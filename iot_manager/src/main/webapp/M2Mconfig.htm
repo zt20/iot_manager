@@ -1,0 +1,136 @@
+
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改配置</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/edit.css">
+	<style type="text/css">
+	  .additional{
+	  	 display:none;
+	  }
+	  .form-horizontal .control-label{ width:160px;}
+	</style>
+    <!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+
+    <script type="text/javascript" src="js/init.js"></script>
+	<script type="text/javascript" src="js/loading.js"></script>
+    <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+
+    <script type="text/javascript">
+    	$(document).ready(function () {
+    		$("#formAgent").ajaxForm({
+    			success: function (result) {
+    				bootbox.alert(result.Message);
+    			},
+    			error: function (XmlHttpRequest, textStatus, errorThrown) {
+    				bootbox.alert("操作失败:服务器错误");
+    			}
+    		});
+    	});
+    </script>
+
+</head>
+<body>
+    <div class="container-fluid" id="content">
+        <div id="main">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="box box-bordered">
+                            <div class="box-title">
+                                <h3><i class="icon-edit"></i>系统参数配置</h3>
+                            </div>
+                            <div class="box-content">
+                                <form action="M2Mconfig.htm?action=save" method="post" class="form-horizontal form-validate" id="formAgent">
+                                    <div class="control-group">
+                                        <label for="SmsValidate" class="control-label">微信短信验证：</label>
+                                        <div class="controls">
+                                            是<input type="radio" name="SmsValidate" value="1" checked="checked" /> 否<input type="radio" name="SmsValidate" value="0"   />
+                                            <br />
+                                            建议启用，实名认证最基本的保证。
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
+                                        <label for="RealNameType" class="control-label">实名审核类型：</label>
+                                        <div class="controls">
+                                            手动审核<input type="radio" name="RealNameType" value="0" checked="checked" /> 自动通过<input type="radio" name="RealNameType" value="1"   /> 无实名要求<input type="radio" name="RealNameType" value="2"   />
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="PhonePrefix" class="control-label">虚拟号码前缀：</label>
+                                        <div class="controls">
+                                            <input type="text" class="input-small" name="PhonePrefix" value="179" />必须是3位数字
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
+                                        <label for="WxShowICCID" class="control-label">微信显示ICCID：</label>
+                                        <div class="controls">
+                                            显示<input type="radio" name="WxShowICCID" value="1" checked="checked" /> 不显示<input type="radio" name="WxShowICCID" value="0"   />
+                                            <br />
+                                            如果不显示ICCID，那么相应的充值记录、命令日志都将不会显示
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
+                                        <label for="WxShowPhone" class="control-label">微信显示虚拟号码：</label>
+                                        <div class="controls">
+                                            显示<input type="radio" name="WxShowPhone" value="1" checked="checked" /> 不显示<input type="radio" name="WxShowPhone" value="0"   />
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
+                                        <label for="WxShowMSISDN" class="control-label">微信显示MSISDN：</label>
+                                        <div class="controls">
+                                            显示<input type="radio" name="WxShowMSISDN" value="1" checked="checked" /> 不显示<input type="radio" name="WxShowMSISDN" value="0"   />
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
+                                        <label for="WxMainShow" class="control-label">微信主号码：</label>
+                                        <div class="controls">
+                                            虚拟号码<input type="radio" name="WxMainShow" value="0" checked="checked" /> ICCID<input type="radio" name="WxMainShow" value="1"   /> MSISDN<input type="radio" name="WxMainShow" value="2"   />
+                                            <br />
+                                            以上面选择的为主号码显示。必须和上面的是否显示配合，否则可能出现异常。
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
+                                        <label for="WxUseSms" class="control-label">启动短信发送：</label>
+                                        <div class="controls">
+                                            启用<input type="radio" name="WxUseSms" value="1" checked="checked" /> 不启用<input type="radio" name="WxUseSms" value="0"   />
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary" id="btnSubmit"><i class="icon-ok-sign"></i>修改</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

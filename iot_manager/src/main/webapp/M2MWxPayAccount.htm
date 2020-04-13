@@ -1,0 +1,300 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>支付管理</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/plugins/icheck/all.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/list.css">
+    <!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+    <script type="text/javascript" src="js/init.js"></script>
+    <!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>-->
+    <style type="text/css">
+        .dropdown-menu
+        {
+            border: 1px solid #7f7f7f;
+        }
+    </style>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$("#wxPayAdd").click(function () {
+				$("#action").val("wxPayAdd");
+				$("#Title").val("微支付");
+				$("#wxPayID").val("");
+				$("#AppId").val("");
+				$("#AppSecret").val("");
+				$("#Mchid").val("");
+				$("#Key").val("");
+				$("#OrderIndex").val("1");
+				$("input:radio[value='1']").attr('checked', 'true');
+
+				$("#wxPayAddDilog").modal("show");
+			});
+
+			$("#btnSubmit").click(function () {
+				var creating = $("#btnSubmit").data("creating");
+				if (!creating) {
+					$("#btnSubmit").data("creating", true);
+					var action = $("#action").val();
+					var Title = $("#Title").val();
+					var AppId = $("#AppId").val();
+					var AppSecret = $("#AppSecret").val();
+					var Mchid = $("#Mchid").val();
+					var Key = $("#Key").val();
+					var OrderIndex = $("#OrderIndex").val();
+					var IsEnabled = $("input[name='IsEnabled']:checked").val();
+
+					if (Title == "") {
+						alert("请填写名称");
+						$("#btnSubmit").data("creating", false);
+						return;
+					}
+					if (AppId == "") {
+						alert("请填写AppId");
+						$("#btnSubmit").data("creating", false);
+						return;
+					}
+					if (AppSecret == "") {
+						alert("请填写应用密钥");
+						$("#btnSubmit").data("creating", false);
+						return;
+					}
+
+					if (Mchid == "") {
+						alert("请填写商户 ID");
+						$("#btnSubmit").data("creating", false);
+						return;
+					}
+
+					if (Key == "") {
+						alert("请填写支付密钥");
+						$("#btnSubmit").data("creating", false);
+						return;
+					}
+
+					if (OrderIndex == "") {
+						alert("请填写显示排序");
+						$("#btnSubmit").data("creating", false);
+						return;
+					}
+
+
+					$.ajax({
+						url: 'GetM2MWxAccount.htm',
+						type: 'post',
+						data: { "action": action, "Title": Title, "AppId": AppId, "AppSecret": AppSecret, "Mchid": Mchid, "Key": Key, "OrderIndex": OrderIndex, "IsEnabled": IsEnabled, "PayAccountID": $("#wxPayID").val() },
+						success: function (result) {
+							alert(result.Message);
+							if (result.OK) {
+								$("#Title").val("微支付");
+								$("#wxPayID").val("");
+								$("#AppId").val("");
+								$("#AppSecret").val("");
+								$("#Mchid").val("");
+								$("#Key").val("");
+								$("#OrderIndex").val("1");
+								$("input:radio[value='1']").attr('checked', 'true');
+								$("#wxPayAddDilog").modal("hide");
+								location.reload();
+							}
+							$("#btnSubmit").data("creating", false);
+						}
+					})
+				}
+			});
+
+			$(document).on("click", ".action-edit", function () {
+
+				var PayAccountID = $(this).data("id");
+				var Title = $(this).attr("data-Title");
+				$.ajax({
+					url: 'GetM2MWxAccount.htm',
+					type: 'post',
+					data: { "action": "wxPayInfo", "PayAccountID": PayAccountID },
+					success: function (result) {
+						if (result.OK) {
+							$("#wxPayID").val(PayAccountID);
+							$("#Title").val(Title);
+							$("#AppId").val(result.Message.AppId);
+							$("#AppSecret").val(result.Message.AppSecret);
+							$("#Mchid").val(result.Message.Mchid);
+							$("#Key").val(result.Message.Key);
+							$("#OrderIndex").val(result.Message.OrderIndex);
+							$("input:radio[value='" + result.Message.IsEnabled + "']").attr('checked', 'true');
+							$("#action").val("wxPayUpdate");
+							$("#wxPayAddDilog").modal("show");
+						} else {
+							alert(result.Message);
+						}
+					}
+				});
+			});
+		});
+	</script>
+</head>
+<body>
+    <div class="container-fluid" id="content">
+        <div id="main">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="box box-bordered">
+                            <div class="box-title">
+                                <h3>
+                                    <i class="icon-table"></i>已绑定微信帐号列表</h3>
+									<div class="dataTables_info1 dropdown pull-right" style="margin-right:10px; margin-top:5px;">
+                                        <a href="#" class="dropdown-toggle btn  btn-primary" data-toggle="dropdown"><i class="icon-plus-sign">
+                                        </i>添加支付方式</a>
+                                        <ul class="dropdown-menu nopadding">
+                                            <li class=""><a href="#" id="wxPayAdd" style="width: 148px">
+                                                <img src="img/weixin.png" alt="" /><span>微支付</span></a></li>
+                                            <!--<li class=""><a href="PayAccountAliPayPhoneAdd.htm" id="A1" style="width: 148px">
+                                                <img src="img/alipayPhone.png" alt="" /><span>支付宝手机端</span></a></li>
+                                            <li class=""><a href="PayAccountTenPayAdd.htm" id="tenpay" style="width: 148px">
+                                                <img src="img/tenpay_direct_icon.gif" alt="" /><span>财付通</span></a> </li>-->
+                                        </ul>
+                                    </div>
+                                    <div style="clear: both;">
+                                    </div>
+                            </div>
+                            <div class="box-content nopadding">
+                                <div class="dataTables_wrapper" style="padding-top: 10px">
+                                    <table class="table table-hover table-nomargin table-bordered table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 100px;">
+                                                    支付类型
+                                                </th>
+                                                <th>
+                                                    支付方式
+                                                </th>
+                                                <th style="width: 150px;">
+                                                    创建时间
+                                                </th>
+                                                <th style="width: 60px;">
+                                                    是否启用
+                                                </th>
+                                                <th style="width: 60px;">
+                                                    操作
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            
+                                            <tr>
+                                                <td colspan="5" style="height: 80px; text-align: center">
+                                                    暂无数据..
+                                                </td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="modal fade" id="wxPayAddDilog" tabindex="-1" role="dialog" style="top: 0px;"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        ×</button>
+                    <h4 class="modal-title">
+                        微支付信息
+                    </h4>
+                </div>
+                <div class="modal-body" style="width: 550px; margin: 0 auto; max-height: 430px; ">
+                       <div class="form-group" style="margin-bottom: 15px">
+							<div class="input-group" style="margin-right: 15px;">
+								<span class="input-group-addon" style="padding-top: 0px; padding-left:35px;">支付方式：</span>
+								<input class="form-control"  style="width: 100px;" type="text" name="Title" id="Title" class='input-xsmall' value="微支付" data-rule-required="true" data-msg-required="*" maxlength="20" data-rule-minlength="3" data-rule-maxlength="20" placeholder="支付方式名称" />
+							</div>
+							<div class="clearfix">
+							</div>
+						</div>
+                        <div class="form-group" style="margin-bottom: 15px">
+							<div class="input-group" style="margin-right: 15px;">
+								<span class="input-group-addon" style="padding-top: 0px; padding-left:20px;">公众号标识：</span>
+								<input class="form-control"  style="width: 150px;" type="text" name="AppId" id="AppId" class='input-xsmall' value="" data-rule-required="true" data-msg-required="*" maxlength="50" data-rule-minlength="2" data-rule-maxlength="50" placeholder="公众号身份标识 AppId" />
+							</div>
+							<div class="clearfix">
+							</div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px">
+							<div class="input-group" style="margin-right: 15px;">
+								<span class="input-group-addon" style="padding-top: 0px; padding-left:35px;">应用密钥：</span>
+                                <input class="form-control"  style="width: 150px;" type="text" name="AppSecret" id="AppSecret" class='input-xsmall' value="" data-rule-required="true" data-msg-required="*" maxlength="50" data-rule-minlength="2" data-rule-maxlength="50" placeholder="应用密钥 AppSecret" />
+							</div>
+							<div class="clearfix">
+							</div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px">
+							<div class="input-group" style="margin-right: 15px;">
+								<span class="input-group-addon" style="padding-top: 0px; padding-left:45px;">商户 ID：</span>
+                                <input class="form-control"  style="width: 150px;" type="text" name="Mchid" id="Mchid" class='input-xsmall' value="" data-rule-required="true" data-msg-required="*" maxlength="50" data-rule-minlength="2" data-rule-maxlength="50" placeholder="商户ID" />
+							</div>
+							<div class="clearfix">
+							</div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px">
+							<div class="input-group" style="margin-right: 15px;">
+								<span class="input-group-addon" style="padding-top: 0px; padding-left:35px;">支付密钥：</span>
+                                <input class="form-control"  style="width: 220px;" type="text" name="Key" id="Key" class='input-xsmall' value="" data-rule-required="true" data-msg-required="*" maxlength="50" data-rule-minlength="2" data-rule-maxlength="50" placeholder="支付密钥" />
+								<div class="help-inline">
+                                    登录微信支付商户后台>API安全>API密钥>设置API密钥
+                                </div>
+							</div>
+							<div class="clearfix">
+							</div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px">
+							<div class="input-group" style="margin-right: 15px;">
+                            <span class="input-group-addon" style="padding-top: 0px; padding-left:35px;">显示排序：</span>
+                                <input class="form-control"  style="width: 50px;" type="text" name="OrderIndex" id="OrderIndex" class='input-xsmall' value="1" data-rule-required="true" data-msg-required="*" maxlength="2" data-rule-minlength="1" date-rule-digits="true" data-rule-maxlength="2" placeholder="请填数字" />
+                                <div class="help-inline">数字越大排序越靠前</div>
+							</div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px">
+							<div class="input-group" style="margin-right: 15px;">
+								<span class="input-group-addon" style="padding-top: 0px; padding-left:35px;">是否启用：</span>
+                                <input id="Radio7" name="IsEnabled" type="radio" value="1" checked="checked"/>启用
+                                <input id="Radio8" name="IsEnabled" type="radio" value="2" />停用
+							</div>
+                            <div class="clearfix">
+							</div>
+						</div>
+                </div>
+                <div class="modal-footer clearfix" style="margin-top: 0px;">
+					<input type="hidden" name="action" id="action" value="wxPayAdd" />
+					<input type="hidden" name="wxPayID" id="wxPayID" value="" />
+                    <button type="button" class="btn" data-dismiss="modal">
+                        取消</button>
+                    <button type="button" class="btn btn-primary" id="btnSubmit" data-creating="false">
+                        确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

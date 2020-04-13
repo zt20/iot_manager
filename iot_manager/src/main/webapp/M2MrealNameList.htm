@@ -1,0 +1,229 @@
+
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改配置</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/edit.css">
+	<style type="text/css">
+	  .additional{
+	  	 display:none;
+	  }
+	  .tableImg{ width:220px; height:138px;}
+	</style>
+    <!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+
+
+    <script type="text/javascript" src="js/init.js"></script>
+	<script type="text/javascript" src="js/loading.js"></script>
+    <script type="text/javascript" src="js/jquery.form.min.js"></script>
+
+	<script type="text/javascript" src="js/content_zoom/content_zoom.js"></script>
+	<link rel="stylesheet" href="js/content_zoom/content_zoom.css"/>
+
+    <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $(".zoomImg img").fancyZoom({ scaleImg: true, closeOnClick: true });
+
+          $(".action-search").on("click", function () {
+              $("#action").val("search");
+              $("#searchForm").submit();
+          });
+          $(".action-export").on("click", function () {
+              var cardNull = $("#cardNull").val();
+              var resetFlag = $("#resetFlag").val();
+              var showInfo = "<font color='red'>全部</font>";
+              if (cardNull != "" || resetFlag != "") {
+                  showInfo = "";
+                  if (cardNull == "1") {
+                      showInfo = showInfo + "身份证号码为空 ";
+                  } else if (cardNull == "2") {
+                      showInfo = showInfo + "身份证号码正常 ";
+                  }
+                  if (resetFlag == "1") {
+                      showInfo = showInfo + "可编辑状态 ";
+                  } else if (resetFlag == "2") {
+                      showInfo = showInfo + "不可编辑状态 ";
+                  }
+              }
+              $("#showInfo").html(showInfo);
+              $("#modal-set").modal();
+          });
+
+          $("#modal-set").on("click", "#setOpen", function () {
+              $("#action").val("setOpen");
+              $("#searchForm").ajaxSubmit({
+                  type: "POST",
+                  success: function (result) {
+                      alert(result.Message);
+                      window.location.reload();
+                  },
+                  error: function (XmlHttpRequest, textStatus, errorThrown) {
+                      alert("操作失败服务器错误");
+                  }
+              });
+              $("#modal-set").modal("hide");
+          });
+
+          $("#modal-set").on("click", "#setClose", function () {
+              $("#action").val("setClose");
+              $("#searchForm").ajaxSubmit({
+                  type: "POST",
+                  success: function (result) {
+                      alert(result.Message);
+                      window.location.reload();
+                  },
+                  error: function (XmlHttpRequest, textStatus, errorThrown) {
+                      alert("操作失败服务器错误");
+                  }
+              });
+              $("#modal-set").modal("hide");
+          });
+
+          $("#modal-set").on("click", "#setRe", function () {
+              $("#action").val("setRe");
+              $("#searchForm").ajaxSubmit({
+                  type: "POST",
+                  success: function (result) {
+                      alert(result.Message);
+                      window.location.reload();
+                  },
+                  error: function (XmlHttpRequest, textStatus, errorThrown) {
+                      alert("操作失败服务器错误");
+                  }
+              });
+              $("#modal-set").modal("hide");
+          });
+      });
+    </script>
+
+</head>
+<body>
+    <div class="container-fluid" id="content">
+        <div id="main">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="box box-bordered">
+                            <div class="box-title">
+                <h3><i class="icon-table"></i> 实名查看</h3>
+              </div>
+              <div class="box-content nopadding">
+                <div class="dataTables_wrapper">
+                    <div class="dataTables_info1" style="padding-top: 10px;">
+					<form class="form-inline" action="M2MrealNameList.htm" method="post" id="searchForm">
+                    <input type="hidden" name="action" id="action" value="search" />
+                    <div class="dataTables_filter">
+                        <label style="width: 70px;">手机号码: </label>
+                        <input type="text" class="input-small" name="Mobile" id="Mobile" placeholder="手机号码" value="" />
+                        <label style="width: 70px;">身份证号码: </label>
+                        <input type="text" class="input-small" name="CertNumber" id="CertNumber" placeholder="身份证号码" value="" />
+						<label>身份证号码: </label>
+                        <select id="cardNull" name="cardNull" class="select2-me input-small" data-search="false">
+							<option value="">全部</option>
+							<option value="1" >为空</option>
+							<option value="2" >正常</option>
+						</select>
+                        <label>编辑状态: </label>
+                        <select id="resetFlag" name="resetFlag" class="select2-me input-small" data-search="false">
+							<option value="">全部</option>
+							<option value="1" >可编辑</option>
+							<option value="2" >不可编辑</option>
+						</select>
+                        <button type="button" class="btn btn-primary action-search"><i class="icon-search"></i> 搜索</button>
+                        <button type="button" class="btn btn-success action-export"><i class="icon-cogs"></i> 按条件设置</button>
+                      
+                    </div>
+					</form>
+                  </div>
+                  <div style="clear:both;"></div>
+                    <table class="table table-hover table-nomargin table-bordered table-condensed">
+                      <thead>
+                        <tr>
+                          <th>编号</th>
+                          <th style="width:80px;">手机号码</th>
+						  <th style="width:120px;">身份证号码</th>
+						  <th style="width:220px;">身份证正面</th>
+						  <th style="width:220px;">身份证反面</th>
+						  <th style="width:220px;">手持身份证</th>
+                          <th style="width:60px;">操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                        <tr>
+                          <td colspan="10" style="height:80px; text-align:center">暂无数据..</td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+
+                </div>
+              </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="modal-set" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+		<form id="most-set-form" class="form-horizontal" novalidate="novalidate" action="#">
+		<div class="modal-header">
+			<button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+			<h4 class="modal-title" id="H3">设置</h4>
+		</div>
+		<div class="modal-body">
+			<div class="box-content" id="Div4">
+				<div class="control-group">
+   					<label class="control-label">当前选择条件: </label>
+					<div class="controls" style="margin-left: 130px;">
+                    <span id="showInfo"></span>
+					</div>
+   				</div>
+                <div class="control-group">
+                    <label class="control-label"></label>
+                    <div class="controls" style="margin-left: 130px;">
+   					 <a class="btn btn-primary" id="setOpen">允许编辑</a>
+                      <a class="btn btn-danger" id="setClose">关闭编辑</a>
+                       <a class="btn btn-primary" id="setRe">重新实名</a>
+                    </div>
+   				</div>
+
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+           
+		</div>
+		</form>
+	</div>
+	
+</body>
+</html>
+

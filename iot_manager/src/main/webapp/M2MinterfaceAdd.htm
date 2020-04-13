@@ -1,0 +1,264 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>添加流量通道</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/plugins/select2/select2.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/add.css">
+	<!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+  <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+  <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+  <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+  <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+  <script type="text/javascript" src="js/init.js"></script>
+  <script type="text/javascript" src="js/json.js"></script>
+  <script type="text/javascript" src="js/loading.js"></script>
+
+  <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+
+  <script>
+      // $(document).ready(function () {
+      //     $('#interfaceRemark').height(28);
+      //     $('#interfaceRemarkDiv').css("top", $('#pID').offset().top);
+      //     $('#interfaceRemarkDiv').css("left", "610px");
+      //
+      //     $("#RuleID").trigger("change");
+      //
+      //     $(".UseSmsCss").on("change", function () {
+      //         if ($(this).val() == "0") {
+      //             $("#smsConfig").hide();
+      //         } else {
+      //             $("#smsConfig").show();
+      //         }
+      //     });
+      //
+      //
+      //     $('#formInterface').submit(function () {
+      //         var x = new Object();
+      //         //var params = "{";
+      //         $(".interfaceParams").each(function () {
+      //             x[$(this).attr("paramKey")] = $(this).val();
+      //             //params = params + '"' + $(this).attr("paramKey") + '":"' + $(this).val().replace(/\"/g, "\\\"") + '",';
+      //         });
+      //         //if (params.lastIndexOf(",") > 0) {
+      //         //	params = params.substr(0, params.length - 1);
+      //         //}
+      //         //params = params + "}";
+      //         $("#interfaceParams").val($.toJSON(x));
+      //
+      //         var params = "[";
+      //         $(".packagesParams").each(function () {
+      //             if ($(this).is(':checked')) {
+      //                 params = params + '{"Package":' + $(this).val().replace(/\"/g, "\\\"") + '},';
+      //             }
+      //         });
+      //         if (params.lastIndexOf(",") > 0) {
+      //             params = params.substr(0, params.length - 1);
+      //         }
+      //         params = params + "]";
+      //         $("#packageParams").val(params);
+      //
+      //         var smsParams = "{";
+      //         $(".smsParams").each(function () {
+      //             smsParams = smsParams + '"' + $(this).attr("paramKey") + '":"' + $(this).val().replace(/\"/g, "\\\"") + '",';
+      //         });
+      //         if (smsParams.lastIndexOf(",") > 0) {
+      //             smsParams = smsParams.substr(0, smsParams.length - 1);
+      //         }
+      //         smsParams = smsParams + "}";
+      //         $("#smsConfigData").val(smsParams);
+      //
+      //
+      //         $(this).ajaxSubmit({
+      //             success: function (result) {
+      //                 bootbox.alert(result.Message, function (box) {
+      //                     if (result.OK) {
+      //                         $("#formInterface").resetForm();
+      //                     }
+      //                 });
+      //             },
+      //             error: function (XmlHttpRequest, textStatus, errorThrown) {
+      //                 bootbox.alert("操作失败:服务器错误");
+      //             }
+      //         });
+      //         return false;
+      //     });
+      // });
+  </script>
+
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+              <div class="box-title">
+                <h3><i class="icon-ok-sign"></i> 物联网通道</h3>
+              </div>
+              <div class="box-content">
+                <!--<form action="M2MinterfaceAdd.htm?action=add" method="POST" class="form-horizontal form-validate" id="formInterface">-->
+                  <div class="form-horizontal form-validate">
+                  <input type="hidden" name="interfaceParams" value="" id="interfaceParams"/>
+				  <input type="hidden" name="packageParams" value="" id="packageParams"/>
+                  <input type="hidden" name="smsConfigData" value="" id="smsConfigData"/>
+				  <div class="control-group">
+                    <label for="interfaceName" class="control-label">通道名称：</label>
+                    <div class="controls">
+                      <input type="text" id="interfaceName" name="interfaceName" class="input-xlarge" maxlength="20" data-rule-required="true" data-msg-required="请填写通道名称" title="通道名称必填，最大允许输入20个字符"/>
+                    </div>
+                  </div>
+				  <div class="control-group">
+                    <label for="discount" class="control-label">实际折扣：</label>
+                    <div class="controls">
+                      <input type="text" id="discount" name="discount" value="10" class="input-small" maxlength="7" data-rule-required="true" data-msg-required="请填写通道实际折扣" title="最大允许输入7个字符"/>通道折扣，用于路由
+                    </div>
+                  </div>
+				  <div class="control-group">
+                    <label for="showName" class="control-label">展示名称：</label>
+                    <div class="controls">
+                      <input type="text" id="showName" name="showName" class="input-xlarge" maxlength="25" title="最大允许输入25个字符"/>代理可见，用于选择资费计划
+                    </div>
+                  </div>
+				  <div class="control-group">
+                    <label for="userDiscount" class="control-label">代理基础折扣：</label>
+                    <div class="controls">
+                      <input type="text" id="userDiscount" name="userDiscount" value="10" class="input-small" maxlength="7" data-rule-required="true" data-msg-required="请填写代理基础折扣" title="最大允许输入7个字符"/>代理使用该通道的基础折扣，代理最终折扣可在代理折扣中修改
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label for="operatorType" class="control-label">运营商类型：</label>
+                    <div class="controls">
+                        <input type="radio" name="operatorType" class="operatorTypeCss" value="1" checked="checked"/>移动
+                        <input type="radio" name="operatorType" class="operatorTypeCss" value="2"/>联通
+                        <input type="radio" name="operatorType" class="operatorTypeCss" value="3"/>电信
+						<input type="radio" name="operatorType" class="operatorTypeCss" value="0"/>全网
+						<div id="showPackages" style="width:330px;">
+						</div>
+                    </div>
+                  </div>
+                  <div class="control-group">
+					<label for="submitInterval" class="control-label">提交时间间隔：</label>
+					<div class="controls">
+						<input type="text" id="submitInterval" name="submitInterval" class="input-mini" value="10" maxlength="10" data-rule-integer="true" title="最大允许输入10个字符" data-msg-integer="应填写数字" data-rule-minlength="1" data-msg-minlength="至少1位整数" />毫秒
+					</div>
+					</div>
+				<div class="control-group">
+					<label for="taskScanInterval" class="control-label">任务扫描间隔：</label>
+					<div class="controls">
+						<input type="text" id="taskScanInterval" name="taskScanInterval" class="input-mini" value="10" maxlength="3" data-rule-integer="true" title="最大允许输入3个字符" data-msg-integer="应填写数字" data-rule-minlength="1" data-msg-minlength="至少1位整数" />毫秒
+					</div>
+					</div>
+				<div class="control-group">
+					<label for="taskScanInterval" class="control-label">结算日：</label>
+					<div class="controls">
+						<input type="text" id="SettlementDay" name="SettlementDay" class="input-mini" value="25" maxlength="2" data-rule-integer="true" title="最大允许输入2个字符" data-msg-integer="应填写数字" data-rule-minlength="1" data-msg-minlength="至少1位整数" />日
+					</div>
+					</div>
+				<div class="control-group">
+                    <label for="remark" class="control-label">备注：</label>
+                    <div class="controls">
+					  <textarea name="remark" cols="20" rows="2" id="remark"></textarea>
+                    </div>
+                  </div>
+                 <div class="control-group">
+                    <label for="RechargeMode" class="control-label">充值模式：</label>
+                    <div class="controls">
+                        <input type="radio" name="RechargeMode" value="0" checked="checked"/>自动
+                        <input type="radio" name="RechargeMode" value="1" />人工审核
+                    </div>
+                  </div>
+                <div class="control-group">
+                    <label for="operatorType" class="control-label">启用短信：</label>
+                    <div class="controls">
+                        <input type="radio" name="UseSms" class="UseSmsCss" value="0" checked="checked"/>否
+                        <input type="radio" name="UseSms" class="UseSmsCss" value="1" />是
+                    </div>
+                  </div>
+                <!--<div class="control-group" id="smsConfig" style=" display:none;">-->
+					<!--<label for="discount" class="control-label">短信配置：</label>-->
+					<!--<div class="controls" id="Div2">-->
+                           <!--<table cellpadding="3" style="min-width:300px;"><tr><td style='width:100px;'>userid：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_userid' paramKey='userid'  class='input-xxlarge smsParams' type='text' name='bc_userid' value='' ></td></tr><tr><td style='width:100px;'>account：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_account' paramKey='account'  class='input-xxlarge smsParams' type='text' name='bc_account' value='' ></td></tr><tr><td style='width:100px;'>password：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_password' paramKey='password'  class='input-xxlarge smsParams' type='text' name='bc_password' value='' ></td></tr><tr><td style='width:100px;'>RPTURL：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_RPTURL' paramKey='RPTURL'  class='input-xxlarge smsParams' type='text' name='bc_RPTURL' value='http://1181453035.com:9999/statusapi.htm?action=query' ></td></tr><tr><td style='width:100px;'>MTURL：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_MTURL' paramKey='MTURL'  class='input-xxlarge smsParams' type='text' name='bc_MTURL' value='http://1181453035.com:9999/sms.htm?action=send' ></td></tr><tr><td style='width:100px;'>MOURL：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_MOURL' paramKey='MOURL'  class='input-xxlarge smsParams' type='text' name='bc_MOURL' value='http://1181453035.com:9999/callApi.htm?action=query' ></td></tr><tr><td style='width:100px;'>extno：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_extno' paramKey='extno'  class='input-xxlarge smsParams' type='text' name='bc_extno' value='' ></td></tr></table>-->
+					<!--</div>-->
+				<!--</div>-->
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="btnSubmit"><i class="icon-ok-sign"></i> 添加通道</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+      $("#btnSubmit").on("click", function () {
+
+          var channelName = $("#interfaceName").val();
+          var channelDiscount = $("#discount").val();
+          var showName = $("#showName").val();
+          var channelAgentDiscount = $("#userDiscount").val();
+          var operator = $(":radio[name='operatorType']:checked").val();
+          var submissionInterval = $("#submitInterval").val();
+          var taskScanInterval = $("#taskScanInterval").val();
+          var settlementDate = $("#SettlementDay").val();
+          var note = $("#remark").val();
+          var rechargeMode = $(":radio[name='RechargeMode']:checked").val();
+          var sms = $(":radio[name='UseSms']:checked").val();
+
+          $.ajax({
+              type: 'POST',
+              url: '/api/v1/channel_add.do',
+              data: {
+                  channelName: channelName,
+                  channelDiscount: channelDiscount,
+                  showName: showName,
+                  channelAgentDiscount: channelAgentDiscount,
+                  operator: operator,
+                  submissionInterval: submissionInterval,
+                  taskScanInterval: taskScanInterval,
+                  settlementDate: settlementDate,
+                  note: note,
+                  rechargeMode: rechargeMode,
+                  sms: sms,
+              },
+              success:function(data) {
+                  console.log(data);
+                  if (data.code == 0) {
+                      alert("添加成功!");
+                      window.location.href = '/M2MinterfaceList.htm';
+                  } else {
+                      alert(data.msg);
+                  }
+
+              },
+              error: function(XMLHttpRequest) {
+                  alert("系统出错了" + XMLHttpRequest.status );
+              },
+          });
+
+      });
+    </script>
+</body>
+</html>
+

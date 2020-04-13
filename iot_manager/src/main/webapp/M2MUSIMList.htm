@@ -1,0 +1,1276 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>流量通道管理</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/plugins/icheck/all.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/list.css">
+    <link rel="stylesheet" href="css/plugins/datepicker/bootstrap-datetimepicker.css">
+    <link rel="stylesheet" href="css/pagination.css">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+    <link rel="stylesheet" href="css/ie7.css">
+    <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+    <script type="text/javascript" src="js/init.js?20160401"></script>
+    <script type="text/javascript" src="js/plugins/datepicker/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="js/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/m2m.js?20171101"></script>
+    <script type="text/javascript" src="js/pager.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/loading.js"></script>
+    <script type="text/javascript" src="js/plugins/jquery-paginator/jquery.pagination.js"></script>
+    <!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('input, textarea').placeholder();
+        });
+    </script>
+    <![endif]-->
+    <style type="text/css">
+        dl {
+            margin: 0;
+        }
+
+        dd {
+            margin-left: 0px;
+        }
+
+        .pagination {
+            display: inline-block;
+            padding-left: 0;
+            margin: 5px 0;
+            border-radius: 4px
+        }
+
+        .pagination > li {
+            display: inline
+        }
+
+        .pagination > li > a, .pagination > li > span {
+            position: relative;
+            float: left;
+            padding: 6px 12px;
+            margin-left: -1px;
+            line-height: 1.428571429;
+            text-decoration: none;
+            background-color: #fff;
+            border: 1px solid #ddd
+        }
+
+        .pagination > li:first-child > a, .pagination > li:first-child > span {
+            margin-left: 0;
+            border-bottom-left-radius: 4px;
+            border-top-left-radius: 4px
+        }
+
+        .pagination > li:last-child > a, .pagination > li:last-child > span {
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px
+        }
+
+        .pagination > li > a:hover, .pagination > li > span:hover, .pagination > li > a:focus, .pagination > li > span:focus {
+            background-color: #eee
+        }
+
+        .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+            z-index: 2;
+            color: #fff;
+            cursor: default;
+            background-color: #428bca;
+            border-color: #428bca
+        }
+
+        .pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus {
+            color: #999;
+            cursor: not-allowed;
+            background-color: #fff;
+            border-color: #ddd
+        }
+
+        .pagination-lg > li > a, .pagination-lg > li > span {
+            padding: 10px 16px;
+            font-size: 18px
+        }
+
+        .pagination-lg > li:first-child > a, .pagination-lg > li:first-child > span {
+            border-bottom-left-radius: 6px;
+            border-top-left-radius: 6px
+        }
+
+        .pagination-lg > li:last-child > a, .pagination-lg > li:last-child > span {
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px
+        }
+
+        .pagination-sm > li > a, .pagination-sm > li > span {
+            padding: 5px 10px;
+            font-size: 12px
+        }
+
+        .pagination-sm > li:first-child > a, .pagination-sm > li:first-child > span {
+            border-bottom-left-radius: 3px;
+            border-top-left-radius: 3px
+        }
+
+        .pagination-sm > li:last-child > a, .pagination-sm > li:last-child > span {
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px
+        }
+
+        .pagination > li > a {
+            background: #fafafa;
+            color: #666;
+        }
+
+        .pagination > li:first-of-type a,
+        .pagination > li:last-of-type a {
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+    </style>
+    <script type="text/javascript">
+        //////////////////////////////////////////////////////////////////
+        function getUsedFlowLog() {
+            var html = "";
+            if (cmdId == 0) {
+                html = '<tr class="empty">';
+                html += '    <td colspan="12"  style="line-height:100px;text-align: center;">暂无数据！</td>';
+                html += '</tr>';
+                $("#usedFlowList").html(html);
+            } else {
+                $.post("SetM2MUSIM.htm", {action: "getCmdLog", cmdid: cmdId}, function (data) {
+                    if (data.OK) {
+                        if (pp == "…")
+                            pp = "……";
+                        else
+                            pp = "…";
+
+                        switch (data.Message.Status) {
+                            case 0: {
+                                html = '<tr class="empty">';
+                                html += '    <td colspan="12"  style="line-height:100px;text-align: center;">查询中：等待' + pp + '</td>';
+                                html += '</tr>';
+                                break;
+                            }
+                            case 1: {
+                                html = '<tr class="empty">';
+                                html += '    <td colspan="12"  style="line-height:100px;text-align: center;">查询中：等待' + pp + '</td>';
+                                html += '</tr>';
+                                break;
+                            }
+                            case 2: {
+                                html = '<tr class="empty">';
+                                html += '    <td colspan="12"  style="line-height:100px;text-align: center;"><font color="red"  >查询失败</font>，原因：' + data.Message.SubmitErrorCode + '</td>';
+                                html += '</tr>';
+                                break;
+                            }
+                            case 3: {
+                                html = '<tr class="empty">';
+                                html += '    <td colspan="12"  style="line-height:100px;text-align: center;">查询中：等待' + pp + '</td>';
+                                html += '</tr>';
+                                break;
+                            }
+                            case 4: {
+                                html = '<tr class="empty">';
+                                html += '    <td colspan="12"  style="line-height:100px;text-align: center;"><font color="red"  >查询失败</font>，原因：' + data.Message.ReportErrorCode + '</td>';
+                                html += '</tr>';
+                                break;
+                            }
+                            case 5: {
+                                try {
+                                    var json = $.parseJSON(data.Message.ExtData);
+
+                                    html = "";
+                                    $.each(json.list, function () {
+                                        html += '<tr class="odd">';
+                                        html += '    <td>' + this.date + '</td>';
+                                        html += '    <td>' + this.used + 'M</td>';
+                                        html += '</tr>';
+                                    });
+                                    html += '<tr class="odd">';
+                                    html += '    <td>累计</td>';
+                                    html += '    <td>' + json.total + 'M</td>';
+                                    html += '</tr>';
+
+                                } catch (e) {
+                                    html = '<tr class="empty">';
+                                    html += '    <td colspan="12"  style="line-height:100px;text-align: center;"><font color="orange"  >查询结果</font>：' + data.Message.ReportErrorCode + '</td>';
+                                    html += '</tr>';
+                                }
+
+                                break;
+                            }
+                        }
+
+                        $("#usedFlowList").html(html);
+                        if (data.Message.Status == 4 || data.Message.Status == 5 || data.Message.Status == 6) {
+                            t = window.clearInterval(t);
+                        }
+                    } else {
+                        html = '<tr class="empty">';
+                        html += '    <td colspan="12"  style="line-height:100px;text-align: center;">暂无数据！</td>';
+                        html += '</tr>';
+                        $("#usedFlowList").html(html);
+                    }
+                });
+            }
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        $(document).ready(function () {
+            //////////////////////////////////
+            $('#modal-usedFlow').on('hide.bs.modal', function () {
+                t = window.clearInterval(t)
+            })
+            $(".usedFlowSpan").on("click", function () {
+                var ID = $(this).attr("data-id");
+                var iccid = $(this).attr("data-ICCID");
+                $("#usedFlowTitle").html(iccid + "最近7天历史用量");
+                $.ajax({
+                    url: 'SetM2MUSIM.htm',
+                    type: 'post',
+                    data: {action: "getUsedFlowLog", "ID": ID},
+                    error: function () {
+                        alert("远程访问失败");
+                    },
+                    success: function (result) {
+                        if (result.OK) {
+                            $("#modal-usedFlow").modal();
+                            cmdId = result.Message;
+                            getUsedFlowLog();
+                            t = setInterval("getUsedFlowLog()", 3000);
+                        } else {
+                            alert(result.Message);
+                        }
+                    }
+                });
+            });
+            /////////////////////////////////
+
+            $(".action-agent").on("click", function () {
+                var ID = $(this).attr("data-id");
+                var ICCID = $(this).attr("data-ICCID");
+                var AgentAccount = $(this).attr("data-AgentAccount");
+                $("#setToAgentID").val(ID);
+                $("#setToAgent_Account").val(AgentAccount);
+                $("#myModalLabel2").html(ICCID + "代理设置");
+                $("#modal-setToAgent").modal();
+            });
+
+            $(".action-dt").on("click", function () {
+                $(this).next().toggle();
+            });
+
+            $(".action-remove").on("click", function () {
+                var planCode = $(this).attr("data-planCode");
+                var id = $(this).parent().parent().parent().parent().attr("data-id");
+                bootbox.confirm("确定要取消订购吗?", function (box) {
+                    if (box) {
+                        $.get("SetM2MUSIM.htm", {action: "removePlan", id: id, planCode: planCode},
+                            function (result) {
+                                if (result.OK) {
+                                    $("#modal-cmdShow").modal();
+                                    cmdId = result.Message;
+                                    getCmdLog();
+                                    t = setInterval("getCmdLog()", 3000);
+                                } else {
+                                    alert(result.Message);
+                                }
+                            });
+                    }
+                });
+            });
+
+            $(".action-dataGet").on("click", function () {
+                var id = $(this).attr("data-id");
+                var ICCID = $(this).attr("data-ICCID");
+
+                $.get("SetM2MUSIM.htm", {action: "dataGet", id: id},
+                    function (result) {
+                        if (result.OK) {
+                            $("#modal-cmdShow").modal();
+                            cmdId = result.Message;
+                            getCmdLog();
+                            t = setInterval("getCmdLog()", 3000);
+                        } else {
+                            alert(result.Message);
+                        }
+                    });
+
+            });
+
+            $(".action-syncCertNumber").on("click", function () {
+                var id = $(this).attr("data-id");
+                var ICCID = $(this).attr("data-ICCID");
+
+                $.get("SetM2MUSIM.htm", {action: "syncCertNumber", id: id},
+                    function (result) {
+                        if (result.OK) {
+                            $("#modal-cmdShow").modal();
+                            cmdId = result.Message;
+                            getCmdLog();
+                            t = setInterval("getCmdLog()", 3000);
+                        } else {
+                            alert(result.Message);
+                        }
+                    });
+
+            });
+
+            $("#modal-setToAgent").on("click", ".btn-primary", function () {
+                $("#most-setToAgent-form").ajaxSubmit({
+                    type: "POST",
+                    success: function (result) {
+                        if (result.OK) {
+                            $("#modal-setToAgent").modal("hide");
+                            $("#modal-cmdShow").modal();
+                            cmdId = result.Message;
+                            getCmdLog();
+                            t = setInterval("getCmdLog()", 3000);
+                        } else {
+                            alert(result.Message);
+                        }
+                    },
+                    error: function (XmlHttpRequest, textStatus, errorThrown) {
+                        alert("操作失败服务器错误");
+                    }
+                });
+                $("#modal-setToAgent").modal("hide");
+            });
+
+            $(".action-nextRate").on("click", function () {
+                var ID = $(this).attr("data-id");
+                var ICCID = $(this).attr("data-ICCID");
+                var Rate = $(this).attr("data-Rate");
+
+                //alert(ID);
+
+                $.ajax({
+                    url: 'SetM2MUSIM.htm',
+                    type: 'GET',
+                    data: {action: "getRateSelect", ID: ID},
+                    error: function () {
+                        alert("远程访问失败");
+                    },
+                    success: function (result) {
+                        if (result.OK) {
+                            $("#setNextRate_Rate").html('<option selected="selected">选择套餐</option>');
+                            $.each(result.Message, function (index, item) {
+                                $("#setNextRate_Rate").append('<option value=' + item.PlanCode + '>' + item.PlanName + '</option>')
+                            });
+                            $("#setNextRate_Rate").select2();
+                        }
+                    }
+                });
+
+                $("#setNextRateID").val(ID);
+                $("#setNextRate_Rate").val(Rate);
+                $("#setNextRate_Rate").trigger('change');
+                $("#myModalLabel3").html(ICCID + "套餐设置");
+                $("#modal-setNextRate").modal();
+
+            });
+
+            $("#modal-setNextRate").on("click", ".btn-primary", function () {
+
+                var setNextRate = $("#setNextRate_Rate").val();
+
+                if (setNextRate) {
+                    $("#most-setNextRate-form").ajaxSubmit({
+                        type: "POST",
+                        success: function (result) {
+                            if (result.OK) {
+                                $("#modal-setNextRate").modal("hide");
+                                $("#modal-cmdShow").modal();
+                                cmdId = result.Message;
+                                getCmdLog();
+                                t = setInterval("getCmdLog()", 3000);
+                            } else {
+                                alert(result.Message);
+                            }
+                        },
+                        error: function (XmlHttpRequest, textStatus, errorThrown) {
+                            alert("操作失败服务器错误");
+                        }
+                    });
+                } else {
+                    alert("请选择参数");
+                }
+
+                $("#modal-setNextRate").modal("hide");
+            });
+            //////////////////
+            $(".action-status").on("click", function () {
+                var ID = $(this).attr("data-id");
+                var ICCID = $(this).attr("data-ICCID");
+                var status = $(this).attr("data-status");
+                $("#setStatusID").val(ID);
+                $("#SetStatus").val(status);
+                $("#SetStatus").trigger('change');
+                $("#myModalLabel4").html(ICCID + "状态设置");
+                $("#modal-setStatus").modal();
+            });
+
+            $("#modal-setStatus").on("click", ".btn-primary", function () {
+                $("#most-setStatus-form").ajaxSubmit({
+                    type: "POST",
+                    success: function (result) {
+                        if (result.OK) {
+                            $("#modal-setStatus").modal("hide");
+                            $("#modal-cmdShow").modal();
+                            cmdId = result.Message;
+                            getCmdLog();
+                            t = setInterval("getCmdLog()", 3000);
+                        } else {
+                            alert(result.Message);
+                        }
+                    },
+                    error: function (XmlHttpRequest, textStatus, errorThrown) {
+                        alert("操作失败服务器错误");
+                    }
+                });
+                $("#modal-setStatus").modal("hide");
+            });
+            //////////////////////////
+            $(".action-cutService").on("click", function () {
+                var ID = $(this).attr("data-id");
+                var ICCID = $(this).attr("data-ICCID");
+                var status = $(this).attr("data-cutService");
+                $("#setCutServiceID").val(ID);
+                $("#cutService").val(status);
+                $("#cutService").trigger('change');
+                $("#myModalLabel5").html(ICCID + "单独断网设置");
+                $("#modal-setCutService").modal();
+            });
+
+            $("#modal-setCutService").on("click", ".btn-primary", function () {
+                $("#most-setCutService-form").ajaxSubmit({
+                    type: "POST",
+                    success: function (result) {
+                        if (result.OK) {
+                            $("#modal-setCutService").modal("hide");
+                            $("#modal-cmdShow").modal();
+                            cmdId = result.Message;
+                            getCmdLog();
+                            t = setInterval("getCmdLog()", 3000);
+                        } else {
+                            alert(result.Message);
+                        }
+                    },
+                    error: function (XmlHttpRequest, textStatus, errorThrown) {
+                        alert("操作失败服务器错误");
+                    }
+                });
+                $("#modal-setCutService").modal("hide");
+            });
+            ///////////////////////
+            $('#modal-cmdShow').on('hide.bs.modal', function () {
+                t = window.clearInterval(t)
+                location.reload();
+            })
+
+            $("#InterfaceID").change(function () {
+                var interfaceID = $("#InterfaceID").val();
+                if (interfaceID > 0) {
+                    $.ajax({
+                        url: 'SetM2MUSIMInit.htm',
+                        type: 'GET',
+                        data: {action: "getRateSelect", interfaceID: interfaceID},
+                        error: function () {
+                            alert("远程访问失败");
+                        },
+                        success: function (result) {
+                            if (result.OK) {
+                                $("#Rate").html('<option value="">选择套餐</option>');
+                                $.each(result.Message, function (index, item) {
+                                    $("#Rate").append('<option value=' + item.PlanCode + '>' + item.PlanName + '</option>')
+                                });
+
+                                $("#NextRate").html('<option value="">选择套餐</option>');
+                                $.each(result.Message, function (index, item) {
+                                    $("#NextRate").append('<option value=' + item.PlanCode + '>' + item.PlanName + '</option>')
+                                });
+
+                                $("#Rate").select2();
+                                $("#NextRate").select2();
+
+                            }
+                        }
+                    });
+                }
+            });
+
+
+            //////////////////
+
+            $(".action-addPlan").on("click", function () {
+                var ID = $(this).attr("data-id");
+                var ICCID = $(this).attr("data-ICCID");
+
+                $.ajax({
+                    url: 'SetM2MUSIM.htm',
+                    type: 'GET',
+                    data: {action: "getAddPlanSelect", ID: ID},
+                    error: function () {
+                        alert("远程访问失败");
+                    },
+                    success: function (result) {
+                        if (result.OK) {
+                            $("#addPlan").html('<option selected="selected">选择套餐</option>');
+                            $.each(result.Message, function (index, item) {
+                                $("#addPlan").append('<option value=' + item.PlanCode + '>' + item.OriginalPlanName + '</option>')
+                            });
+                            $("#addPlan").select2();
+                            $("#addPlan").trigger('change');
+                        }
+                    }
+                });
+
+                $("#addPlan_ID").val(ID);
+                $("#myModalLabel4").html(ICCID + "叠加套餐");
+                $("#modal-addPlan").modal();
+
+            });
+
+            $("#modal-addPlan").on("click", ".btn-primary", function () {
+
+                var addPlan = $("#addPlan").val();
+
+                if (addPlan) {
+                    $("#most-addPlan-form").ajaxSubmit({
+                        type: "POST",
+                        success: function (result) {
+                            if (result.OK) {
+                                $("#modal-addPlan").modal("hide");
+                                $("#modal-cmdShow").modal();
+                                cmdId = result.Message;
+                                getCmdLog();
+                                t = setInterval("getCmdLog()", 3000);
+                            } else {
+                                alert(result.Message);
+                            }
+                        },
+                        error: function (XmlHttpRequest, textStatus, errorThrown) {
+                            alert("操作失败服务器错误");
+                        }
+                    });
+                } else {
+                    alert("请选择参数");
+                }
+
+                $("#modal-addPlan").modal("hide");
+            });
+            ////////////////短信相关/////////////////////
+            $(".action-smsSend").on("click", function () {
+                var id = $(this).data("id");
+                var iccid = $(this).attr("data-ICCID");
+                $("#smsID").val(id);
+                $("#smsSendTitle").html(iccid + "的短信");
+                $("input:radio[name='smsType'][value='1']").prop("checked", 'checked');
+                $("#smsContent").val("");
+                $("#smsSendLogList").html("");
+                $(".pagination").html("");
+                $("#smsSendFist").trigger("click");
+                $("#modal-smsSend").modal();
+            });
+            $(".smsSendButton").on("click", function () {
+                var id = $(this).data("id");
+
+                $(this).parent().parent().children().removeClass("active");
+                $(this).parent().addClass("active");
+
+                if (id == "send") {
+                    $("#smsSendDiv").show();
+                    $("#smsSendLogDiv").hide();
+                } else {
+                    $("#smsSendDiv").hide();
+                    $("#smsSendLogDiv").show();
+                }
+            });
+
+            $("#modal-smsSend").on("click", ".smsSubmit", function () {
+                var ID = $("#smsID").val();
+                var sms = $("#smsContent").val();
+                if (sms == "") {
+                    alert("发送内容不能为空！");
+                    return;
+                }
+                $.ajax({
+                    url: 'SetM2MUSIM.htm',
+                    type: 'POST',
+                    data: {"action": "smsSend", "ID": ID, "smsContent": sms},
+                    error: function () {
+                        alert("远程访问失败");
+                    },
+                    success: function (result) {
+                        if (result.OK) {
+                            alert("提交成功！");
+                            $("#smsContent").val("");
+                        } else {
+                            alert(result.Message);
+                        }
+                    }
+                });
+            });
+
+            var pagination = new Pagination();
+            pagination.setPageIndex(1);
+            pagination.setPageSize(10);
+            $('#start_date').datetimepicker({autoclose: true, format: "yyyy-mm-dd", minView: 'month'});
+            $('#end_date').datetimepicker({autoclose: true, format: "yyyy-mm-dd", minView: 'month'});
+
+            $(document).on("click", ".pagination a[data-index]", function () {
+                pagination.setPageIndex($(this).attr("data-index"));
+                $(".smsSearch").trigger("click");
+            });
+
+            $("#modal-smsSend").on("click", ".smsSearch", function () {
+                var ID = $("#smsID").val();
+                $.ajax({
+                    url: 'SetM2MUSIM.htm',
+                    type: 'post',
+                    data: {
+                        action: "smsSearch",
+                        "ID": ID,
+                        "start_date": $("#start_date").val(),
+                        "end_date": $("#end_date").val(),
+                        "pageIndex": pagination.getPageIndex(),
+                        "pageSize": pagination.getPageSize()
+                    },
+                    error: function () {
+                        alert("远程访问失败");
+                    },
+                    success: function (result) {
+                        if (result.OK) {
+                            var html = "";
+                            $.each(result.Message.Data, function () {
+                                html += '<tr class="odd">';
+                                html += '    <td>' + this.SmsTypeName + '</td>';
+                                html += '    <td>' + this.SmsTime + '</td>';
+                                html += '    <td>' + this.MsgContent + '</td>';
+                                html += '    <td>' + this.StatusName + '</td>';
+                                html += '    <td>' + this.SubmitTime + '<br/>' + this.SubmitErrorCode + '</td>';
+                                html += '    <td>' + this.ReportTime + '<br/>' + this.ReportErrorCode + '</td>';
+                                html += '</tr>';
+                            });
+
+                            if (result.Message.RecordCount == 0) {
+                                html = '<tr class="empty">';
+                                html += '    <td colspan="12"  style="line-height:100px;text-align: center;">暂无数据</td>';
+                                html += '</tr>';
+                            }
+
+                            $("#smsSendLogList").html(html);
+                            //分页参数设置
+                            pagination.setRecordCount(result.Message.RecordCount);
+                            //刷新分页按钮
+                            $(".pagination").html(pagination.getHtml());
+                        }
+                    }
+                });
+            });
+            ////////////////////////
+        });
+    </script>
+</head>
+<body>
+<div class="container-fluid" id="content">
+    <div id="main">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="box box-bordered">
+                        <div class="box-title">
+                            <h3><i class="icon-table"></i>物联网卡列表</h3>
+                        </div>
+                        <div class="box-content nopadding">
+                            <div class="dataTables_wrapper">
+                                <div class="dataTables_info1" style="padding-top: 10px;">
+                                    <div class="form-inline">
+                                        <div class="dataTables_filter">
+
+                                            <label style="width: 50px;">卡　号: </label>
+                                            <input type="text" class="input-small" name="MSISDN" id="MSISDN"
+                                                   placeholder="卡号" value=""/>
+
+                                            <label style="width: 50px;">运营商: </label>
+                                            <select id="OperatorType" name="OperatorType" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="1">移动</option>
+                                                <option value="2">联通</option>
+                                                <option value="3">电信</option>
+                                            </select>
+
+                                            <label style="width: 50px;">通　道: </label>
+                                            <select id="InterfaceID" name="InterfaceID" class="select2-me input-medium"
+                                                    data-search="true">
+                                                <option value=''>选择通道</option>
+                                            </select>
+
+                                            <label style="width: 60px;">下月套餐: </label>
+                                            <select id="NextRate" name="NextRate" class="select2-me input-medium"
+                                                    data-search="true">
+                                                <option value=''>请指定通道</option>
+                                            </select>
+                                            <label style="width: 60px;">代　　理: </label>
+                                            <input type="text" class="input-small" name="AgentAccount" id="AgentAccount"
+                                                   placeholder="代理账号" value=""/>
+                                            <label style="width: 50px;">门　限: </label>
+                                            <select id="Used" name="Used" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="1">流量告警</option>
+                                                <option value="2">达量</option>
+                                                <option value="3">超量</option>
+                                            </select>
+                                            <label style="width: 50px;">类　型: </label>
+                                            <select id="SyncMode" name="SyncMode" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="0">普通</option>
+                                                <option value="1">包月</option>
+                                                <option value="2">包年</option>
+                                            </select>
+                                        </div>
+                                        <div style="clear: both;"></div>
+                                        <div class="dataTables_filter">
+
+                                            <label style="width: 50px;">ICCID: </label>
+                                            <input type="text" class="input-small" name="ICCID" id="ICCID"
+                                                   placeholder="ICCID" value=""/>
+                                            <label style="width: 50px;">状　态: </label>
+                                            <select id="Status" name="Status" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="1">可测试</option>
+                                                <option value="2">库存</option>
+                                                <option value="4">可激活</option>
+                                                <option value="5">已启用</option>
+                                                <option value="6">已停用</option>
+                                                <option value="7">已失效</option>
+                                            </select>
+                                            <label style="width: 50px;">套　餐: </label>
+                                            <select id="Rate" name="Rate" class="select2-me input-medium"
+                                                    data-search="true">
+                                                <option value=''>请指定通道</option>
+                                            </select>
+                                            <label style="width: 60px;">客　　户: </label>
+                                            <input type="text" class="input-medium" name="UserAccount" id="UserAccount"
+                                                   placeholder="客户账号" value="" style="width:136px; margin-right:5px;"/>
+                                            <label style="width: 60px;"> 虚拟号码: </label>
+                                            <input type="text" class="input-small" name="Phone" id="Phone"
+                                                   placeholder="虚拟号码" value=""/>
+                                            <label style="width: 50px;">网　络: </label>
+                                            <select id="NetState" name="NetState" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="1">已达量断网</option>
+                                                <option value="2">已单独断网</option>
+                                            </select>
+                                            <label style="width: 50px;">流量池: </label>
+                                            <select id="PoolMode" name="PoolMode" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="0">否</option>
+                                                <option value="1">是</option>
+                                            </select>
+                                            <button type="submit" id = "iotCardSearch" class="btn btn-primary"><i class="icon-search"></i>搜索
+                                            </button>
+                                        </div>
+                                </div>
+                                </div>
+                                <div style="clear: both;"></div>
+
+                                <table id="iotCardList" class="table table-hover table-nomargin table-bordered table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: auto;">卡号</th>
+
+                                        <th style="width: auto;">状态</th>
+                                        <th style="width: auto;">网络</th>
+                                        <th style="width: auto;">总/使用量</th>
+                                        <th style="width: auto;">归属代理/客户</th>
+                                        <th>通道</th>
+                                        <th style="width: auto;">类型</th>
+                                        <th>套餐</th>
+                                        <th style="width: auto;">结算日</th>
+                                        <th style="width: auto;">导入日期</th>
+                                        <th style="width: auto;">续费</th>
+                                        <th style="width: auto;">流量池</th>
+                                        <th>续费情况</th>
+                                        <th style="width: auto;">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <div id="pagination-container">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-setToAgent" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-setToAgent-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIM.htm">
+        <input type="hidden" name="action" value="setToAgent"/>
+        <input type="hidden" name="id" id="setToAgentID" value=""/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel2">代理设置</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="bodyList">
+                <div class="control-group">
+                    <label class="control-label">归属代理账号</label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <input type="text" name="account" id="setToAgent_Account" value="" class="input-xlarge"
+                               maxlength="20"/>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <a class="btn btn-primary">确定</a>
+        </div>
+    </form>
+</div>
+
+<div id="modal-setNextRate" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-setNextRate-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIM.htm">
+        <input type="hidden" name="action" value="setNextRate"/>
+        <input type="hidden" name="id" id="setNextRateID" value=""/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel3">套餐设置</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="bodyList3">
+                <div class="control-group">
+                    <label class="control-label">下期套餐: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <select name="NextRate" id="setNextRate_Rate" class="select2-me input-xlarge"
+                                data-search="true">
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a> <a class="btn btn-primary">确定</a>
+        </div>
+    </form>
+</div>
+
+<div id="modal-addPlan" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-addPlan-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIM.htm">
+        <input type="hidden" name="action" value="addPlan"/>
+        <input type="hidden" name="id" id="addPlan_ID" value=""/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel4">叠加套餐</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="Div3">
+                <div class="control-group">
+                    <label class="control-label">叠加套餐: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <select name="addPlan" id="addPlan" class="select2-me input-xlarge" data-search="true">
+                        </select><br/>通过管理平台叠加套餐，将不会收取客户费用！
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a> <a class="btn btn-primary">确定</a>
+        </div>
+    </form>
+</div>
+
+<div id="modal-setStatus" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-setStatus-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIM.htm">
+        <input type="hidden" name="action" value="setStatus"/>
+        <input type="hidden" name="id" id="setStatusID" value=""/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel4">状态设置</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="Div2">
+                <div class="control-group">
+                    <label class="control-label">状　　态: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <select name="Status" id="SetStatus" class="select2-me input-xlarge" data-search="false">
+                            <option value="5">启用</option>
+                            <option value="6">停用</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <a class="btn btn-primary">确定</a>
+        </div>
+    </form>
+</div>
+
+
+<div id="modal-setCutService" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-setCutService-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIM.htm">
+        <input type="hidden" name="action" value="setCutService"/>
+        <input type="hidden" name="id" id="setCutServiceID" value=""/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel5">断网设置</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="Div1">
+                <div class="control-group">
+                    <label class="control-label">单独断网: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <select name="cutService" id="cutService" class="select2-me input-xlarge" data-search="false">
+                            <option value="1">断网</option>
+                            <option value="2">恢复</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <a class="btn btn-primary">确定</a>
+        </div>
+    </form>
+</div>
+
+<div id="modal-cmdShow" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="modal-cmdShow-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIM.htm">
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="H1">命令执行</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content">
+                <div class="control-group">
+                    <div class="controls" id="modal-cmdShow-message" style="margin-left: 80px;">
+                        正在执行，请稍后
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+        </div>
+    </form>
+</div>
+
+
+<div id="modal-smsSend" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true"
+     style="width:700px;">
+    <form id="modal-smsSend-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIM.htm">
+        <input type="hidden" name="action" value="sendSms"/>
+        <input type="hidden" name="id" id="smsID" value=""/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="smsSendTitle">短信</h4>
+        </div>
+        <div class="modal-body">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#" class="smsSendButton" data-id="send" id="smsSendFist">短信发送</a></li>
+                <li><a href="#" class="smsSendButton" data-id="log">历史日志</a></li>
+            </ul>
+            <div class="box-content" id="smsSendDiv">
+                <!--
+                <div class="control-group">
+                    <label class="control-label">短信类型: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        普通<input type="radio" name="smsType" value="1" checked="checked"/> 十六进制<input type="radio" name="smsType" value="2"/>
+                    </div>
+                </div>
+                -->
+                <div class="control-group">
+                    <label class="control-label">短信内容: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <textarea name="smsContent" id="smsContent" cols="12" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls" style="text-align:center;">
+                        <a class="btn btn-primary smsSubmit">提交</a>
+                    </div>
+                </div>
+            </div>
+            <div class="box-content" id="smsSendLogDiv" style="display:none;">
+                <div class="control-group">
+                    <div>
+                        <div class="form-group pull-left" style="padding-right:5px;">
+                            开始时间:
+                            <div class="input-group input-append" id="start_date_div" style="">
+							    <span class="input-group-addon add-on">
+								    <i class="fa fa-calendar icon-calendar" data-date-icon="icon-calendar"
+                                       data-time-icon="icon-time"></i>
+							    </span>
+                                <input class="form-control input-sm" placeholder="开始时间" style="width: 120px;"
+                                       id="start_date" name="start_date" value="2019-02-16" data-format="yyyy-MM-dd"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="form-group pull-left" style="padding-right:5px;">
+                            结束时间:
+                            <div class="input-group input-append" id="end_date_div" style="">
+								    <span class="input-group-addon add-on">
+									    <i class="fa fa-calendar icon-calendar" data-date-icon="icon-calendar"
+                                           data-time-icon="icon-time"></i>
+								    </span>
+                                <input class="form-control input-sm" placeholder="结束时间" style="width: 120px;"
+                                       id="end_date" name="end_date" value="2019-02-16" style="width: 160px;"
+                                       type="text">
+                            </div>
+                        </div>
+                        <a class="btn btn-primary smsSearch">查询</a>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <table class="table table-hover table-nomargin table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th style="width: 60px;">类型</th>
+                            <th style="width: 120px;">时间</th>
+                            <th>内容</th>
+                            <th style="width: 30px;">状态</th>
+                            <th>提交返回值</th>
+                            <th>发送返回值</th>
+                        </tr>
+                        </thead>
+                        <tbody id="smsSendLogList">
+                        </tbody>
+                    </table>
+                    <nav>
+                        <ul class="pagination"></ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+        </div>
+    </form>
+</div>
+
+<div id="modal-usedFlow" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="usedFlowTitle">最近7天历史用量</h4>
+    </div>
+    <div class="modal-body">
+        <div class="box-content">
+            <div class="control-group">
+                <table class="table table-hover table-nomargin table-bordered table-condensed">
+                    <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>流量</th>
+                    </tr>
+                    </thead>
+                    <tbody id="usedFlowList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+    </div>
+</div>
+</body>
+
+<script>
+
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/api/v1/channel_all.do",
+            success: function (data) {
+                if (data.code == 0) {
+                    var channelNames = data.object;
+                    // console.log(channelNames);
+                    var channelName;
+                    for (var x in channelNames) {
+                        channelName = channelNames[x];
+                        // console.log(channelName);
+                        var result = "<option value='" + channelName + "'>" + channelName + "</option>";
+                        $("#InterfaceID").append(result);
+                        // $("#AddInterfaceID").append(result);
+                    }
+
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+
+        });
+    });
+
+    $("#iotCardSearch").click(function () {
+        pageStart();
+
+        function pageStart() {
+            var cardId = $("#MSISDN").val();
+            var operator = $("#OperatorType").val();
+            var status = $("#Status").val();
+            var channelName = $("#InterfaceID").val();
+            var agentName = $("#AgentAccount").val();
+            var trafficPool = $("#PoolMode").val();
+            var networkStatus = $("#NetState").val();
+            // console.log(agentAccount + ";" + name +";" + id + ";" + status)
+            $('#pagination-container').pagination({
+                dataSource: "/api/v1/iotCard_list.do?cardId=" + cardId
+                    + "&operator=" + operator + "&channelName=" + channelName + "&status=" + status
+                    + "&agentName=" + agentName + "&trafficPool=" + trafficPool + "&networkStatus=" + networkStatus,
+                prevText: '<<',
+                nextText: '>>',
+                goButtonText: 'go',
+                alias: {
+                    pageNumber: 'page',
+                    pageSize: 'size'
+                },
+                pageSize: 20,
+                totalNumberLocator: function (response) {//处理页数
+                    return response.total;
+                },
+                locator: 'list',
+                ajax: {
+                    type: 'GET',
+                    beforeSend: function () {//请求前处理
+                        $("#dataContainer").html('加载中...');
+                    }
+                },
+                showGoInput: true,
+                showGoButton: true,
+                showNavigator: true,
+                callback: function (data, pagination) {
+                    console.log(data);
+                    $("#iotCardList tr td").remove();
+                    $.each(data, function (i, item) {
+                        var result = "<tr><td>" + item['cardId'] + "</td><td>" + iotCardStatus(item['status']) + "</td><td>" + iotCardNetworkStatus(item['networkStatus']) + "</td><td>" +
+                            useTariff(item['useSize'], item['totalSize']) + "</td><td>" + iotAgentName(item['agentName']) + "</td><td>" + iotCardOperatorChannelName(item['operator'], item['channelName']) + "</td><td>" + cardType(item['cardType']) + "</td><td>" +
+                            iotCardDetail(item['cardDetail']) + "</td><td>" + settlementDate(item['settlementDate']) + "</td><td>" + item['addTime'] + "</td><td>" + renew(item['renew'])+"</td><td>" + isTrafficPool(item['trafficPool'])
+                            + "</td><td>" + iotCardRenewDetail(item['renewDetail']) + "</td></tr>";
+
+                        $("#iotCardList").append(result);
+                    });
+                }
+
+            });
+        }
+
+    });
+
+    function iotCardRenewDetail(data){
+        if (data == null)
+            return '';
+        return data;
+    }
+
+    function iotCardDetail(data){
+        if (data == null)
+            return '';
+        return data;
+    }
+
+    function iotAgentName(data) {
+        if (data == null)
+            return "";
+        return data;
+    }
+
+    function iotCardStatus(data) {
+        if (data == 1)
+            return "<font color='#8fbc8f'>可测试</font>";
+        if (data == 2)
+            return "<font color='#00ced1'>库存</font>";
+        if (data == 4)
+            return "<font color='#00bfff'>可激活</font>";
+        if (data == 5)
+            return "<font color='green'>已激活</font>";
+        if (data == 6)
+            return "<font color='#ff7f50'>已停用</font>";
+        if (data == 7)
+            return "<font color='#dc143c'>已失效</font>";
+        return "<font color='#a9a9a9'>未知</font>";
+    }
+
+    function iotCardNetworkStatus(data) {
+        if (data == 1)
+            return "<font color='green'>正常</font>";
+        if (data == 2)
+            return "<font color='#dc143c'>断网</font>";
+        return "<font color='#a9a9a9'>未知</font>";
+    }
+
+    function useTariff(data1, data2) {
+        return "<font color='#006400'>" + data1 + "M/" + data2 + "M" + "</font>"
+    }
+
+    function iotCardOperatorChannelName(data1, data2) {
+        return "[" + iotOperator(data1) + "]</br>" + data2;
+    }
+
+    function cardType(data) {
+        if (data == 0)
+            return "<font color='#006400'>普通账户</font>"
+        return "<font color='#ff7f50'>非正常账户</font>";
+    }
+
+    function settlementDate(data) {
+        return "每月" + data + "日";
+    }
+
+    function renew(data) {
+        if (data == 0)
+            return "<font color='#006400'>未续费</font>"
+        return "<font color='#006400'>续费</font>"
+    }
+
+    function isTrafficPool(data) {
+        if (data == 0)
+            return "<font color='#ff7f50'>否</font>";
+        return "<font color='#00ffff'>是</font>";
+    }
+
+    function iotOperator(data){
+        if (data == 1)
+            return '移动';
+        if (data == 2)
+            return '联通';
+        if (data == 3)
+            return '电信';
+        return '未知';
+    }
+
+</script>
+
+</html>

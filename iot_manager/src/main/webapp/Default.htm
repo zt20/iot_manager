@@ -1,0 +1,651 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        物联网测试平台</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css?20151101">
+    <link rel="stylesheet" href="css/themes.css?20151101">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+    <link rel="stylesheet" href="css/ie7.css">
+    <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/nicescroll/jquery.nicescroll.min.js"></script>
+    <script type="text/javascript" src="js/cookie.js"></script>
+    <script type="text/javascript">
+        //重置高度
+        var resizeHeight = function () {
+            $w = $(window);
+            $("#left").height($w.height() - 54);
+            $("#mainFrame").height($w.height() - 54);
+            $("#content").css("height", $w.height() - 54);
+        }
+        var lastID = 0;
+        var isfirst = true;
+        /*        function getAlarm() {
+                    if (!$("#IsEnabled").is(':checked')) {
+                        $.post("GetAlarm.htm", { action: "getList", id: lastID, showInterfaceAlarm: $("#showInterfaceAlarm").is(':checked'), showAgentBalanceAlarm: $("#showAgentBalanceAlarm").is(':checked') }, function (data) {
+                            if (data.OK) {
+                                var html = "";
+                                if (!isfirst) {
+                                    for (var i = 0; i < data.Message.length; i++) {
+                                        if (i == 0) {
+                                            lastID = data.Message[i].ID;
+                                        }
+                                        html += "<tr>";
+                                        html += "	<td>" + data.Message[i].AlarmTitle + "</td>";
+                                        html += "	<td>" + data.Message[i].CreateTime + "</td>";
+                                        html += "	<td>" + data.Message[i].Content + "</td>";
+                                        html += "</tr>";
+                                    }
+                                    if (html != "") {
+                                        $("#bodyList").html(html);
+                                        $("#modal-plus").modal();
+                                    }
+                                } else {
+                                    isfirst = false;
+                                    for (var i = 0; i < data.Message.length; i++) {
+                                        if (i == 0) {
+                                            lastID = data.Message[i].ID;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }*/
+
+        $(function () {
+            $("#brand").on("click", function (e) {
+                $("#modal-plus").modal();
+            });
+            // setInterval(getAlarm, 5000);
+            $(".btn-showAlarm").on("click", function (e) {
+                $("#modal-plus").modal("hide");
+                $("#mainFrame").attr("src", "AlarmLogList.htm");
+            });
+
+            $("#left").on("click", ".dropdown-toggle", function (e) {
+                var $parent = $(this).parent();
+                $parent.siblings("li.dropdown-submenu").addClass("on active");
+                if (!$parent.hasClass("active")) {
+                    $parent.addClass("active");
+                } else {
+                    if (!$parent.hasClass("on")) {
+                        $parent.addClass("on");
+                    } else {
+                        $parent.removeClass("on");
+                    }
+                }
+            });
+            $(document).on("click", "a.menu-item", function (e) {
+                e.preventDefault();
+                $("#load").show();
+                var href = $(this).attr("href");
+                if (href.indexOf("http") >= 0) {
+                    href = href + "?t=" + Math.random();
+                }
+                $("#mainFrame").attr("src", href);
+                var $parent = $(this).parent();
+                var key = $parent.attr("key");
+
+                window.setMenuActive(key);
+
+                var sm = window.getSubMenu(key);
+                $("#left .subnav-ul").html(sm.content);
+                $("#left .subnav-ul a.dropdown-toggle span").after("<i class='icon-chevron-down'></i>");
+
+                //window.onresize = function (e) {
+                //    $("#left").css("height", $(document).height());
+                //}
+
+
+            });
+
+            $("#notNeedPop").on("click", function (e) {
+                if ($(this).prop("checked")) {
+                    setCookie("notNeedPop", 1, 7);
+                } else {
+                    delCookie("notNeedPop");
+                }
+            });
+
+            $('.dropdown-menu').mouseleave(function () {
+                $(document.body).trigger("click");
+            });
+
+            $("iframe#mainFrame").on("readystatechange", function () {
+                var frame = this;
+                if (frame.readyState == "interactive")//state: loading ,interactive,   complete
+                {
+                    $("#load").hide();
+                }
+            }).on("load", function () {
+                $("#load").hide();
+            });
+
+
+            window.setLoading = function () {
+                $("#load").show();
+            }
+
+            window.setMenuActive = function (functionID) {
+                $(".mainnav li").removeClass("active");
+                var item = $(".mainnav li[key=" + functionID + "]");
+                item.parents(".level2,.level1").addClass("active");
+                item.addClass("active");
+            }
+
+            function generateNavMenuHTML(nodeList) {
+                var html = nodeList.html();
+
+                var data = html.replace(/dropdown-menu/g, "nav nav-list").replace(/data-toggle=\"dropdown\"/g, "");
+
+                return data;
+            }
+
+            window.getSubMenu = function (fid) {
+                var node = $(".mainnav li[key=" + fid + "]");
+                var pid = node.parents("li.level1").attr("key");
+                return {
+                    title: $(".mainnav li[key=" + pid + "]>a>span").text(),
+                    content: generateNavMenuHTML($(".mainnav li[key=" + pid + "] ul.dropdown-menu"))
+                };
+            }
+
+            window.getBreadCrumbsHTML = function (fid) {
+                var node = $(".mainnav li[key=" + fid + "]");
+                var lv1node = node.parents("li.level1").find(">a");
+                var lv2node = node.parents("li.level2").find(">a");
+
+                var html = [];
+                lv1node.size() && html.push('<li><i class="icon-chevron-right"></i> <a href="' + lv1node.attr("href") + '">' + lv1node.text() + '</a> </li> ');
+                lv2node.size() && html.push('<li><i class="icon-angle-right"></i><a href="' + lv2node.attr("href") + '"> ' + lv2node.text() + '</a> </li>');
+                html.push('<li><i class="icon-angle-right"></i><a href="javascript:;"> ' + node.text() + ' </a></li>');
+
+                return html.join("\n");
+            }
+            $("a.menu-item").each(function () {
+                if ($(this).attr("href") == "/MyAdminEdit.htm") {
+                    $(this).trigger("click");
+                }
+            });
+        });
+
+        $(document).ready(function (e) {
+            //重置高度
+            resizeHeight();
+
+            //显示滚动条
+            if (!$("#left").hasClass("hasScroll")) {
+                $("#left").niceScroll({
+                    cursorcolor: '#999'
+                });
+                $("#left").addClass("hasScroll");
+            } else {
+                $("#left").getNiceScroll().resize().show();
+            }
+
+
+            if (getCookie("notNeedPop") == null) {
+                $("#modal-alarm").modal();
+            }
+
+        })
+
+        $(window).resize(function (e) {
+            resizeHeight();
+        });
+
+    </script>
+    <style type="text/css">
+        body {
+            font-family: "微软雅黑", "宋体";
+            font-size: 13px !important;
+        }
+
+        #main {
+            padding-bottom: 0px;
+        }
+
+        #content {
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .toggle-subnav {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div id="navigation">
+    <div class="container-fluid">
+        <a href="#" id="brand">
+            物联网测试平台</a>
+        <ul class="mainnav">
+            <li class=" level1" key="0001" pid="0000"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span>系统管理</span>
+                <i class="icon-caret-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-submenu level2" key="000101" pid="0001"><a href="#" class="dropdown-toggle"
+                                                                                   data-toggle="dropdown"><i
+                            class="icon-home"></i>&nbsp;<span>系统管理</span> </a>
+                        <ul class="dropdown-menu">
+                            <li class=" level3" key="00010101" pid="000101"><a href="/ConfigEdit.htm" class="menu-item"><i
+                                    class="icon-cogs"></i>&nbsp;<span>系统配置</span> </a>
+                            </li>
+                            <li class=" level3" key="00010111" pid="000101"><a href="/EmailConfigEdit.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-cogs"></i>&nbsp;<span>邮件配置</span> </a>
+                            </li>
+                            <li class=" level3" key="00010102" pid="000101"><a href="/SmsConfigEdit.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-cog"></i>&nbsp;<span>短信接口配置</span> </a>
+                            </li>
+                            <li class=" level3" key="00010103" pid="000101"><a href="/AdminList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-group"></i>&nbsp;<span>管理员管理</span> </a>
+                            </li>
+                            <li class=" level3" key="00010105" pid="000101"><a href="/AdminLogList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-list"></i>&nbsp;<span>管理日志</span> </a>
+                            </li>
+                            <li class=" level3" key="00010106" pid="000101"><a href="/NotificationList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-volume-up"></i>&nbsp;<span>公告管理</span> </a>
+                            </li>
+                            <li class=" level3" key="00010109" pid="000101"><a href="/SystemInfo.htm" class="menu-item"><i
+                                    class="icon-cogs"></i>&nbsp;<span>系统版本</span> </a>
+                            </li>
+                            <li class=" level3" key="00010110" pid="000101"><a href="/AlarmLogList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-cogs"></i>&nbsp;<span>告警日志</span> </a>
+                            </li>
+                            <li class=" level3" key="00010112" pid="000101"><a
+                                    href="http://news.flow.maiyuantek.com/news.html" class="menu-item"><i
+                                    class="icon-volume-up"></i>&nbsp;<span>关于平台</span> </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown-submenu level2" key="000103" pid="0001"><a href="#" class="dropdown-toggle"
+                                                                                   data-toggle="dropdown"><i
+                            class="icon-credit-card"></i>&nbsp;<span>资金管理</span> </a>
+                        <ul class="dropdown-menu">
+                            <li class=" level3" key="00010308" pid="000103"><a href="/CashConfig.htm" class="menu-item"><i
+                                    class="icon-cogs"></i>&nbsp;<span>参数配置</span> </a>
+                            </li>
+                            <li class=" level3" key="00010301" pid="000103"><a href="/BankInfoList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-cogs"></i>&nbsp;<span>卡号管理</span> </a>
+                            </li>
+                            <li class=" level3" key="00010302" pid="000103"><a href="/PaymentApplyAdd.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-money"></i>&nbsp;<span>付款申请</span> </a>
+                            </li>
+                            <li class=" level3" key="00010303" pid="000103"><a href="/PaymentApplyAudit.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-money"></i>&nbsp;<span>付款审核</span> </a>
+                            </li>
+                            <li class=" level3" key="00010304" pid="000103"><a href="/PaymentApplyLogList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-tasks"></i>&nbsp;<span>付款记录</span> </a>
+                            </li>
+                            <li class=" level3" key="00010305" pid="000103"><a href="/AddFundsApplyAdd.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-money"></i>&nbsp;<span>加款申请</span> </a>
+                            </li>
+                            <li class=" level3" key="00010306" pid="000103"><a href="/AddFundsApplyAudit.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-money"></i>&nbsp;<span>加款审核</span> </a>
+                            </li>
+                            <li class=" level3" key="00010307" pid="000103"><a href="/AddFundsApplyLogList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-tasks"></i>&nbsp;<span>加款记录</span> </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown-submenu level2" key="000102" pid="0001"><a href="#" class="dropdown-toggle"
+                                                                                   data-toggle="dropdown"><i
+                            class="icon-align-left"></i>&nbsp;<span>个人管理</span> </a>
+                        <ul class="dropdown-menu">
+                            <li class=" level3" key="00010201" pid="000102"><a href="/MyAdminEdit.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-user"></i>&nbsp;<span>个人管理</span> </a>
+                            </li>
+                            <li class=" level3" key="00010202" pid="000102"><a href="/MyAdminLogList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-list"></i>&nbsp;<span>个人日志管理</span> </a>
+                            </li>
+                            <li class=" level3" key="00010203" pid="000102"><a href="/MyPasswordEdit.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-pencil"></i>&nbsp;<span>修改密码</span> </a>
+                            </li>
+                            <li class=" level3" key="00010204" pid="000102"><a href="/Login.htm" class="menu-item"><i
+                                    class="icon-off"></i>&nbsp;<span>退出登录</span> </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class=" level1" key="0002" pid="0000"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span>业务管理</span>
+                <i class="icon-caret-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li class=" level2" key="000202" pid="0002"><a href="/AgentList.htm" class="menu-item"><i
+                            class="icon-user"></i>&nbsp;<span>代理商管理</span> </a>
+                    </li>
+                    <!--<li class=" level2" key="000203" pid="0002"><a href="/MerchantList.htm" class="menu-item"><i class="icon-group"></i>&nbsp;<span>客户管理</span> </a>-->
+                    </li>
+                </ul>
+            </li>
+            <li class=" level1" key="0005" pid="0000"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span>物联网卡</span>
+                <i class="icon-caret-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-submenu level2" key="000501" pid="0005"><a href="#" class="dropdown-toggle"
+                                                                                   data-toggle="dropdown"><i
+                            class="icon-th"></i>&nbsp;<span>参数配置</span> </a>
+                        <ul class="dropdown-menu">
+                            <li class=" level3" key="00050105" pid="000501"><a href="/M2Mconfig.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-cogs"></i>&nbsp;<span>系统配置</span> </a>
+                            </li>
+                            <li class=" level3" key="00050101" pid="000501"><a href="/M2MinterfaceList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-link"></i>&nbsp;<span>通道管理</span> </a>
+                            </li>
+                            <li class=" level3" key="00050102" pid="000501"><a href="/M2MpackageList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-briefcase"></i>&nbsp;<span>资费计划</span> </a>
+                            </li>
+                            <li class=" level3" key="00050103" pid="000501"><a href="/M2MaddPackageList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-briefcase"></i>&nbsp;<span>加油包</span> </a>
+                            </li>
+                            <li class=" level3" key="00050104" pid="000501"><a href="/M2MpoolList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-briefcase"></i>&nbsp;<span>流量池</span> </a>
+                            </li>
+                            <li class=" level3" key="00050106" pid="000501"><a href="/M2MinterfaceListDel.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-link"></i>&nbsp;<span>通道回收站</span> </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown-submenu level2" key="000515" pid="0005"><a href="#" class="dropdown-toggle"
+                                                                                   data-toggle="dropdown"><i
+                            class="icon-th"></i>&nbsp;<span>代理套餐</span> </a>
+                        <ul class="dropdown-menu">
+                            <li class=" level3" key="00051501" pid="000515"><a href="/M2MAgentPackageList.htm"
+                                                                               class="menu-item"><i class="icon-th"></i>&nbsp;<span>资费计划</span>
+                            </a>
+                            </li>
+                            <li class=" level3" key="00051502" pid="000515"><a href="/M2MAgentAddPackageList.htm"
+                                                                               class="menu-item"><i class="icon-th"></i>&nbsp;<span>加油包</span>
+                            </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class=" level2" key="000502" pid="0005"><a href="/M2MUSIMList.htm" class="menu-item"><i
+                            class="icon-th"></i>&nbsp;<span>物联网卡管理</span> </a>
+                    </li>
+                    <li class=" level2" key="000503" pid="0005"><a href="/M2MUSIMSegSet.htm" class="menu-item"><i
+                            class="icon-th"></i>&nbsp;<span>批量设置</span> </a>
+                    </li>
+                    <li class=" level2" key="000504" pid="0005"><a href="/M2MUSIMCmdList.htm" class="menu-item"><i
+                            class="icon-th"></i>&nbsp;<span>命令监控</span> </a>
+                    </li>
+                    <li class=" level2" key="000512" pid="0005"><a href="/M2MUSIMCmdLogList.htm" class="menu-item"><i
+                            class="icon-th"></i>&nbsp;<span>命令日志</span> </a>
+                    </li>
+                    <li class="dropdown-submenu level2" key="000505" pid="0005"><a href="#" class="dropdown-toggle"
+                                                                                   data-toggle="dropdown"><i
+                            class="icon-th"></i>&nbsp;<span>统计分析</span> </a>
+                        <ul class="dropdown-menu">
+                            <li class=" level3" key="00050501" pid="000505"><a href="/M2MAgentStat.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-bar-chart"></i>&nbsp;<span>代理统计</span> </a>
+                            </li>
+                            <li class=" level3" key="00050502" pid="000505"><a href="/M2MUserStat.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-bar-chart"></i>&nbsp;<span>客户统计</span> </a>
+                            </li>
+                            <li class=" level3" key="00050503" pid="000505"><a href="/M2MUSIMStat.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-bar-chart"></i>&nbsp;<span>卡量统计</span> </a>
+                            </li>
+                            <li class=" level3" key="00050504" pid="000505"><a href="/M2MConsumeStat.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-bar-chart"></i>&nbsp;<span>毛利统计</span> </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown-submenu level2" key="000507" pid="0005"><a href="#" class="dropdown-toggle"
+                                                                                   data-toggle="dropdown"><i
+                            class="icon-th"></i>&nbsp;<span>预警管理</span> </a>
+                        <ul class="dropdown-menu">
+                            <li class=" level3" key="00050701" pid="000507"><a href="/M2MalarmConfig.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-cogs"></i>&nbsp;<span>规则设置</span> </a>
+                            </li>
+                            <li class=" level3" key="00050702" pid="000507"><a href="/M2MalarmSet.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-cogs"></i>&nbsp;<span>预警设置</span> </a>
+                            </li>
+                            <li class=" level3" key="00050703" pid="000507"><a href="/M2MalarmLog.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-bar-chart"></i>&nbsp;<span>预警日志</span> </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown-submenu level2" key="000508" pid="0005"><a href="#" class="dropdown-toggle"
+                                                                                   data-toggle="dropdown"><i
+                            class="icon-th"></i>&nbsp;<span>实名制</span> </a>
+                        <ul class="dropdown-menu">
+                            <li class=" level3" key="00050801" pid="000508"><a href="/M2MrealNameList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-bar-chart"></i>&nbsp;<span>实名查看</span> </a>
+                            </li>
+                            <li class=" level3" key="00050802" pid="000508"><a href="/M2MrealNameAudit.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-bar-chart"></i>&nbsp;<span>实名审核</span> </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown-submenu level2" key="000509" pid="0005"><a href="#" class="dropdown-toggle"
+                                                                                   data-toggle="dropdown"><i
+                            class="icon-th"></i>&nbsp;<span>微信设置</span> </a>
+                        <ul class="dropdown-menu">
+                            <li class=" level3" key="00050901" pid="000509"><a href="M2MWxBindPage.htm"
+                                                                               class="menu-item"><i class="icon-th"></i>&nbsp;<span>微信授权</span>
+                            </a>
+                            </li>
+                            <li class=" level3" key="00050902" pid="000509"><a href="M2MWxMenu.htm" class="menu-item"><i
+                                    class="icon-th"></i>&nbsp;<span>菜单地址</span> </a>
+                            </li>
+                            <li class=" level3" key="00050903" pid="000509"><a href="M2MWxPayAccount.htm"
+                                                                               class="menu-item"><i class="icon-th"></i>&nbsp;<span>支付配置</span>
+                            </a>
+                            </li>
+                            <li class=" level3" key="00050904" pid="000509"><a href="M2MWxPayLogs.htm"
+                                                                               class="menu-item"><i class="icon-th"></i>&nbsp;<span>支付日志</span>
+                            </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class=" level2" key="000510" pid="0005"><a href="/M2MUSIMChargeLogList.htm" class="menu-item"><i
+                            class="icon-th"></i>&nbsp;<span>充值日志</span> </a>
+                    </li>
+                    <li class=" level2" key="000511" pid="0005"><a href="/M2MBalanceChangeList.htm" class="menu-item"><i
+                            class="icon-th"></i>&nbsp;<span>消费日志</span> </a>
+                    </li>
+                    <li class=" level2" key="000514" pid="0005"><a href="/M2MSmsLogList.htm" class="menu-item"><i
+                            class="icon-th"></i>&nbsp;<span>短信日志</span> </a>
+                    </li>
+                    <li class="dropdown-submenu level2" key="000513" pid="0005"><a href="#" class="dropdown-toggle"
+                                                                                   data-toggle="dropdown"><i
+                            class="icon-th"></i>&nbsp;<span>代理提现</span> </a>
+                        <ul class="dropdown-menu">
+                            <li class=" level3" key="00051301" pid="000513"><a href="/M2MAgentWithdrawalsList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-bar-chart"></i>&nbsp;<span>提现处理</span> </a>
+                            </li>
+                            <li class=" level3" key="00051302" pid="000513"><a href="/M2MAgentWithdrawalsLogList.htm"
+                                                                               class="menu-item"><i
+                                    class="icon-bar-chart"></i>&nbsp;<span>提现日志</span> </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+
+        <div class="user">
+            <div class="dropdown">
+                <a href="#" id="account" class='dropdown-toggle' data-toggle="dropdown">
+                    <img src="img/user-avatar.jpg" alt=""></a>
+                <ul class="dropdown-menu pull-right">
+                    <li><a href="MyAdminEdit.htm" target="mainFrame">个人设置</a></li>
+                    <li><a href="MyPasswordEdit.htm" target="mainFrame">修改密码</a></li>
+                    <li><a href="Login.htm">退出登录</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid" id="content">
+    <div id="left" class="sidebar-fixed">
+        <div class="subnav">
+            <ul class="subnav-ul">
+                <li class="dropdown-submenu level2 active" key="000210" pid="0002"><a href="#"
+                                                                                      class="dropdown-toggle"><i
+                        class="icon-leaf"></i>&nbsp;<span>系统管理</span><i class="icon-chevron-down"></i> </a>
+                    <ul class="nav nav-list">
+                        <li class=" level3 active" key="00020101" pid="000201"><a href="/ConfigEdit.htm"
+                                                                                  class="menu-item"><i
+                                class="icon-cogs"></i>&nbsp;<span>系统配置</span> </a>
+                        </li>
+                        <li class=" level3" key="00020102" pid="000201"><a href="/SmsConfigEdit.htm"
+                                                                           class="menu-item"><i class="icon-cog"></i>&nbsp;<span>短信接口配置</span>
+                        </a>
+                        </li>
+                        <li class=" level3" key="00020103" pid="000201"><a href="/AdminList.htm" class="menu-item"><i
+                                class="icon-group"></i>&nbsp;<span>管理员管理</span> </a>
+                        </li>
+                        <li class=" level3" key="00020104" pid="000201"><a href="/AdminLogList.htm" class="menu-item"><i
+                                class="icon-list"></i>&nbsp;<span>管理日志</span> </a>
+                        </li>
+                        <li class=" level3" key="00020105" pid="000201"><a href="/NotificationList.htm"
+                                                                           class="menu-item"><i
+                                class="icon-volume-up"></i>&nbsp;<span>公告管理</span> </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown-submenu level2" key="000202" pid="0002"><a href="#" class="dropdown-toggle"><i
+                        class="icon-align-left"></i>&nbsp;<span>个人管理</span><i class="icon-chevron-down"></i> </a>
+                    <ul class="nav nav-list">
+                        <li class=" level3" key="00020201" pid="000202"><a href="/MyAdminEdit.htm" class="menu-item"><i
+                                class="icon-user"></i>&nbsp;<span>个人信息</span> </a>
+                        </li>
+                        <li class=" level3" key="00020202" pid="000202"><a href="/MyAdminLogList.htm" class="menu-item"><i
+                                class="icon-list"></i>&nbsp;<span>个人日志管理</span> </a>
+                        </li>
+                        <li class=" level3" key="00020203" pid="000202"><a href="/MyPasswordEdit.htm" class="menu-item"><i
+                                class="icon-pencil"></i>&nbsp;<span>修改密码</span> </a>
+                        </li>
+                        <li class=" level3" key="00020204" pid="000202"><a href="/Logout.htm" class="menu-item"><i
+                                class="icon-off"></i>&nbsp;<span>退出登录</span> </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div align="center" style="position: absolute; width: 100%; height: 100px; z-index: 100; left: 0px; top: 348px"
+         id="load">
+        <i style="font-size: 75px; color: rgb(0, 153, 255);" class="icon-spinner icon-spin"></i>
+    </div>
+    <div id="main">
+        <iframe frameborder="0" src="Dashboard.htm" name="mainFrame" id="mainFrame" title="mainFrame"
+                scrolling="auto" width="100%"></iframe>
+    </div>
+</div>
+
+
+<!--<div id="modal-plus" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2"
+    aria-hidden="true" style="width:800px;">
+    <form id="most-plus-form" class="form-horizontal" novalidate="novalidate" action="GetAlarm.htm">
+    <div class="modal-header">
+        <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">
+            ×</button>
+        <h4 class="modal-title" id="myModalLabel2">
+            <input type="checkbox" name="IsEnabled" id="IsEnabled" value="0"/>暂不提示</h4>
+    </div>-->
+<!--<div class="modal-body">
+    <div class="box-content">
+            <input type="checkbox" name="showInterfaceAlarm" id="showInterfaceAlarm" checked="checked" value="0"/>通道告警</h4>
+            <input type="checkbox" name="showAgentBalanceAlarm" id="showAgentBalanceAlarm" checked="checked" value="0"/>代理余额告警</h4>
+          <table class="table table-hover table-nomargin table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th>标题</th>
+                <th>时间</th>
+                <th>内容</th>
+              </tr>
+            </thead>
+            <tbody id="bodyList">
+            </tbody>
+            </table>
+    </div>
+</div>
+<div class="modal-footer">
+        <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a> <a class="btn btn-primary btn-showAlarm">查看详情</a>
+</div>
+</form>
+</div>-->
+
+<!--<div id="modal-alarm" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2"
+    aria-hidden="true" style="width:700px;">
+    <div class="modal-header">
+        <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">
+            ×</button>
+        <h4 class="modal-title" id="myModalLabel3">
+            友情提示</h4>
+    </div>
+&lt;!&ndash;	<div class="modal-body" style=" height:260px;display:table; width:100%;">
+        <div class="box-content" style="vertical-align:middle;display:table-cell;height:100%; width:100%; text-align:center; color:Red;">
+            产品维护将于2019-03-06过期，如需继续维护，请联系服务提供商进行续费！
+        </div>
+    </div>&ndash;&gt;
+    <div class="modal-footer">
+        <div style="float:left"><input type="checkbox" class="glyphicon-badoo" id="notNeedPop" />近期不再提示</div>		<a class="btn btn-primary" data-dismiss="modal" aria-hidden="true">知道了</a>
+    </di-->
+<!--</div>-->
+</body>
+
+<script>
+
+    $(document).ready(function () {
+
+    });
+
+    $(document).ready(function () {
+      $.ajax({
+            type: 'get',
+            url: '/api/v1/getAccount.do',
+            success: function (data) {
+
+                if (data.code == 0) {
+                    var account = data.msg;
+                    $("#account").html("欢迎您," + account);
+                }
+            }
+        });
+
+    })
+
+</script>
+</html>

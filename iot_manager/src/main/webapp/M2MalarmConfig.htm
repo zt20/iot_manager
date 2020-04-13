@@ -1,0 +1,112 @@
+
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改配置</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/edit.css">
+	<style type="text/css">
+	  .additional{
+	  	 display:none;
+	  }
+	</style>
+    <!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+
+	<script type="text/javascript" src="js/plugins/fileupload/bootstrap-fileupload.min.js"></script>
+
+    <script type="text/javascript" src="js/init.js"></script>
+	<script type="text/javascript" src="js/loading.js"></script>
+	<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+    <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+              <div class="box-title">
+                <h3><i class="icon-table"></i> 规则设置</h3>
+              </div>
+              <div class="box-content nopadding">
+                <div class="dataTables_wrapper">
+                    <table class="table table-hover table-nomargin table-bordered table-condensed">
+                      <thead>
+                        <tr>
+                          <th style="width:200px;">预警代码</th>
+                          <th style="width:200px;">预警名称</th>
+						  <th>支持对象</th>
+						  <th>支持模式</th>
+                          <th style="width:150px;">操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      <tr>
+                          <td>1</td>
+						  <td>流量不足</td>
+						  <td>管理可用</br>代理可用</br>客户可用</br></td>
+						  <td>API推送</br>邮件通知</br>短信通知</br></td>
+                          <td><a href="M2MalarmConfigEdit.htm?id=1" title="修改">修改</a></td>
+                        </tr>
+                      <tr>
+                          <td>2</td>
+						  <td>余额不足</td>
+						  <td>管理可用</br>代理可用</br>客户可用</br></td>
+						  <td>API推送</br>邮件通知</br></td>
+                          <td><a href="M2MalarmConfigEdit.htm?id=2" title="修改">修改</a></td>
+                        </tr>
+                      <tr>
+                          <td>3</td>
+						  <td>状态变更</td>
+						  <td>管理可用</br>代理可用</br>客户可用</br></td>
+						  <td>API推送</br>邮件通知</br>短信通知</br></td>
+                          <td><a href="M2MalarmConfigEdit.htm?id=3" title="修改">修改</a></td>
+                        </tr>
+                      <tr>
+                          <td>4</td>
+						  <td>套餐变更</td>
+						  <td>管理可用</br>代理可用</br>客户可用</br></td>
+						  <td>API推送</br>邮件通知</br>短信通知</br></td>
+                          <td><a href="M2MalarmConfigEdit.htm?id=4" title="修改">修改</a></td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+
+                    <div class="dataTables_paginate paging_full_numbers"> <a href="#" class="paginate_button paginate_button_disabled">首页</a>  <a href="#" class="paginate_button paginate_button_disabled">上一页</a>  <span>  <a href="M2MalarmConfig.htm?pageIndex=1" class="paginate_active">1</a>   </span>  <a href="#" class="paginate_button paginate_button_disabled">下一页</a>  <a href="#" class="paginate_button paginate_button_disabled">尾页</a>  <a href="#" class="paginate_button paginate_button_disabled">共4条，1页</a>  <a href="#" class="paginate_button paginate_button_disabled">当前第</a>  <select name="pageSelect" id="pageSelect" class="select2-me input-mini"> <option value="M2MalarmConfig.htm?pageIndex=1" selected="selected">1</option> </select> <a href="#" class="paginate_button paginate_button_disabled">页</a> </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

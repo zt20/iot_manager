@@ -1,0 +1,175 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>管理日志管理</title>
+
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/plugins/select2/select2.css">
+  <link rel="stylesheet" href="css/plugins/icheck/all.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/list.css">
+  <link rel="stylesheet" href="css/plugins/datepicker/bootstrap-datetimepicker.css">
+	<!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+  <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+  <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+  <script type="text/javascript" src="js/plugins/datepicker/bootstrap-datetimepicker.js"></script>
+  <script type="text/javascript" src="js/init.js"></script>
+
+  <!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('input, textarea').placeholder();
+      });
+    </script>
+  <![endif]-->
+  <script type="text/javascript">
+  	$(document).ready(function () {
+  		$('#start_date').datetimepicker({ autoclose: true, format: "yyyy-mm-dd", minView: 'month' });
+  		$('#end_date').datetimepicker({ autoclose: true, format: "yyyy-mm-dd", minView: 'month' });
+  		$("#export").on("click", function () {
+  			location.href = "PaymentApplyLogListStatus3.htm?action=export&start_date=" + $("#start_date").val() + "&end_date=" + $("#end_date").val() + "&AgentID=" + $("#AgentID").val() + "&IsPublic=" + $("#IsPublic").val() + "&Cash=" + $("#Cash").val() + "&OrderName=" + $("#OrderName").val() + "&Description=" + $("#Description").val() + "&PayCardID=" + $("#PayCardID").val() + "&ReceiveCardID=" + $("#ReceiveCardID").val();
+  		});
+  	});
+  </script>
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+              <div class="box-title">
+                <h3><i class="icon-table"></i> 付款记录列表</h3>
+              </div>
+			  <ul class="nav nav-tabs">
+				<li><a href="PaymentApplyLogList.htm">申请中<span class="badge badge-important"></span></a>
+				</li>
+				<li><a href="PaymentApplyLogListStatus1.htm">已初审<span class="badge badge-important"></span></a>
+				</li>
+				<li><a href="PaymentApplyLogListStatus2.htm">已终审<span class="badge badge-important"></span></a>
+				</li>
+				<li><a href="PaymentApplyLogListStatus5.htm">待复核<span class="badge badge-important"></span></a>
+				</li>
+				<li class="active"><a href="PaymentApplyLogListStatus3.htm">已完结</a>
+				</li>
+				<li><a href="PaymentApplyLogListStatus4.htm">已取消</a>
+				</li>
+			</ul>
+				<div class="box-content nopadding">
+					
+                <div class="dataTables_wrapper">
+					<form class="form-inline" action="PaymentApplyLogListStatus3.htm" method="post">
+					<div class="dataTables_info1">		
+						<div class="dataTables_filter">
+							<div class="form-group pull-left" style="padding-right:5px;">
+							开始时间
+								<div class="input-group input-append" id="start_date_div" style="">
+									<span class="input-group-addon add-on">
+										<i class="fa fa-calendar icon-calendar" data-date-icon="icon-calendar" data-time-icon="icon-time"></i>
+									</span>
+									<input class="form-control input-sm" placeholder="开始时间" style="width: 80px;" id="start_date" name="start_date" value="2019-02-16" data-format="yyyy-MM-dd" type="text">
+								</div>
+							</div>
+							<div class="form-group pull-left" style="padding-right:5px;">
+								结束时间
+								<div class="input-group input-append" id="end_date_div" style="">
+									<span class="input-group-addon add-on">
+										<i class="fa fa-calendar icon-calendar" data-date-icon="icon-calendar" data-time-icon="icon-time"></i>
+									</span>
+									<input class="form-control input-sm" placeholder="结束时间" style="width: 80px;" id="end_date" name="end_date" value="2019-02-16" style="width: 160px;" type="text">
+								</div>
+							</div>
+							<label>关联代理: </label>
+                            <select id="AgentID" name="AgentID" class="select2-me input-xlarge" data-search="true">
+                                <option value=''>全部</option><option value='26' >[test111]test111</option><option value='25' >[88测试账号]测试账号</option><option value='24' >[wsd3705]康智然</option><option value='21' >[yjdls]yjdls</option><option value='20' >[广州xx信息科技有限公司]minxun</option><option value='18' >[c代理2]clh2</option><option value='16' >[8888]123321</option><option value='12' >[20180416]20180416</option><option value='11' >[全球通]admin2</option><option value='10' >[智能机器人科技公司]机器人</option><option value='9' >[优景万禾]diexin</option><option value='8' >[测试代理]admin@test</option><option value='1' >[内置代理]agent</option>
+                            </select>
+						</div>
+					<div style="clear:both;"></div>
+					<div class="dataTables_filter">
+						<label>类型: </label>
+                        <select id="IsPublic" name="IsPublic" class="select2-me select-large" data-search="false">
+                            <option value="">全部</option>
+							<option value="0" >Ⅰ类</option>
+							<option value="1" >Ⅱ类</option>
+                        </select>
+						<label>状态: </label>
+                        <select id="Status" name="Status" class="select2-me select-large" data-search="false">
+                            <option value="">全部</option>
+							<option value="3" >完结</option>
+							<option value="4" >取消</option>
+                        </select>
+						<label>金额: </label>
+						<input type="text" id="Cash" name="Cash" placeholder="金额" class="input-small" value="" />
+						<label>名称: </label>
+						<input type="text" id="OrderName" name="OrderName" placeholder="名称" class="input-small" value="" />
+						<label>备注: </label>
+						<input type="text" id="Description" name="Description" placeholder="备注" class="input-small" value="" />
+					</div>
+					<div style="clear:both;"></div>
+					<div class="dataTables_filter">
+						<label>付款账号: </label>
+						<select id="PayCardID" name="PayCardID" class="select2-me input-xxlarge"  data-search="true">
+							<option value=''>全部</option><option value='1' >【建设】[有限公司]-技有限公司-555665258956545665542</option>
+						</select>
+					</div>
+					<div style="clear:both;"></div>
+					<div class="dataTables_filter">
+						<label>收款账号: </label>
+						<select id="ReceiveCardID" name="ReceiveCardID" class="select2-me input-xxlarge" data-search="true">
+							<option value=''>全部</option><option value='2' >【招商】[信息技术有限公司]-信息技术有限公司-2333332214124142535</option>
+						</select>
+						<button type="submit" class="btn btn-primary"><i class="icon-search"></i> 搜索</button>
+						<button type="button" id="export" class="btn btn-primary"><i class="icon-share-alt"></i> 导出</button>
+					</div>
+				</div>
+				</form>
+                    <div style="clear:both;"></div>
+                    <table class="table table-hover table-nomargin table-bordered table-condensed">
+                      <thead>
+                        <tr>
+						  <th style="width:40px;">操作员</th>
+						  <th style="width:30px;">类别</th>
+						  <th style="width:30px;">子类</th>
+						  <th style="width:30px;">状态</th>
+						  <th style="width:30px;">类型</th>
+                          <th style="width:50px;">名称</th>
+                          <th style="width:70px;">关联代理</th>
+						  <th style="width:155px;">付款账号</th>
+                          <th style="width:155px;">收款账号</th>
+						  <th style="width:80px;">金额(元)</th>
+						  <th style="width:40px;">制单人</th>
+						  <th style="width:80px;">制单时间</th>
+						  <th>备注</th>
+						  <th style="width:60px;">操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                        <tr>
+                          <td colspan="12" style="height:80px; text-align:center">暂无数据..</td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

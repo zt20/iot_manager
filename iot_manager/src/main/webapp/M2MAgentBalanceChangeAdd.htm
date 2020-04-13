@@ -1,0 +1,316 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>代理商充扣值</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/add.css">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+    <link rel="stylesheet" href="css/ie7.css">
+    <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+    <script type="text/javascript" src="js/init.js"></script>
+    <script type="text/javascript" src="js/loading.js"></script>
+
+    <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("input, textarea").placeholder();
+        });
+    </script>
+    <![endif]-->
+
+    <script>
+        // $(document).ready(function () {
+        // 	$("#formAgentBalanceChange").ajaxForm({
+        // 		success: function (result) {
+        // 			bootbox.alert(result.Message, function (box) {
+        // 				if (result.OK) {
+        // 					$("#formAgentBalanceChange").resetForm();
+        // 				}
+        // 			});
+        // 		},
+        // 		error: function (XmlHttpRequest, textStatus, errorThrown) {
+        // 			bootbox.alert("操作失败:服务器错误");
+        // 		}
+        // 	});
+
+
+        $("#remark").blur(function () {
+            $("#description").val($("#remark").html());
+        });
+
+        $("#remark").keyup(function (event) {
+            $("#description").val($("#remark").html());
+        });
+
+        $("#remark").change(function () {
+            $("#description").val($("#remark").html());
+        })
+
+
+        $("#amount").blur(function () {
+            showAmount($(this).val());
+        });
+
+        $("#amount").keyup(function (event) {
+            showAmount($(this).val());
+        });
+
+        $("#amount").change(function () {
+            showAmount($(this).val());
+        })
+
+        window.addEventListener('load', function (e) {
+            document.body.onpaste = function (e) {
+                var items = e.clipboardData.items;
+                for (var i = 0; i < items.length; ++i) {
+                    item = items[i];
+                    if (item && item.kind === 'file' && item.type.match(/^image\//i)) {
+                        imgReader(item);
+                        break;
+                    }
+                }
+            };
+        });
+
+        var imgReader = function (item) {
+            var blob = item.getAsFile(),
+                reader = new FileReader();
+
+            reader.onload = function (e) {
+                var img = new Image();
+
+                img.src = e.target.result;
+                var logBox = document.getElementById('remark');
+                logBox.appendChild(img);
+            };
+
+            reader.readAsDataURL(blob);
+        };
+
+        function showAmount(amount) {
+            $("#amountShow").html(ToTrans(amount));
+        }
+
+        function ToTrans(a) {
+            var minus = "";
+            var b = 9.999999999999E10,
+                f = "\u96f6",
+                h = "\u58f9",
+                g = "\u8d30",
+                e = "\u53c1",
+                k = "\u8086",
+                p = "\u4f0d",
+                q = "\u9646",
+                r = "\u67d2",
+                s = "\u634c",
+                t = "\u7396",
+                l = "\u62fe",
+                d = "\u4f70",
+                i = "\u4edf",
+                m = "\u4e07",
+                j = "\u4ebf",
+                u = "人民币",
+                o = "\u5143",
+                c = "\u89d2",
+                n = "\u5206",
+                v = "\u6574";
+            a = a.toString();
+            if (a == "") {
+                //alert("转换内容不能为空!");
+                return "转换内容不能为空"
+            }
+            if (a.indexOf('-') == 0) {
+                a = a.replace("-", "");
+                minus = "负";
+            } // 处理负数符号“-”
+            if (a.match(/[^,.\d]/) != null) {
+                //alert("输入有误,请输入小数点和纯数字!");
+                return "输入有误,请输入小数点和纯数字!"
+            }
+            if (a.match(/^((\d{1,3}(,\d{3})*(.((\d{3},)*\d{1,3}))?)|(\d+(.\d+)?))$/) == null) {
+                //alert("输入有误,请输入小数点和纯数字!");
+                return "输入有误,请输入小数点和纯数字!"
+            }
+            a = a.replace(/,/g, "");
+            a = a.replace(/^0+/, "");
+            if (Number(a) > b) {
+                //alert("\u5bf9\u4e0d\u8d77,\u4f60\u8f93\u5165\u7684\u6570\u5b57\u592a\u5927\u4e86!\u6700\u5927\u6570\u5b57\u4e3a99999999999.99\uff01");
+                return ""
+            }
+            b = a.split(".");
+            if (b.length > 1) {
+                a = b[0];
+                b = b[1];
+                b = b.substr(0, 2)
+            } else {
+                a = b[0];
+                b = ""
+            }
+            h = new Array(f, h, g, e, k, p, q, r, s, t);
+            l = new Array("", l, d, i);
+            m = new Array("", m, j);
+            n = new Array(c, n);
+            c = "";
+            if (Number(a) > 0) {
+                for (d = j = 0; d < a.length; d++) {
+                    e = a.length - d - 1;
+                    i = a.substr(d, 1);
+                    g = e / 4;
+                    e = e % 4;
+                    if (i == "0") j++;
+                    else {
+                        if (j > 0) c += h[0];
+                        j = 0;
+                        c += h[Number(i)] + l[e]
+                    }
+                    if (e == 0 && j < 4) c += m[g]
+                }
+                c += o
+            }
+            if (b != "") for (d = 0; d < b.length; d++) {
+                i = b.substr(d, 1);
+                if (i != "0") c += h[Number(i)] + n[d]
+            }
+            if (c == "") c = f + o;
+            if (b.length < 2) c += v;
+            return minus + c;
+        }
+    </script>
+</head>
+<body>
+<div class="container-fluid" id="content">
+    <div id="main">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="box box-bordered">
+                        <div class="box-title">
+                            <h3><i class="icon-ok-sign"></i> 代理商物联网充扣值</h3>
+                        </div>
+                        <div class="box-content">
+                            <div class="form-horizontal form-validate">
+                                <div class="control-group">
+                                    <label for="account" class="control-label">代理商账号：</label>
+                                    <div class="controls">
+                                        <b id="account" class="control-text"></b>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label for="balance" class="control-label">代理商当前余额：</label>
+                                    <div class="controls">
+                                        <b id="balance" class="control-text font-red"></b>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label for="cash" class="control-label">充值量：</label>
+                                    <div class="controls">
+                                        <div class="input-append">
+                                            <span class="add-on">￥</span>
+                                            <input type="text" id="amount" name="amount" class="input-small"
+                                                   data-rule-required="true" data-msg-required="请填写充值量"
+                                                   data-rule-number="true" data-msg-number="请输入数字"/>
+                                            <span class="add-on">元</span>
+                                        </div>
+                                        <div class="help-block">提示:如需扣值请填写负数</div>
+                                    </div>
+                                </div>
+                                <!--<div class="control-group">-->
+                                    <!--<label for="description" class="control-label">大写：</label>-->
+                                    <!--<div class="controls" id="amountShow" style="color:Red; font-size:16px;"></div>-->
+                                <!--</div>-->
+                                <!--<div class="control-group">-->
+                                    <!--<label for="description" class="control-label">充扣值备注：</label>-->
+                                    <!--<div class="controls" contenteditable="true" id="remark" class="span8" name="remark"-->
+                                         <!--style=" background-color:#f9f9f9; border:1px solid #ccc; transition:border linear .2s,box-shadow linear .2s; padding:4px 6px; color:#555;word-wrap: break-word;white-space: pre-wrap;width: 60%;margin-top: 0;margin-right: 5px; height:200px; overflow:auto;"></div>-->
+                                    <!--<div class="controls"></div>-->
+                                <!--</div>-->
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary" id="btnSubmit"><i
+                                            class="icon-ok-sign"></i> 提交
+                                    </button>
+                                </div>
+                                <input type="hidden" id="description" name="description"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    $(document).ready(function () {
+        var id = location.search;
+        id = id.substr(1);
+        $.ajax({
+            type: "GET",
+            url: "/api/v1/agent_id.do?id=" + id,
+            success: function (data) {
+                // alert(data)
+                if (data.code == 0) {
+                    var agent = data.object;
+                    if (null == agent) {
+                        alert("该代理商已经不存在");
+                    }
+                    console.log(agent);
+                    $("#account").html(agent.agentAccount);
+                    $("#balance").html(agent.balance);
+                } else {
+                    alert("查询失败");
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+        });
+    });
+
+
+    $("#btnSubmit").click(function () {
+        if (!confirm("确定提交?"))
+            return;
+        var account = $("#account").html();
+        var balance = $("#amount").val();
+        console.log(account + balance +  '--<')
+        $.ajax({
+            type: 'post',
+            url: '/api/v1/addAgent_money.do',
+            data: {
+                account: account,
+                balance: balance
+            },
+            success: function (data) {
+                if (data.code == 0){
+                    alert("充值成功！");
+                    window.location.href = "/AgentList.htm";
+                }else{
+                    alert(data.msg);
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+
+        });
+
+    });
+
+</script>
+
+</html>
+

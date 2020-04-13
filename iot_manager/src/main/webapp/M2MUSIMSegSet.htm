@@ -1,0 +1,1511 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <title>流量通道管理</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/plugins/icheck/all.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/list.css">
+    <link rel="stylesheet" href="css/pagination.css">
+
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+    <link rel="stylesheet" href="css/ie7.css">
+    <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+    <script type="text/javascript" src="js/init.js?20160401"></script>
+    <script type="text/javascript" src="js/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/loading.js?20161010"></script>
+    <script type="text/javascript" src="js/m2m.js?20171101"></script>
+    <script type="text/javascript" src="js/plugins/jquery-paginator/jquery.pagination.js"></script>
+
+    <!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('input, textarea').placeholder();
+        });
+    </script>
+    <![endif]-->
+    <style type="text/css">
+        dl {
+            margin: 0;
+        }
+
+        dd {
+            margin-left: 0px;
+        }
+
+        .showCount {
+            color: Red;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+
+            // $(".action-search").on("click", function () {
+            //        $("#action").val("search");
+            //    });
+            $(".action-export").on("click", function () {
+                $("#action").val("export");
+                $("#searchForm").submit();
+            });
+
+            $(".action-dt").on("click", function () {
+                $(this).next().toggle();
+            });
+
+            $(".action-remove").on("click", function () {
+                var planCode = $(this).attr("data-planCode");
+                var id = $(this).parent().parent().parent().parent().attr("data-id");
+                bootbox.confirm("确定要取消订购吗?", function (box) {
+                    if (box) {
+                        $.get("SetM2MUSIM.htm", {action: "removePlan", id: id, planCode: planCode},
+                            function (result) {
+                                if (result.OK) {
+                                    $("#modal-cmdShow").modal();
+                                    cmdId = result.Message;
+                                    getCmdLog();
+                                    t = setInterval("getCmdLog()", 3000);
+                                } else {
+                                    alert(result.Message);
+                                }
+                            });
+                    }
+                });
+            });
+
+            ////////////////////////////
+            $(".action-import").on("click", function () {
+                $("#modal-Import").modal();
+            });
+            $("#most-Import-form").ajaxForm({
+                success: function (result) {
+                    console.log(result);
+                    if (result.code == 0) {
+                        $("#modal-Import").modal("hide");
+                        alert("上传成功！");
+                        location.reload();
+                    } else {
+                        alert(result.msg);
+                    }
+                },
+                error: function (XmlHttpRequest, textStatus, errorThrown) {
+                    bootbox.alert("操作失败:服务器错误");
+                }
+            });
+
+
+            /////////////////////////////
+            $(".action-agent").on("click", function () {
+                // checkCount();
+                checkAgentCount("agent");
+                $("#modal-setToAgent").modal();
+            });
+
+            // function checkCount() {
+            //     $(".showCount").html("查询中，请稍候……");
+            //
+            //     $.post("SetM2MUSIMSeg.htm", {
+            //         action: "checkCount",
+            //         HasSet: $("input[name='HasSet']:checked").val(),
+            //         SPhone: $("#SPhone").val(),
+            //         EPhone: $("#EPhone").val(),
+            //         Phone: $("#Phone").val(),
+            //         SMSISDN: $("#SMSISDN").val(),
+            //         EMSISDN: $("#EMSISDN").val(),
+            //         SICCID: $("#SICCID").val(),
+            //         EICCID: $("#EICCID").val(),
+            //         MSISDN: $("#MSISDN").val(),
+            //         ICCID: $("#ICCID").val(),
+            //         OperatorType: $("#OperatorType").val(),
+            //         Status: $("#Status").val(),
+            //         Rate: $("#Rate").val(),
+            //         NextRate: $("#NextRate").val(),
+            //         AgentAccount: $("#AgentAccount").val(),
+            //         UserAccount: $("#UserAccount").val(),
+            //         InterfaceID: $("#InterfaceID").val(),
+            //         Used: $("#Used").val(),
+            //         NetState: $("#NetState").val(),
+            //         SyncMode: $("#SyncMode").val(),
+            //         PoolMode: $("#PoolMode").val()
+            //     }, function (result) {
+            //         if (result.OK) {
+            //             $(".showCount").html(result.Message + "张卡");
+            //         } else {
+            //             alert(result.Message);
+            //         }
+            //     });
+            // }
+
+            $("#modal-setToAgent").on("click", ".btn-primary", function () {
+                $.post("/api/v1/batch_setIotCard.do", {
+                    action: "setToAgentSeg",
+                    HasSet: $("input[name='HasSet']:checked").val(),
+                    SPhone: $("#SPhone").val(),
+                    EPhone: $("#EPhone").val(),
+                    Phone: $("#Phone").val(),
+                    SMSISDN: $("#SMSISDN").val(),
+                    EMSISDN: $("#EMSISDN").val(),
+                    SICCID: $("#SICCID").val(),
+                    EICCID: $("#EICCID").val(),
+                    MSISDN: $("#MSISDN").val(),
+                    ICCID: $("#ICCID").val(),
+                    OperatorType: $("#OperatorType").val(),
+                    Status: $("#Status").val(),
+                    Rate: $("#Rate").val(),
+                    NextRate: $("#NextRate").val(),
+                    AgentAccount: $("#AgentAccount").val(),
+                    UserAccount: $("#UserAccount").val(),
+                    interfaceID: $("#InterfaceID").val(),
+                    Used: $("#Used").val(),
+                    NetState: $("#NetState").val(),
+                    SyncMode: $("#SyncMode").val(),
+                    PoolMode: $("#PoolMode").val(),
+                    agentAccount: $("#setToAgent_Account").val()
+                }, function (result) {
+                    console.log(result.code);
+                    if (result.code == 0) {
+                        alert("添加成功！")
+                        $("#modal-setToAgent").modal("hide");
+                        window.location.reload();
+                        // $("#modal-cmdShow").modal();
+                        // cmdId = result.Message;
+                        // getCmdLog();
+                        // t = setInterval("getCmdLog()", 3000);
+                    } else {
+                        alert(result.msg);
+                    }
+                });
+            });
+
+            // $(".action-nextRate").on("click", function () {
+            //     var interfaceId = 0;
+            //     if (interfaceId) {
+            //         $("#most-setNextRate-form").resetForm();
+            //         $("#modal-setNextRate").modal();
+            //     } else {
+            //         alert("请注意，只有选定通道后的查询结果才能批量设置");
+            //     }
+            // });
+            //
+            // $("#modal-setNextRate").on("click", ".btn-primary", function () {
+            //     var interfaceID = $("#InterfaceID").val();
+            //     var setNextRate = $("#setNextRate_Rate").val();
+            //
+            //     if (interfaceID && setNextRate) {
+            //         $.post("SetM2MUSIMSeg.htm", {
+            //             action: "setNextRateSeg",
+            //             HasSet: $("input[name='HasSet']:checked").val(),
+            //             SPhone: $("#SPhone").val(),
+            //             EPhone: $("#EPhone").val(),
+            //             Phone: $("#Phone").val(),
+            //             SMSISDN: $("#SMSISDN").val(),
+            //             EMSISDN: $("#EMSISDN").val(),
+            //             SICCID: $("#SICCID").val(),
+            //             EICCID: $("#EICCID").val(),
+            //             MSISDN: $("#MSISDN").val(),
+            //             ICCID: $("#ICCID").val(),
+            //             OperatorType: $("#OperatorType").val(),
+            //             Status: $("#Status").val(),
+            //             Rate: $("#Rate").val(),
+            //             NextRate: $("#NextRate").val(),
+            //             AgentAccount: $("#AgentAccount").val(),
+            //             UserAccount: $("#UserAccount").val(),
+            //             InterfaceID: $("#InterfaceID").val(),
+            //             Used: $("#Used").val(),
+            //             NetState: $("#NetState").val(),
+            //             SyncMode: $("#SyncMode").val(),
+            //             PoolMode: $("#PoolMode").val(),
+            //             setNextRate: $("#setNextRate_Rate").val()
+            //         }, function (result) {
+            //             if (result.OK) {
+            //                 $("#modal-setNextRate").modal("hide");
+            //                 $("#modal-cmdShow").modal();
+            //                 cmdId = result.Message;
+            //                 getCmdLog();
+            //                 t = setInterval("getCmdLog()", 3000);
+            //             } else {
+            //                 alert(result.Message);
+            //             }
+            //         });
+            //     } else {
+            //         alert("请选择参数");
+            //     }
+            // });
+            // /////////////////////////////
+            $(".action-status").on("click", function () {
+                checkAgentCount("status");
+                // $("#SetStatus").trigger('change');
+                $("#modal-setStatus").modal();
+            });
+
+            $("#modal-setStatus").on("click", ".btn-primary", function () {
+                bootbox.confirm("确定要设置状态吗?该操作不可逆！", function (box) {
+                    if (box) {
+                        $.post("/api/v1/batch_setIotCard.do", {
+                            action: "setStatusSeg",
+                            HasSet: $("input[name='HasSet']:checked").val(),
+                            SPhone: $("#SPhone").val(),
+                            EPhone: $("#EPhone").val(),
+                            Phone: $("#Phone").val(),
+                            SMSISDN: $("#SMSISDN").val(),
+                            EMSISDN: $("#EMSISDN").val(),
+                            SICCID: $("#SICCID").val(),
+                            EICCID: $("#EICCID").val(),
+                            MSISDN: $("#MSISDN").val(),
+                            ICCID: $("#ICCID").val(),
+                            OperatorType: $("#OperatorType").val(),
+                            Status: $("#Status").val(),
+                            Rate: $("#Rate").val(),
+                            NextRate: $("#NextRate").val(),
+                            AgentAccount: $("#AgentAccount").val(),
+                            UserAccount: $("#UserAccount").val(),
+                            InterfaceID: $("#InterfaceID").val(),
+                            Used: $("#Used").val(),
+                            NetState: $("#NetState").val(),
+                            SyncMode: $("#SyncMode").val(),
+                            PoolMode: $("#PoolMode").val(),
+                            setStatus: $("#SetStatus").val()
+                        }, function (result) {
+                            if (result.code == 0) {
+                                alert("设置成功")
+                                $("#modal-setStatus").modal("hide");
+                                // $("#modal-cmdShow").modal();
+                                // cmdId = result.Message;
+                                // getCmdLog();
+                                // t = setInterval("getCmdLog()", 3000);
+                            } else {
+                                alert(result.msg);
+                            }
+                        });
+                    }
+                });
+            });
+            // /////////////////////////
+            $(".action-cutService").on("click", function () {
+                checkAgentCount("network");
+                // $("#SetCutService").trigger('change');
+                $("#modal-setCutService").modal();
+            });
+
+            $("#modal-setCutService").on("click", ".btn-primary", function () {
+                bootbox.confirm("确定要设置断网状态吗?该操作不可逆！", function (box) {
+                    if (box) {
+                        $.post("/api/v1/batch_setIotCard.do", {
+                            action: "setCutServiceSeg",
+                            HasSet: $("input[name='HasSet']:checked").val(),
+                            SPhone: $("#SPhone").val(),
+                            EPhone: $("#EPhone").val(),
+                            Phone: $("#Phone").val(),
+                            SMSISDN: $("#SMSISDN").val(),
+                            EMSISDN: $("#EMSISDN").val(),
+                            SICCID: $("#SICCID").val(),
+                            EICCID: $("#EICCID").val(),
+                            MSISDN: $("#MSISDN").val(),
+                            ICCID: $("#ICCID").val(),
+                            OperatorType: $("#OperatorType").val(),
+                            Status: $("#Status").val(),
+                            Rate: $("#Rate").val(),
+                            NextRate: $("#NextRate").val(),
+                            AgentAccount: $("#AgentAccount").val(),
+                            UserAccount: $("#UserAccount").val(),
+                            InterfaceID: $("#InterfaceID").val(),
+                            Used: $("#Used").val(),
+                            NetState: $("#NetState").val(),
+                            SyncMode: $("#SyncMode").val(),
+                            PoolMode: $("#PoolMode").val(),
+                            setCutService: $("#SetCutService").val()
+                        }, function (result) {
+                            if (result.code == 0) {
+                                alert("更新成功！")
+                                $("#modal-setCutService").modal("hide");
+                                // $("#modal-cmdShow").modal();
+                                // cmdId = result.Message;
+                                // getCmdLog();
+                                // t = setInterval("getCmdLog()", 3000);
+                            } else {
+                                alert(result.msg);
+                            }
+                        });
+                    }
+                });
+            });
+            //
+            // /////////////////////////
+            // $(".action-smssend").on("click", function () {
+            //     checkCount();
+            //     $("#modal-smsSend").modal();
+            // });
+            //
+            // $("#modal-smsSend").on("click", ".btn-primary", function () {
+            //     bootbox.confirm("确定要发送短信息吗？", function (box) {
+            //         if (box) {
+            //             $.post("SetM2MUSIMSeg.htm", {
+            //                 action: "smsSend",
+            //                 HasSet: $("input[name='HasSet']:checked").val(),
+            //                 SPhone: $("#SPhone").val(),
+            //                 EPhone: $("#EPhone").val(),
+            //                 Phone: $("#Phone").val(),
+            //                 SMSISDN: $("#SMSISDN").val(),
+            //                 EMSISDN: $("#EMSISDN").val(),
+            //                 SICCID: $("#SICCID").val(),
+            //                 EICCID: $("#EICCID").val(),
+            //                 MSISDN: $("#MSISDN").val(),
+            //                 ICCID: $("#ICCID").val(),
+            //                 OperatorType: $("#OperatorType").val(),
+            //                 Status: $("#Status").val(),
+            //                 Rate: $("#Rate").val(),
+            //                 NextRate: $("#NextRate").val(),
+            //                 AgentAccount: $("#AgentAccount").val(),
+            //                 UserAccount: $("#UserAccount").val(),
+            //                 InterfaceID: $("#InterfaceID").val(),
+            //                 Used: $("#Used").val(),
+            //                 NetState: $("#NetState").val(),
+            //                 SyncMode: $("#SyncMode").val(),
+            //                 PoolMode: $("#PoolMode").val(),
+            //                 smsContent: $("#smsContent").val()
+            //             }, function (result) {
+            //                 if (result.OK) {
+            //                     $("#modal-smsSend").modal("hide");
+            //                     alert(result.Message);
+            //                 } else {
+            //                     alert(result.Message);
+            //                 }
+            //             });
+            //         }
+            //     });
+            // });
+            // ////////////////////////////////////////////////
+            // $('#modal-cmdShow').on('hide.bs.modal', function () {
+            //     t = window.clearInterval(t)
+            //     location.reload();
+            // })
+            //
+            // $("#InterfaceID").change(function () {
+            //     var interfaceID = $("#InterfaceID").val();
+            //     if (interfaceID > 0) {
+            //         $.ajax({
+            //             url: 'SetM2MUSIMInit.htm',
+            //             type: 'GET',
+            //             data: {action: "getRateSelect", interfaceID: interfaceID},
+            //             error: function () {
+            //                 alert("远程访问失败");
+            //             },
+            //             success: function (result) {
+            //                 if (result.OK) {
+            //                     $("#Rate").html('<option value="">选择套餐</option>');
+            //                     $.each(result.Message, function (index, item) {
+            //                         $("#Rate").append('<option value=' + item.PlanCode + '>' + item.PlanName + '</option>')
+            //                     });
+            //
+            //                     $("#NextRate").html('<option value="">选择套餐</option>');
+            //                     $.each(result.Message, function (index, item) {
+            //                         $("#NextRate").append('<option value=' + item.PlanCode + '>' + item.PlanName + '</option>')
+            //                     });
+            //                     $("#Rate").select2();
+            //                     $("#NextRate").select2();
+            //                 }
+            //             }
+            //         });
+            //     }
+            // });
+            //
+            // $("#selInterace").change(function () {
+            //     var interfaceID = $("#selInterace").val();
+            //     if (interfaceID > 0) {
+            //         $.ajax({
+            //             url: 'SetM2MUSIMInit.htm',
+            //             type: 'GET',
+            //             data: {action: "getRateSelect", interfaceID: interfaceID},
+            //             error: function () {
+            //                 alert("远程访问失败");
+            //             },
+            //             success: function (result) {
+            //                 if (result.OK) {
+            //                     $("#setNextRate_Rate").html("");
+            //                     $.each(result.Message, function (index, item) {
+            //                         $("#setNextRate_Rate").append('<option value=' + item.PlanCode + '>' + item.PlanName + '</option>')
+            //                     });
+            //                 }
+            //             }
+            //         });
+            //     }
+            // });
+
+
+            $(".action-SyncMode").on("click", function () {
+                checkAgentCount("cardType");
+                $("#modal-SyncMode").modal();
+            });
+
+            $("#modal-SyncMode").on("click", ".btn-primary", function () {
+                $.post("/api/v1/batch_setIotCard.do", {
+                    action: "setSyncModeSeg",
+                    HasSet: $("input[name='HasSet']:checked").val(),
+                    SPhone: $("#SPhone").val(),
+                    EPhone: $("#EPhone").val(),
+                    Phone: $("#Phone").val(),
+                    SMSISDN: $("#SMSISDN").val(),
+                    EMSISDN: $("#EMSISDN").val(),
+                    SICCID: $("#SICCID").val(),
+                    EICCID: $("#EICCID").val(),
+                    MSISDN: $("#MSISDN").val(),
+                    ICCID: $("#ICCID").val(),
+                    OperatorType: $("#OperatorType").val(),
+                    Status: $("#Status").val(),
+                    Rate: $("#Rate").val(),
+                    NextRate: $("#NextRate").val(),
+                    AgentAccount: $("#AgentAccount").val(),
+                    UserAccount: $("#UserAccount").val(),
+                    InterfaceID: $("#InterfaceID").val(),
+                    Used: $("#Used").val(),
+                    NetState: $("#NetState").val(),
+                    SyncMode: $("#SyncMode").val(),
+                    PoolMode: $("#PoolMode").val(),
+                    setSyncMode: $("#setSyncMode").val()
+                }, function (result) {
+                    if (result.code == 0) {
+                        alert("设置完成！");
+                        $("#modal-SyncMode").modal("hide");
+                        // location.reload();
+                    } else {
+                        alert(result.msg);
+                    }
+                });
+            });
+            ////////////////////////////////
+            $(".action-importUsed").on("click", function () {
+                $("#modal-ImportUsed").modal();
+            });
+            $("#most-ImportUsed-form").ajaxForm({
+                success: function (result) {
+                    if (result.code == 0) {
+                        $("#modal-ImportUsed").modal("hide");
+                        alert(result.Message);
+                        location.reload();
+                    } else {
+                        alert(result.Message);
+                    }
+                },
+                error: function (XmlHttpRequest, textStatus, errorThrown) {
+                    bootbox.alert("操作失败:服务器错误");
+                }
+            });
+            ////////////////////////////////
+            $(".action-importDel").on("click", function () {
+                $("#modal-ImportDel").modal();
+            });
+            $("#most-ImportDel-form").ajaxForm({
+                success: function (result) {
+                    if (result.OK) {
+                        $("#modal-ImportDel").modal("hide");
+                        alert(result.Message);
+                        location.reload();
+                    } else {
+                        alert(result.Message);
+                    }
+                },
+                error: function (XmlHttpRequest, textStatus, errorThrown) {
+                    bootbox.alert("操作失败:服务器错误");
+                }
+            });
+            /////////////////////////////
+
+            $(".action-delSeg").on("click", function () {
+                if (confirm("你确定要删除吗？下面列表中查询出来的卡都将被删除，该操作不可逆！")) {
+                    $.post("SetM2MUSIMSeg.htm", {
+                        action: "delSeg",
+                        HasSet: $("input[name='HasSet']:checked").val(),
+                        SPhone: $("#SPhone").val(),
+                        EPhone: $("#EPhone").val(),
+                        Phone: $("#Phone").val(),
+                        SMSISDN: $("#SMSISDN").val(),
+                        EMSISDN: $("#EMSISDN").val(),
+                        SICCID: $("#SICCID").val(),
+                        EICCID: $("#EICCID").val(),
+                        MSISDN: $("#MSISDN").val(),
+                        ICCID: $("#ICCID").val(),
+                        OperatorType: $("#OperatorType").val(),
+                        Status: $("#Status").val(),
+                        Rate: $("#Rate").val(),
+                        NextRate: $("#NextRate").val(),
+                        AgentAccount: $("#AgentAccount").val(),
+                        UserAccount: $("#UserAccount").val(),
+                        InterfaceID: $("#InterfaceID").val(),
+                        Used: $("#Used").val(),
+                        NetState: $("#NetState").val(),
+                        SyncMode: $("#SyncMode").val(),
+                        PoolMode: $("#PoolMode").val()
+                    }, function (result) {
+                        if (result.OK) {
+                            alert(result.Message);
+                            location.reload();
+                        } else {
+                            alert(result.Message);
+                        }
+                    });
+                }
+            });
+            /////////////////////////////
+
+
+            $(".action-PoolMode").on("click", function () {
+                checkAgentCount("trafficPool");
+                $("#modal-PoolMode").modal();
+            });
+
+            $("#modal-PoolMode").on("click", ".btn-primary", function () {
+                $.post("/api/v1/batch_setIotCard.do", {
+                    action: "setPoolModeSeg",
+                    HasSet: $("input[name='HasSet']:checked").val(),
+                    SPhone: $("#SPhone").val(),
+                    EPhone: $("#EPhone").val(),
+                    Phone: $("#Phone").val(),
+                    SMSISDN: $("#SMSISDN").val(),
+                    EMSISDN: $("#EMSISDN").val(),
+                    SICCID: $("#SICCID").val(),
+                    EICCID: $("#EICCID").val(),
+                    MSISDN: $("#MSISDN").val(),
+                    ICCID: $("#ICCID").val(),
+                    OperatorType: $("#OperatorType").val(),
+                    Status: $("#Status").val(),
+                    Rate: $("#Rate").val(),
+                    NextRate: $("#NextRate").val(),
+                    AgentAccount: $("#AgentAccount").val(),
+                    UserAccount: $("#UserAccount").val(),
+                    InterfaceID: $("#InterfaceID").val(),
+                    Used: $("#Used").val(),
+                    NetState: $("#NetState").val(),
+                    SyncMode: $("#SyncMode").val(),
+                    PoolMode: $("#PoolMode").val(),
+                    setPoolMode: $("#setPoolMode").val()
+                }, function (result) {
+                    if (result.code == 0) {
+                        alert("设置完成！");
+                        $("#modal-PoolMode").modal("hide");
+                        location.reload();
+                    } else {
+                        alert(result.msg);
+                    }
+                });
+            });
+
+            //////////////////////
+        });
+    </script>
+</head>
+<body>
+<div class="container-fluid" id="content">
+    <div id="main">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="box box-bordered">
+                        <div class="box-title">
+                            <h3><i class="icon-table"></i> 批量操作</h3>
+                        </div>
+                        <div class="box-content nopadding">
+                            <div class="dataTables_wrapper">
+                                <div class="dataTables_info1" style="padding-top: 10px;">
+                                    <div id="searchForm" class="form-inline">
+                                        <input type="hidden" name="action" id="action" value="search"/>
+                                        <div style="clear:both;"></div>
+                                        <div class="dataTables_filter">
+                                            <label style="width:65px;">卡号范围: </label>
+                                            <input type="text" class="input-small" name="SMSISDN" id="SMSISDN"
+                                                   placeholder="开始卡号" value=""/>
+                                            <label>到</label>
+                                            <input type="text" class="input-small" name="EMSISDN" id="EMSISDN"
+                                                   placeholder="截止卡号" value=""/>
+
+                                            <label style="width:40px;">卡号: </label>
+                                            <input type="text" class="input-small" name="MSISDN" id="MSISDN"
+                                                   placeholder="卡号" value=""/>
+
+                                            <label style="width:45px;">运营商: </label>
+                                            <select id="OperatorType" name="OperatorType" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="1">移动</option>
+                                                <option value="2">联通</option>
+                                                <option value="3">电信</option>
+                                            </select>
+
+                                            <label style="width:45px;">通　道: </label>
+                                            <select id="InterfaceID" name="InterfaceID" class="select2-me input-medium"
+                                                    data-search="true">
+                                                <option value=''>选择通道</option>
+                                            </select>
+
+
+                                        </div>
+                                        <div style="clear:both;"></div>
+                                        <div class="dataTables_filter">
+                                            <label style="width:65px;">ICCID范围: </label>
+                                            <input type="text" class="input-small" name="SICCID" id="SICCID"
+                                                   placeholder="开始ICCID" value=""/>
+                                            <label>到</label>
+                                            <input type="text" class="input-small" name="EICCID" id="EICCID"
+                                                   placeholder="截止ICCID" value=""/>
+
+                                            <label style="width:40px;">ICCID: </label>
+                                            <input type="text" class="input-small" name="ICCID" id="ICCID"
+                                                   placeholder="ICCID" value=""/>
+
+                                            <label style="width:45px;">状　态: </label>
+                                            <select id="Status" name="Status" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="1">可测试</option>
+                                                <option value="2">库存</option>
+                                                <option value="4">可激活</option>
+                                                <option value="5">已启用</option>
+                                                <option value="6">已停用</option>
+                                                <option value="7">已失效</option>
+                                            </select>
+
+                                            <label style="width:45px;">套　餐: </label>
+                                            <select id="Rate" name="Rate" class="select2-me input-medium"
+                                                    data-search="true">
+                                                <option value=''>请指定通道</option>
+                                            </select>
+
+
+                                        </div>
+                                        <div style="clear:both;"></div>
+                                        <div class="dataTables_filter">
+                                            <label style="width:65px;">虚卡范围: </label>
+                                            <input type="text" class="input-small" name="SPhone" id="SPhone"
+                                                   placeholder="开始虚拟卡号" value=""/>
+                                            <label>到</label>
+                                            <input type="text" class="input-small" name="EPhone" id="EPhone"
+                                                   placeholder="截止虚拟卡号" value=""/>
+
+                                            <label style="width:40px;">卡号: </label>
+                                            <input type="text" class="input-small" name="Phone" id="Phone"
+                                                   placeholder="虚拟卡号" value=""/>
+
+                                            <label style="width:45px;">代　理: </label>
+                                            <input type="text" class="input-small" style="width:78px;"
+                                                   name="AgentAccount" id="AgentAccount" placeholder="代理账号" value=""/>
+
+
+                                            <label style="width:45px;">下 期: </label>
+                                            <select id="NextRate" name="NextRate" class="select2-me input-medium"
+                                                    data-search="true">
+                                                <option value=''>请指定通道</option>
+                                            </select>
+
+                                        </div>
+
+
+                                        <div style="clear:both;"></div>
+                                        <div class="dataTables_filter">
+                                            <label style="width:45px;">客　户: </label>
+                                            <input type="text" class="input-small" name="UserAccount" id="UserAccount"
+                                                   placeholder="客户账号" value=""/>
+                                            <label style="width:45px;">门　限: </label>
+                                            <select id="Used" name="Used" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="1">流量告警</option>
+                                                <option value="2">达量</option>
+                                                <option value="3">超量</option>
+
+                                            </select>
+                                            <label style="width: 50px;">类　型: </label>
+                                            <select id="Select1" name="SyncMode" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="0">普通</option>
+                                                <option value="1">包月</option>
+                                                <option value="2">包年</option>
+                                            </select>
+                                            <label style="width: 50px;">网　络: </label>
+                                            <select id="NetState" name="NetState" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="1">正常</option>
+                                                <option value="2">断网</option>
+                                            </select>
+                                            <label style="width: 50px;">流量池: </label>
+                                            <select id="PoolMode" name="PoolMode" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="0">否</option>
+                                                <option value="1">是</option>
+                                            </select>
+
+                                        </div>
+                                        <div style="clear:both;"></div>
+                                        <div class="dataTables_filter">
+                                            <label style="width:60px;">分配状态: </label>
+                                            <div style="display:inline-block;width: 155px;">
+                                                <input type="radio" style="margin-top:-2px !important" name="HasSet"
+                                                       value="" checked="checked"/><span> 全部</span>
+                                                <input type="radio" style="margin-top:-2px !important" name="HasSet"
+                                                       value="1"/><span> 已分</span>
+                                                <input type="radio" style="margin-top:-2px !important" name="HasSet"
+                                                       value="2"/><span> 未分</span>
+                                            </div>
+                                            <button id="iotCardSearch" type="submit"
+                                                    class="btn btn-primary action-search"><i
+                                                    class="icon-search"></i> 搜索
+                                            </button>
+                                            <button type="button" class="btn btn-success action-export"><i
+                                                    class="icon-share-alt"></i> 导出
+                                            </button>
+                                        </div>
+                                        <div style="clear:both;"></div>
+                                        <div class="dataTables_filter">
+                                            <label style="width:65px;">批量操作: </label>
+                                            <button type="button" class="btn btn-primary action-agent"><i
+                                                    class="icon-th"></i> 批量设置代理
+                                            </button>
+                                            <button type="button" class="btn btn-primary action-nextRate"><i
+                                                    class="icon-th"></i> 批量设置套餐
+                                            </button>
+                                            <button type="button" class="btn btn-primary action-status"><i
+                                                    class="icon-th"></i> 批量设置状态
+                                            </button>
+                                            <button type="button" class="btn btn-primary action-cutService"><i
+                                                    class="icon-th"></i> 批量设置断网
+                                            </button>
+                                            <button type="button" class="btn btn-primary action-SyncMode"><i
+                                                    class="icon-th"></i> 批量设置卡类型
+                                            </button>
+                                            <button type="button" class="btn btn-primary action-PoolMode"><i
+                                                    class="icon-th"></i> 批量设置流量池
+                                            </button>
+                                        </div>
+
+                                        <div style="clear:both;"></div>
+                                        <div class="dataTables_filter">
+                                            <label style="width:65px;"></label>
+                                            <button type="button" class="btn btn-success action-import"><i
+                                                    class="icon-cogs"></i> 批量导入卡号
+                                            </button>
+                                            <button type="button" class="btn btn-primary action-importUsed"><i
+                                                    class="icon-cogs"></i> 批量更新用量
+                                            </button>
+                                            <button type="button" class="btn btn-success action-smssend"><i
+                                                    class="icon-cogs"></i> 短信发送
+                                            </button>
+                                            <button type="button" class="btn btn-danger action-importDel"><i
+                                                    class="icon-cogs"></i> 批量导入删除
+                                            </button>
+                                            <button type="button" class="btn btn-danger action-delSeg"><i
+                                                    class="icon-cogs"></i> 批量删除
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="clear:both;"></div>
+
+                                <table id="iotCardList"
+                                       class="table table-hover table-nomargin table-bordered table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: auto;">卡号</th>
+                                        <th style="width: auto;">状态</th>
+                                        <th style="width: auto;">网络</th>
+                                        <th style="width: auto;">总/使用量</th>
+                                        <th style="width: auto;">归属代理/客户</th>
+                                        <th>通道</th>
+                                        <th style="width: auto;">类型</th>
+                                        <th>套餐</th>
+                                        <th style="width: auto;">结算日</th>
+                                        <th style="width: auto;">导入日期</th>
+                                        <th style="width: auto;">续费</th>
+                                        <th style="width: auto;">流量池</th>
+                                        <th>续费情况</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <div id="pagination-container"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-setToAgent" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2"
+     aria-hidden="true">
+    <form id="most-setToAgent-form" class="form-horizontal" novalidate="novalidate">
+        <input type="hidden" name="action" value="setToAgentSeg"/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel2">代理设置</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="bodyList">
+                <div class="control-group">
+                    <label class="control-label">待处理卡数</label>
+                    <div id="agentAccountCount" class="controls showCount" style="margin-left: 130px;">
+                        查询中，请稍候……
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">归属代理账号</label>
+                <div class="controls" style="margin-left: 130px;">
+                    <select type="text" name="account" id="setToAgent_Account" class="select2-me input-xlarge"
+                            data-search="true"/>
+                    <option value=''>请选择代理商</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <a class="btn btn-primary">确定</a>
+        </div>
+    </form>
+</div>
+
+<div id="modal-setNextRate" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2"
+     aria-hidden="true">
+    <form id="most-setNextRate-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIMSeg.htm">
+        <input type="hidden" name="action" value="setNextRateSeg"/>
+        <input type="hidden" name="id" id="setNextRateID" value=""/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel3">套餐设置</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="bodyList3">
+                <div class="control-group">
+                    <label class="control-label">待处理卡数</label>
+                    <div class="controls showCount" style="margin-left: 130px;">
+                        查询中，请稍候……
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">套　　餐: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <select name="NextRate" id="setNextRate_Rate" class="select2-me input-xlarge"
+                                data-search="true">
+                            <option value=''>请指定通道</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <a class="btn btn-primary">确定</a>
+        </div>
+    </form>
+</div>
+
+<div id="modal-setStatus" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-setStatus-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIMSeg.htm">
+        <input type="hidden" name="action" value="setStatusSeg"/>
+        <input type="hidden" name="id" id="setStatusID" value=""/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel4">状态设置</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="Div2">
+                <div class="control-group">
+                    <label class="control-label">待处理卡数</label>
+                    <div id="setIotCardStatus" class="controls showCount" style="margin-left: 130px;">
+                        查询中，请稍候……
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">状　　态: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <select name="Status" id="SetStatus" class="select2-me input-xlarge" data-search="false">
+                            <option value="5">启用</option>
+                            <option value="6">停用</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <a class="btn btn-primary">确定</a>
+        </div>
+    </form>
+</div>
+
+<div id="modal-setCutService" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-setCutService-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIMSeg.htm">
+        <input type="hidden" name="action" value="setCutServiceSeg"/>
+        <input type="hidden" name="id" id="setCutServiceID" value=""/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel5">单独断网设置</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="Div1">
+                <div class="control-group">
+                    <label class="control-label">待处理卡数</label>
+                    <div id="networkCount" class="controls showCount" style="margin-left: 130px;">
+                        查询中，请稍候……
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">单独断网: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <select name="CutService" id="SetCutService" class="select2-me input-xlarge"
+                                data-search="false">
+                            <option value="1">恢复</option>
+                            <option value="2">断网</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <a class="btn btn-primary">确定</a>
+        </div>
+    </form>
+</div>
+
+<div id="modal-cmdShow" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="modal-cmdShow-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIMSeg.htm">
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="H1">命令执行</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content">
+                <div class="control-group">
+                    <div class="controls" id="modal-cmdShow-message" style="margin-left: 80px;">
+                        正在执行，请稍后
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+        </div>
+    </form>
+</div>
+
+
+<div id="modal-Import" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-Import-form" class="form-horizontal" method="POST" action="/api/v1/IotCardByExcel_add.do"
+          novalidate="novalidate" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="importUSIM"/>
+        <div class="modal-header">
+            <!--<button type="button" class="close btn btn-mini" name="numberFile" data-dismiss="modal" aria-hidden="true">×</button>-->
+            <h4 class="modal-title">导入卡</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content">
+                <div class="control-group">
+                    <label class="control-label">归属通道: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <select id="importCardChannelName" name="channelName" class="select2-me input-medium w2"
+                                data-search="true">
+                            <option value=''>选择通道</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">EXCEL文件: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <input type="file" name="cardFile" value=""/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div style="margin-left: 80px;">
+                        必须包含ICCID和MSISDN列。<br/>
+                        需要IMSI的，请添加IMSI列。<br/>
+                        需要指定运营商类型的，请添加OperatorType列，参数移动、联通、电信，否则系统使用通道的运营商类型。
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <input type="submit" name="name" class="btn btn-primary" value="确定" novalidate="novalidate"/>
+        </div>
+    </form>
+</div>
+
+<div id="modal-SyncMode" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-SyncMode-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIMSeg.htm">
+        <input type="hidden" name="action" value="setSyncModeSeg"/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="H2">卡类型</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="Div3">
+                <div class="control-group">
+                    <div class="control-group">
+                        <label class="control-label">待处理卡数</label>
+                        <div id = "cardTypeCount" class="controls showCount" style="margin-left: 130px;">
+                            查询中，请稍候……
+                        </div>
+                    </div>
+                    <label class="control-label">类　　型: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <select name="setSyncMode" id="setSyncMode" class="select2-me input-large" data-search="false">
+                            <option value="0">普通</option>
+                            <option value="1">包月</option>
+                            <option value="2">包年</option>
+                        </select>
+                        <br/>
+                        普通类型套餐用完即停，包月包年不限制流量，按时间结算
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <a class="btn btn-primary">确定</a>
+        </div>
+    </form>
+</div>
+
+<div id="modal-PoolMode" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-PoolMode-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIMSeg.htm">
+        <input type="hidden" name="action" value="setPoolModeSeg"/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="H3">流量池设置</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="Div4">
+                <div class="control-group">
+                    <label class="control-label">待处理卡数</label>
+                    <div id = "trafficPoolCount" class="controls showCount" style="margin-left: 130px;">
+                        查询中，请稍候……
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">是否流量池: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <select name="setPoolMode" id="setPoolMode" class="select2-me input-large" data-search="false">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                        <br/>
+                        设置卡是否流量池，流量池的卡，按单卡查询使用量，否则查询套餐使用量
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <a class="btn btn-primary">确定</a>
+        </div>
+    </form>
+</div>
+
+<div id="modal-ImportUsed" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-ImportUsed-form" class="form-horizontal" method="POST" action="/api/v1/IotCardByExcel_updateUse.do"
+          novalidate="novalidate" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="importUSIMUsed"/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" name="numberFile" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h4 class="modal-title">更新使用量</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content">
+                <div class="control-group">
+                    <label class="control-label">归属通道: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <select id="updateExcelChannelName" name="interfaceID" class="select2-me input-medium w2"
+                                data-search="true">
+                            <option value=''>选择通道</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">EXCEL文件: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <input type="file" name="file" value=""/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label"> </label>
+                    <div class="controls" style="margin-left: 130px;">必须包含ICCID、套餐流量（MB）、套餐剩余流量（MB）这3列，导入后，将更新卡的套餐总量和使用量
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <input type="submit" name="name" class="btn btn-primary" value="确定" novalidate="novalidate"/>
+        </div>
+    </form>
+</div>
+
+<div id="modal-ImportDel" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-ImportDel-form" class="form-horizontal" method="POST" action="/api/v1/IotCardByExcel_delete"
+          novalidate="novalidate"
+          enctype="multipart/form-data">
+        <input type="hidden" name="action" value="importUSIMDel"/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" name="numberFile" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h4 class="modal-title">批量删除</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content">
+                <div class="control-group">
+                    <label class="control-label">归属通道: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <select id="deleteExcelChannelName" name="interfaceID" class="select2-me input-medium w2"
+                                data-search="true">
+                            <option value=''>选择通道</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">EXCEL文件: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <input type="file" name="file" value=""/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label"> </label>
+                    <div class="controls" style="margin-left: 130px;">必须包含ICCID列，导入后，将按ICCID删除
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <input type="submit" name="name" class="btn btn-primary" value="确定" novalidate="novalidate"/>
+        </div>
+    </form>
+</div>
+
+
+<div id="modal-smsSend" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <form id="most-smsSend-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIMSeg.htm">
+        <input type="hidden" name="action" value="smsSend"/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="H4">短信发送</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="Div5">
+                <div class="control-group">
+                    <label class="control-label">待发送卡数</label>
+                    <div class="controls showCount" style="margin-left: 130px;">
+                        查询中，请稍候……
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">短信内容: </label>
+                    <div class="controls" style="margin-left: 130px;">
+                        <textarea name="smsContent" id="smsContent" cols="12" rows="4"></textarea>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <a class="btn btn-primary">确定</a>
+        </div>
+    </form>
+</div>
+</body>
+
+<script>
+
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/api/v1/channel_all.do",
+            success: function (data) {
+                if (data.code == 0) {
+                    var channelNames = data.object;
+                    // console.log(channelNames);
+                    var channelName;
+                    for (var x in channelNames) {
+                        channelName = channelNames[x];
+                        // console.log(channelName);
+                        var result = "<option value='" + channelName + "'>" + channelName + "</option>";
+                        $("#importCardChannelName").append(result);
+                        $("#deleteExcelChannelName").append(result);
+                        $("#updateExcelChannelName").append(result);
+                        $("#InterfaceID").append(result);
+                        // $("#AddInterfaceID").append(result);
+                    }
+
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+
+        });
+    });
+
+
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/api/v1/agentName_all.do",
+            success: function (data) {
+                if (data.code == 0) {
+                    var agentNames = data.object;
+                    // console.log(channelNames);
+                    var agentName;
+                    for (var x in agentNames) {
+                        agentName = agentNames[x];
+                        // console.log(channelName);
+                        var result = "<option value='" + agentName + "'>" + agentName + "</option>";
+                        $("#setToAgent_Account").append(result);
+                    }
+
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+
+        });
+    });
+
+
+    $("#iotCardSearch").click(function () {
+        pageStart();
+
+        function pageStart() {
+            console.log("daozhele");
+            var startCardId = $("#SMSISDN").val();
+            var endCardId = $("#EMSISDN").val();
+            var cardId = $("#MSISDN").val();
+            var operator = $("#OperatorType").val();
+            var status = $("#Status").val();
+            var channelName = $("#InterfaceID").val();
+            var agentName = $("#AgentAccount").val();
+            var trafficPool = $("#PoolMode").val();
+            var networkStatus = $("#NetState").val();
+            // console.log(agentAccount + ";" + name +";" + id + ";" + status)
+            $('#pagination-container').pagination({
+                dataSource: '/api/v1/iotCard_list.do?startCardId='
+                    + startCardId + "&endCardId=" + endCardId + "&cardId=" + cardId
+                    + "&operator=" + operator + "&channelName=" + channelName + "&status=" + status
+                    + "&agentName=" + agentName + "&trafficPool=" + trafficPool + "&networkStatus=" + networkStatus,
+                prevText: '<<',
+                nextText: '>>',
+                goButtonText: 'go',
+                alias: {
+                    pageNumber: 'page',
+                    pageSize: 'size'
+                },
+                pageSize: 20,
+                totalNumberLocator: function (response) {//处理页数
+                    return response.total;
+                },
+                locator: 'list',
+                ajax: {
+                    type: 'GET',
+                    beforeSend: function () {//请求前处理
+                        $("#dataContainer").html('加载中...');
+                    }
+                },
+                showGoInput: true,
+                showGoButton: true,
+                showNavigator: true,
+                callback: function (data, pagination) {
+                    console.log(data);
+                    $("#iotCardList tr td").remove();
+                    $.each(data, function (i, item) {
+                        var result = "<tr><td>" + item['cardId'] + "</td><td>" + iotCardStatus(item['status']) + "</td><td>" + iotCardNetworkStatus(item['networkStatus']) + "</td><td>" +
+                            useTariff(item['useSize'], item['totalSize']) + "</td><td>" + iotAgentName(item['agentName']) + "</td><td>" + iotCardOperatorChannelName(item['operator'], item['channelName']) + "</td><td>" + cardType(item['cardType']) + "</td><td>" +
+                            iotCardDetail(item['cardDetail']) + "</td><td>" + settlementDate(item['settlementDate']) + "</td><td>" + item['addTime'] + "</td><td>" + renew(item['renew']) + "</td><td>" + isTrafficPool(item['trafficPool'])
+                            + "</td><td>" + iotCardRenewDetail(item['renewDetail']) + "</td></tr>";
+
+                        $("#iotCardList").append(result);
+                    });
+                }
+
+            });
+        }
+
+    });
+
+    function iotCardRenewDetail(data) {
+        if (data == null)
+            return '';
+        return data;
+    }
+
+    function iotCardDetail(data) {
+        if (data == null)
+            return '';
+        return data;
+    }
+
+    function iotAgentName(data) {
+        if (data == null)
+            return "";
+        return data;
+    }
+
+    function iotCardStatus(data) {
+        if (data == 1)
+            return "<font color='#8fbc8f'>可测试</font>";
+        if (data == 2)
+            return "<font color='#00ced1'>库存</font>"
+        if (data == 4)
+            return "<font color='#00bfff'>可激活</font>";
+        if (data == 5)
+            return "<font color='green'>已激活</font>";
+        if (data == 6)
+            return "<font color='#ff7f50'>已停用</font>";
+        if (data == 7)
+            return "<font color='#dc143c'>已失效</font>";
+        return "<font color='#a9a9a9'>未知</font>";
+    }
+
+    function iotCardNetworkStatus(data) {
+        if (data == 1)
+            return "<font color='green'>正常</font>";
+        if (data == 2)
+            return "<font color='#dc143c'>断网</font>";
+        return "<font color='#a9a9a9'>未知</font>";
+    }
+
+    function useTariff(data1, data2) {
+        return "<font color='#006400'>" + data1 + "M/" + data2 + "M" + "</font>"
+    }
+
+    function iotCardOperatorChannelName(data1, data2) {
+        return "[" + iotOperator(data1) + "]</br>" + data2;
+    }
+
+    function cardType(data) {
+        if (data == 0)
+            return "<font color='#006400'>普通</font>"
+        if (data == 1)
+            return "<font color='#ff7f50'>包月</font>";
+        if (data == 2)
+            return "<font color='#ff7f50'>包年</font>";
+
+    }
+
+    function settlementDate(data) {
+        return "每月" + data + "日";
+    }
+
+    function renew(data) {
+        if (data == 0)
+            return "<font color='#006400'>未续费</font>"
+        return "<font color='#006400'>续费</font>"
+    }
+
+    function isTrafficPool(data) {
+        if (data == 0)
+            return "<font color='#ff7f50'>否</font>";
+        return "<font color='#00ffff'>是</font>";
+    }
+
+    function iotOperator(data) {
+        if (data == 1)
+            return '移动';
+        if (data == 2)
+            return '联通';
+        if (data == 3)
+            return '电信';
+        return '未知';
+    }
+
+    function checkAgentCount(action) {
+        var startCardId = $("#SMSISDN").val();
+        var endCardId = $("#EMSISDN").val();
+        var cardId = $("#MSISDN").val();
+        var operator = $("#OperatorType").val();
+        var status = $("#Status").val();
+        var channelName = $("#InterfaceID").val();
+        $.ajax({
+            type: "GET",
+            url: '/api/v1/checkAgentCount.do?startCardId='
+                + startCardId + "&endCardId=" + endCardId + "&cardId=" + cardId
+                + "&operator=" + operator + "&channelName=" + channelName + "&status=" + status + "&action=" + action,
+            success: function (data) {
+                if (data.code == 0) {
+                    console.log("action->" + action);
+                    if (action === 'agent') {
+                        $("#agentAccountCount").html(data.msg);
+                    } else if (action === 'status') {
+                        console.log("status->" + data.msg);
+                        $("#setIotCardStatus").html(data.msg);
+                    } else if (action === 'network') {
+                        $("#networkCount").html(data.msg);
+                    } else if (action === 'cardType'){
+                        $("#cardTypeCount").html(data.msg);
+                    } else if ("trafficPool"===action){
+                        $("#trafficPoolCount").html(data.msg);
+                    }
+                } else {
+                    alert(data.msg);
+                }
+
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+        });
+    }
+
+    // function importCard(){
+    // 	var form = new FormData(document.getElementById("most-Import-form"));
+    // 	console.log(form);
+    // 	$.ajax({
+    // 		url:"/api/v1/import_iotCard.do",
+    // 		type:"post",
+    // 		data:form,
+    // 		processData:false,
+    // 		contentType:false,
+    // 		success:function(data){
+    // 			if (data.code==0){
+    // 				console.log("ok");
+    // 				alert("上传成功！")
+    // 			}else{
+    // 				alert(data.msg);
+    // 			}
+    //
+    // 		},
+    // 		error:function(e){
+    // 			alert("错误！！");
+    // 			window.clearInterval(timer);
+    // 		}
+    // 	});
+    // 	// get();//此处为上传文件的进度条
+    // 	// }
+    // }
+
+</script>
+</html>

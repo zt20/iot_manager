@@ -1,0 +1,163 @@
+
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加代理商</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/add.css">
+	<style type="text/css">
+	  .additional{
+	  	 display:none;
+	  }
+	</style>
+    <!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+    <script type="text/javascript" src="js/init.js"></script>
+	<script type="text/javascript" src="js/loading.js"></script>
+
+    <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+    <script type="text/javascript">
+    	$(document).ready(function () {
+    		$("#AlarmType").on("change", function () {
+    			$("#NotificationUrlDiv").hide();
+    			$("#NotificationEmailDiv").hide();
+    			$("#NotificationMobileDiv").hide();
+    			if ($("#AlarmType").val() != "") {
+    				$.ajax({
+    					url: 'GetM2MAlarm.htm',
+    					type: 'POST',
+    					data: { action: "getList", AlarmType: $("#AlarmType").val() },
+    					error: function () { alert("远程访问失败"); },
+    					success: function (result) {
+    						if (result.OK) {
+    							var obj = $.parseJSON(result.Message.AlarmParams);
+    							$("#AlarmParamName").html(obj.ParamName + "：");
+    							if ((result.Message.AlarmMode & 1) == 1) {
+    								//推送消息
+    								$("#NotificationUrlDiv").show()
+    							}
+    							if ((result.Message.AlarmMode & 2) == 2) {
+    								$("#NotificationEmailDiv").show()
+    								//邮件告警
+    							}
+    							if ((result.Message.AlarmMode & 4) == 4) {
+    								$("#NotificationMobileDiv").show()
+    								//短信告警
+    							}
+    						}
+    						else {
+    							alert(result.Message);
+    						}
+
+    					}
+    				});
+    			} else {
+    				$("#AlarmParamName").html("");
+    			}
+    		});
+    		$("#formAgent").ajaxForm({
+    			success: function (result) {
+    				bootbox.alert(result.Message, function (box) {
+    					if (result.OK) {
+    						$("#formAgent").resetForm();
+    					}
+    				});
+    			},
+    			error: function (XmlHttpRequest, textStatus, errorThrown) {
+    				bootbox.alert("操作失败:服务器错误");
+    			}
+    		});
+
+    	});
+
+    </script>
+</head>
+<body>
+    <div class="container-fluid" id="content">
+        <div id="main">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="box box-bordered">
+                            <div class="box-title">
+                                <h3>
+                                    <i class="icon-ok-sign"></i>
+                                    预警规则</h3>
+                            </div>
+                            <div class="box-content">
+                                <form action="M2MalarmSetAdd.htm?action=add" method="POST" class="form-horizontal form-validate" id="formAgent">
+                                    <div class="control-group">
+                                        <label for="RuleName" class="control-label">规则名称：</label>
+                                        <div class="controls">
+                                            <input type="text" id="RuleName" name="RuleName" class="input-xlarge" maxlength="20" data-rule-required="true" data-msg-required="请填写规则名称" data-rule-minlength="1" data-msg-minlength="规则名称至少1位" title="规则名称必填，最大允许输入20个字符" />
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="AlarmType" class="control-label">规则类型：</label>
+                                        <div class="controls">
+                                            <select id="AlarmType" name="AlarmType" class="select2-me select-xlarge" data-search="false">
+												<option value=''>请选择预警类型</option><option value="4">套餐变更</option><option value="3">状态变更</option><option value="2">余额不足</option><option value="1">流量不足</option>
+                                            </select>
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="AlarmParamValue" class="control-label">预警参数：</label>
+                                        <div class="controls">
+                                            <span id="AlarmParamName"></span><input type="text" id="AlarmParamValue" name="AlarmParamValue" class="input-small" maxlength="20" />
+                                        </div>
+                                    </div>
+
+									<div class="control-group">
+                                        <label for="account" class="control-label">预警方式：</label>
+                                        <div class="controls">
+                                            <div id="NotificationUrlDiv" style="display:none; margin-bottom:5px;">推送地址：<input type="text" id="NotificationUrl" name="NotificationUrl" placeholder="多个用;分隔，不使用则不填" class="input-xxlarge" maxlength="300" /></div>
+											<div id="NotificationEmailDiv" style="display:none; margin-bottom:5px;">邮件地址：<input type="text" id="NotificationEmail" name="NotificationEmail" placeholder="多个用;分隔，不使用则不填" class="input-xxlarge" maxlength="200" /></div>
+											<div id="NotificationMobileDiv" style="display:none; margin-bottom:5px;">手机号码：<input type="text" id="NotificationMobile" name="NotificationMobile" placeholder="多个用;分隔，不使用则不填" class="input-xxlarge" maxlength="200" /></div>
+                                        </div>
+                                    </div>
+
+									<div class="control-group">
+                                        <label for="account" class="control-label">预警对象：</label>
+                                        <div class="controls">
+                                            <div style="margin-bottom:5px;">代理：<input type="radio" name="AlarmObjAgentID" value="-1" checked="checked" />不关注  &nbsp;&nbsp;<input type="radio" name="AlarmObjAgentID" value="0" />全部  &nbsp;&nbsp;<input type="radio" name="AlarmObjAgentID" value="1" />指定ID：<input type="text" id="AgentID" name="AgentID" placeholder="代理ID" class="input-small" maxlength="10" /></div>
+											<div style="margin-bottom:5px;">客户：<input type="radio" name="AlarmObjUserID" value="-1" checked="checked" />不关注  &nbsp;&nbsp;<input type="radio" name="AlarmObjUserID" value="0" />全部  &nbsp;&nbsp;<input type="radio" name="AlarmObjUserID" value="1" />指定ID：<input type="text" id="UserID" name="UserID" placeholder="客户ID" class="input-small" maxlength="10" /></div>
+											<div style="margin-bottom:5px;">通道：<input type="radio" name="AlarmObjInterfaceID" value="-1" checked="checked" />不关注  &nbsp;&nbsp;<input type="radio" name="AlarmObjInterfaceID" value="0" />全部  &nbsp;&nbsp;<input type="radio" name="AlarmObjInterfaceID" value="1" />指定ID：<input type="text" id="InterfaceID" name="InterfaceID" placeholder="通道ID" class="input-small" maxlength="10" /></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary" id="btnSubmit">
+                                            <i class="icon-ok-sign"></i>
+                                            添加</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

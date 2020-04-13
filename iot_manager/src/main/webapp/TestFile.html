@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
+    <title>测试</title>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+</head>
+<body>
+
+
+<form  id="fileUploadForm" enctype="multipart/form-data" method="post" onsubmit="return false">
+    <!--<input id = "username" type="text" name="username"/><br/><br/>-->
+    <input id ="img" type="file" name="img"/><br/><br/>
+    <input type="submit" value="Submit" id="btnSubmit" onclick="test1()"/>
+</form>
+
+<!--<form id="form_table" enctype="multipart/form-data" >-->
+    <!--<input type="file" name="filename" />-->
+    <!--<br/>-->
+    <!--<input type="text" name="account" value="1888" class="account">-->
+<!--</form>-->
+
+
+</body>
+
+<script>
+
+//    var fd = new FormData($("#form_table")[0]);
+//    $.ajax({
+//        url: "/api/v1/testFile.do",
+//        type: "POST",
+//        data: fd,
+//        processData: false,
+//        contentType: false,
+//        success : function(data) {
+//            alert(data.flag);
+//        },
+//        error : function(data) {
+//            alert(data.flag);
+//        }
+//    });
+
+    function test1() {
+        // var username = $("#username").val();
+        // var img = $('#img').get(0).files[0];
+        // console.log(username);
+        // console.log(img);
+        // var form = new FormData($("#fileUploadForm")[0]);
+        var form = new FormData(document.getElementById("fileUploadForm"));
+        // var form = new FormData();
+        // form.append("img", img)
+        $.ajax({
+            type: "POST",
+            url:"/api/v1/testFile.do",
+            data:form,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                alert("success");
+            }
+        })
+    }
+
+    // function fire_ajax_submit() {
+    //
+    //     // Get form
+    //     var form = $('#fileUploadForm')[0];
+    //
+    //     var data = new FormData(form);
+    //
+    //     data.append("CustomField", "This is some extra data, testing");
+    //
+    //     $("#btnSubmit").prop("disabled", true);
+    //
+    //     $.ajax({
+    //         type: "POST",
+    //         enctype: 'multipart/form-data',
+    //         url: "/api/v1/testFile",
+    //         data: data,
+    //         //http://api.jquery.com/jQuery.ajax/
+    //         //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+    //         processData: false, //prevent jQuery from automatically transforming the data into a query string
+    //         contentType: false,
+    //         cache: false,
+    //         timeout: 600000,
+    //         success: function (data) {
+    //
+    //             $("#result").text(data);
+    //             console.log("SUCCESS : ", data);
+    //             $("#btnSubmit").prop("disabled", false);
+    //
+    //         },
+    //         error: function (e) {
+    //
+    //             $("#result").text(e.responseText);
+    //             console.log("ERROR : ", e);
+    //             $("#btnSubmit").prop("disabled", false);
+    //
+    //         }
+    //     });
+    //
+    // }
+
+    function test() {
+        var testdata = $("#tf")[0];
+        var form = new FormData(testdata);
+        console.log(form);
+//             var req = new XMLHttpRequest();
+//             req.open("post", "${pageContext.request.contextPath}/public/testupload", false);
+//             req.send(form);
+        $.ajax({
+            url: "/api/v1/testFile.do",
+            type: "post",
+            data: form,
+            processData: false,
+            enctype: 'multipart/form-data',
+            contentType: false,
+            success: function (data) {
+                // window.clearInterval(timer);
+                console.log("over..");
+            },
+            error: function (e) {
+                alert("错误！！");
+                // window.clearInterval(timer);
+            }
+        });
+    }
+</script>
+</html>

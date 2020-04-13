@@ -1,0 +1,365 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>物联网通道管理</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/plugins/icheck/all.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/list.css">
+    <link rel="stylesheet" href="css/pagination.css">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+    <link rel="stylesheet" href="css/ie7.css">
+    <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+    <script type="text/javascript" src="js/init.js?20160401"></script>
+    <script type="text/javascript" src="js/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jquery-paginator/jquery.pagination.js"></script>
+
+    <!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('input, textarea').placeholder();
+        });
+    </script>
+    <![endif]-->
+    <!--<script type="text/javascript">-->
+    <!--$(document).ready(function () {-->
+    <!--$(".action-alarm").on("click", function () {-->
+    <!--var interfaceID = $(this).attr("data-id");-->
+    <!--var interfaceName = $(this).attr("data-name");-->
+    <!--$("#interfaceID").val(interfaceID);-->
+    <!--$("#myModalLabel2").html(interfaceName + "的告警设置");-->
+    <!--$("input[type='radio']").attr("checked", false);-->
+    <!--$.ajax({-->
+    <!--url: 'GetInterfaceAlarm.htm',-->
+    <!--type: 'POST',-->
+    <!--data: {action: "getList", interfaceID: interfaceID},-->
+    <!--error: function () {-->
+    <!--alert("远程访问失败");-->
+    <!--},-->
+    <!--success: function (result) {-->
+    <!--if (result.Message != null && result.Message != "") {-->
+    <!--if (result.Message.IsEnabled)-->
+    <!--$("input[name='IsEnabled'][value='1']").prop("checked", true);-->
+    <!--else-->
+    <!--$("input[name='IsEnabled'][value='0']").prop("checked", true);-->
+
+    <!--$("#MaxSubmitDelay").val(result.Message.MaxSubmitDelay);-->
+    <!--if (result.Message.StopWhenSubmitDelay)-->
+    <!--$("input[name='StopWhenSubmitDelay'][value='1']").prop("checked", true);-->
+    <!--else-->
+    <!--$("input[name='StopWhenSubmitDelay'][value='0']").prop("checked", true);-->
+
+    <!--$("#MaxReportDelay").val(result.Message.MaxReportDelay);-->
+    <!--if (result.Message.StopWhenReportDelay)-->
+    <!--$("input[name='StopWhenReportDelay'][value='1']").prop("checked", true);-->
+    <!--else-->
+    <!--$("input[name='StopWhenReportDelay'][value='0']").prop("checked", true);-->
+
+    <!--$("#MaxSubmitErrorCount").val(result.Message.MaxSubmitErrorCount);-->
+    <!--if (result.Message.StopWhenSubmitError)-->
+    <!--$("input[name='StopWhenSubmitError'][value='1']").prop("checked", true);-->
+    <!--else-->
+    <!--$("input[name='StopWhenSubmitError'][value='0']").prop("checked", true);-->
+
+    <!--$("#MaxReportErrorCount").val(result.Message.MaxReportErrorCount);-->
+    <!--if (result.Message.StopWhenReportError)-->
+    <!--$("input[name='StopWhenReportError'][value='1']").prop("checked", true);-->
+    <!--else-->
+    <!--$("input[name='StopWhenReportError'][value='0']").prop("checked", true);-->
+
+    <!--$("#MinBalance").val(result.Message.MinBalance);-->
+    <!--if (result.Message.StopWhenBalanceError)-->
+    <!--$("input[name='StopWhenBalanceError'][value='1']").prop("checked", true);-->
+    <!--else-->
+    <!--$("input[name='StopWhenBalanceError'][value='0']").prop("checked", true);-->
+
+    <!--$("#MinAlarmInterval").val(result.Message.MinAlarmInterval);-->
+    <!--} else {-->
+    <!--$("input[name='IsEnabled'][value='0']").prop("checked", true);-->
+
+    <!--$("#MaxSubmitDelay").val(0);-->
+    <!--$("input[name='StopWhenSubmitDelay'][value='1']").prop("checked", true);-->
+
+    <!--$("#MaxReportDelay").val(0);-->
+    <!--$("input[name='StopWhenReportDelay'][value='1']").prop("checked", true);-->
+
+    <!--$("#MaxSubmitErrorCount").val(0);-->
+    <!--$("input[name='StopWhenSubmitError'][value='1']").prop("checked", true);-->
+
+    <!--$("#MaxReportErrorCount").val(0);-->
+    <!--$("input[name='StopWhenReportError'][value='1']").prop("checked", true);-->
+
+    <!--$("#MinBalance").val(0);-->
+    <!--$("input[name='StopWhenBalanceError'][value='0']").prop("checked", true);-->
+
+    <!--$("#MinAlarmInterval").val(60);-->
+    <!--}-->
+    <!--$("#modal-plus").modal();-->
+    <!--}-->
+    <!--});-->
+    <!--});-->
+
+    <!--$("#modal-plus").on("click", ".btn-primary", function () {-->
+    <!--$("#most-plus-form").ajaxSubmit({-->
+    <!--type: "POST",-->
+    <!--success: function (result) {-->
+    <!--alert(result.Message);-->
+    <!--},-->
+    <!--error: function (XmlHttpRequest, textStatus, errorThrown) {-->
+    <!--alert("操作失败服务器错误");-->
+    <!--}-->
+    <!--});-->
+    <!--$("#modal-plus").modal("hide");-->
+    <!--});-->
+    <!--});-->
+    <!--</script>-->
+</head>
+<body>
+<div class="container-fluid" id="content">
+    <div id="main">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="box box-bordered">
+                        <div class="box-title">
+                            <h3><i class="icon-table"></i> 通道列表</h3>
+                            <a href="M2MinterfaceAdd.htm" class="btn btn-primary"
+                               style="float:right;margin-right:10px;"><i class="icon-plus-sign"></i> 添加通道</a>
+                        </div>
+                        <div class="box-content nopadding">
+                            <div class="dataTables_wrapper">
+                                <div class="dataTables_info1" style="padding-top: 10px;">
+                                    <div class="form-inline">
+                                        <div class="dataTables_filter">
+                                            <label>通道名称: </label>
+                                            <input type="text" class="input-small" name="InterfaceName"
+                                                   id="InterfaceName" placeholder="通道名称" value=""/>
+                                            <label>通道状态: </label>
+                                            <select id="status" name="status" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部状态</option>
+                                                <option value="0">正常</option>
+                                                <option value="1">停用</option>
+                                            </select>
+                                            <label>运营商: </label>
+                                            <select id="OperatorType" name="OperatorType" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="1">移动</option>
+                                                <option value="2">联通</option>
+                                                <option value="3">电信</option>
+                                            </select>
+                                            <button id="channelSearch" type="submit" class="btn btn-primary"><i
+                                                    class="icon-search"></i> 搜索
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="clear:both;"></div>
+                                <table id="channelList"
+                                       class="table table-hover table-nomargin table-bordered table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th>通道编号</th>
+                                        <th style="width:auto;">通道名称</th>
+                                        <th style="width:auto;">别名</th>
+                                        <!--<th style="width:auto;">通道类名</th>-->
+                                        <th style="width:auto;">运营商</th>
+                                        <th style="width:auto;">通道状态</th>
+                                        <th style="width:auto;">结算日</th>
+                                        <!--<th style="width:auto;">状态描述</th>-->
+                                        <th style="width:auto;">充值模式</th>
+                                        <th style="width:auto;">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+
+                                    </tbody>
+                                </table>
+                                <div id="pagination-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+<script>
+
+    $("#channelSearch").click(function () {
+        pageStart();
+
+        function pageStart() {
+            var channelName = $("#InterfaceName").val();
+            var operator = $("#OperatorType").val();
+            var status = $("#status").val();
+            // console.log(agentAccount + ";" + name +";" + id + ";" + status)
+            $('#pagination-container').pagination({
+                dataSource: '/api/v1/channel_list.do?channelName='
+                    + channelName + "&operator=" + operator + "&id=" + "&status=" + status,
+                prevText: '<<',
+                nextText: '>>',
+                goButtonText: 'go',
+                alias: {
+                    pageNumber: 'page',
+                    pageSize: 'size'
+                },
+                pageSize: 15,
+                totalNumberLocator: function (response) {//处理页数
+                    return response.total;
+                },
+                locator: 'list',
+                ajax: {
+                    type: 'GET',
+                    beforeSend: function () {//请求前处理
+                        $("#dataContainer").html('加载中...');
+                    }
+                },
+                showGoInput: true,
+                showGoButton: true,
+                showNavigator: true,
+                callback: function (data, pagination) {
+                    $("#channelList tr td").remove();
+                    $.each(data, function (i, item) {
+                        var result = "<tr><td>" + item['id'] + "</td><td>" + item['channelName'] + "</td><td>" + item['showName']
+                            + "</td><td>" + operatorType(item['operator']) + "</td><td>" + channelStatus(item['status']) + "</td><td>" + item['settlementDate']
+                            + "</td><td>" + rechargeMode(item['rechargeMode']) + "</td><td><a href=\"/M2MinterfaceEdit.htm?" + item['id']
+                            + "\">修改</a>&#12288<a href='javascript:void(0)' onclick=\"stopChannel('" + item['id'] + "')\">停用</a>" +
+                            "&#12288<a href='javascript:void(0)' onclick=\"startChannel('" + item['id'] + "')\">启动</a> </td></tr>";
+                        $("#channelList").append(result);
+                    });
+                }
+
+            });
+        }
+
+    });
+
+    function channelStatus(data) {
+        if (data == 0)
+            return "<font color='green'>正常</font>";
+        return "<font color ='red'>停用</font>"
+    }
+
+    function rechargeMode(data) {
+        if (data == 0)
+            return "<font color='green'>自动</font>";
+        return "<font color='#daa520'>人工审核</font>";
+    }
+
+    function stopChannel(data) {
+        if (!confirm('你确定要进行该操作吗？')) {
+            return;
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/api/v1/channel_updateStatus.do',
+            data: {id: data, action: 'stop'},
+            success: function (data) {
+                if (data.code == 0) {
+                    alert("更新成功");
+                    window.location.reload();
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+        });
+    }
+
+    function startChannel(data) {
+        if (!confirm('你确定要进行该操作吗？')) {
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/v1/channel_updateStatus.do',
+            data: {id: data, action: 'ok'},
+            success: function (data) {
+                if (data.code == 0) {
+                    alert("更新成功");
+                    window.location.reload();
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+        });
+    }
+
+    function operatorType(data){
+        if (data == 1)
+            return "移动";
+        if (data == 2)
+            return "联通";
+        if (data == 3)
+            return "电信";
+        if (data == 8)
+            return "全国";
+        return "没有配置运营商";
+    }
+
+    $(document).ready(function () {
+        $('#pagination-container').pagination({
+
+            dataSource: '/api/v1/channel_list.do',
+            prevText: '<<',
+            nextText: '>>',
+            goButtonText: 'go',
+            alias: {
+                pageNumber: 'page',
+                pageSize: 'size'
+            },
+            pageSize: 10,
+            totalNumberLocator: function (response) {//处理页数
+                return response.total;
+            },
+            locator: 'list',
+            ajax: {
+                type: 'GET',
+                beforeSend: function () {//请求前处理
+                    $("#dataContainer").html('加载中...');
+                }
+            },
+            showGoInput: true,
+            showGoButton: true,
+            showNavigator: true,
+            callback: function (data, pagination) {
+                $("#channelList tr td").remove();
+                $.each(data, function (i, item) {
+                    var result = "<tr><td>" + item['id'] + "</td><td>" + item['channelName'] + "</td><td>" + item['showName']
+                        + "</td><td>" + operatorType(item['operator']) + "</td><td>" + channelStatus(item['status']) + "</td><td>" + item['settlementDate']
+                        + "</td><td>" + rechargeMode(item['rechargeMode']) + "</td><td><a href=\"/M2MinterfaceEdit.htm?" + item['id']
+                        + "\">修改</a>&#12288<a href='javascript:void(0)' onclick=\"stopChannel('" + item['id'] + "')\">停用</a>" +
+                        "&#12288<a href='javascript:void(0)' onclick=\"startChannel('" + item['id'] + "')\">启动</a> </td></tr>";
+                    $("#channelList").append(result);
+                });
+            }
+
+        });
+    });
+
+</script>
+</html>

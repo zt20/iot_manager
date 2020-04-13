@@ -1,0 +1,185 @@
+
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>添加公告</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/plugins/select2/select2.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/add.css">
+   <link rel="stylesheet" href="css/plugins/icheck/all.css">
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+  <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+  <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+  <script type="text/javascript" src="js/plugins/fileupload/bootstrap-fileupload.min.js"></script>
+  <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+  <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+  <script type="text/javascript" src="js/init.js"></script>
+  <script type="text/javascript" src="js/loading.js"></script>
+  <script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+  <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+  <script type="text/javascript">
+
+  	$(document).ready(function () {
+
+  		$(document).on("click", "#typeCheck", function () {
+  			$("#modalChoice").modal();
+  			bindPagedList();
+  		});
+  		function bindPagedList() {
+  			$.ajax({
+  				url: "NotificationAdd.htm",
+  				data: { action: "getTargetList", type: $("input[type='radio']:checked").val() },
+  				success: function (result) {
+  					var html = "";
+  					for (var i = 0; i < result.Message.Data.length; i++) {
+  						html += "  <li>";
+  						html += "   <div class=\"check-line\">";
+  						if ($("input[type='radio']:checked").val() == 1 || $("input[type='radio']:checked").val() == 2) {
+  							html += "  <input type=\"checkbox\" class=\"icheck-me\" data-skin=\"minimal\" id=\"toId\" name=\"toId\" value=" + result.Message.Data[i].AgentID + " />";
+  							html += "<label class=\"inline\" for=\"choiceAll\">" + result.Message.Data[i].AgentName + "</label>";
+  						} else {
+  							html += "  <input type=\"checkbox\" class=\"icheck-me\" data-skin=\"minimal\" id=\"toId\" name=\"toId\" value=" + result.Message.Data[i].UserID + " />";
+  							html += "<label class=\"inline\" for=\"choiceAll\">" + result.Message.Data[i].Account + "</label>";
+  						}
+  						html += "   </div>";
+  						html += "  </li>";
+  					}
+  					$(".typeArea").find("ul").html(html);
+  				}
+  			});
+  		}
+  		$(document).on("click", ".choiceAll", function () {
+  			var checked = $(this).prop("checked");
+  			if (checked) {
+  				$("[name='toId']").iCheck('check');
+  			} else {
+  				$("[name='toId']").iCheck('uncheck');
+  			}
+  		});
+  		$("#btnSubmit").on("click", function () {
+  			$('#contents').val(CKEDITOR.instances.contents.getData());
+  			$("#formNotification").ajaxSubmit({
+  				type: "post",
+  				url: "NotificationAdd.htm?action=add",
+  				dataType: "json",
+  				beforeSubmit: function () {
+  					$('#contents').val(CKEDITOR.instances.contents.getData());
+  				},
+  				success: function (result) {
+  					bootbox.alert(result.Message);
+  				},
+  				error: function (XmlHttpRequest, textStatus, errorThrown) {
+  					bootbox.alert("操作失败:服务器错误");
+  				}
+  			});
+  		});
+
+  		$(document).on("click", "a[data-index]", function () {
+  			pagination.setPageIndex($(this).attr("data-index"));
+  			bindPagedList();
+  		});
+  	});
+  </script>
+  <style type="text/css">
+   .choiceArea{height:10px;}
+   .typeArea ul {list-style: none;}
+   .typeArea ul li{float: left; width: 50%;}
+   .pagination ul{width: 100%;margin: 0px;padding: 1px 0px;border: 0px none;}
+   .pagination ul li{width: auto;}
+  </style>
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+              <div class="box-title">
+                <h3>
+                  <i class="icon-ok-sign"></i>
+                  发布公告</h3>
+              </div>
+              <div class="box-content">
+                <form action="NotificationAdd.htm" method="POST" class="form-horizontal form-validate" id="formNotification">
+                <div class="control-group">
+                  <label for="title" class="control-label">标题：</label>
+                  <div class="controls">
+                    <input type="text" id="title" name="title" class="input-xlarge" maxlength="45" data-rule-required="true" data-msg-required="请填写标题" title="标题必填，最大允许输入45个字符" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label for="operator" class="control-label">发布者：</label>
+                  <div class="controls">
+                    <input type="text" id="operator" name="operator" class="input-xlarge" maxlength="15" title="请填写发布者，最大允许输入15个字符" />
+                  </div>
+                </div>
+                <div class="sendType">
+                  <div class="control-group">
+                      <label for="mobile" class="control-label">
+                          发送对象：</label>
+                      <div class="controls radioGroup" id="typeCheck">
+                          <label class="radio inline">
+                              <input id="type1" name="type" type="radio"  value="1"   data-skin="minimal" data-color="blue" /> 发送给所有/单个代理商
+                          </label>
+						  <!--
+                         <label class="radio inline">
+                              <input id="type2" name="type" type="radio"  value="2" data-skin="minimal" data-color="blue" />发送给所有/单个一级代理商
+                          </label>-->
+                          <label class="radio inline">
+                              <input id="type3" name="type" type="radio"  value="3" data-skin="minimal" data-color="blue" />发送给所有/单个商户
+                          </label>
+                      </div>
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label for="contents" class="control-label">发布内容：</label>
+                  <div class="controls">
+                    <textarea id="contents" name="contents" class="ckeditor" rows="5"></textarea>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button type="button" class="btn btn-primary" id="btnSubmit">
+                    <i class="icon-ok-sign"></i>
+                    发布公告</button>
+                </div>
+                <div class="modal fade hide" style="width: 495px;" id="modalChoice">
+                    <div class="modal-header">
+      <a href="javascript:" class="btn btn-mini close" data-dismiss="modal" aria-hidden="true">&times;</a>
+      <h4>
+           <div class="choiceArea">
+             <div class="check-demo-col">
+               <div class="check-line">
+                 <input type="checkbox" class="icheck-me choiceAll" data-skin="minimal" value="true" id="choiceAll" name="choiceAll" />
+                  <label class="inline" for="choiceAll">全选</label>
+               </div>
+             </div>
+           </div>
+      </h4>
+    </div>
+                    <div class="modal-body">
+         <div class="typeArea">
+            <ul></ul>
+         </div>
+    </div>
+                    <div class="modal-footer">
+      <a href="javascript:" class="btn" data-dismiss="modal">取消</a> <input name="submit" type="button" data-dismiss="modal"  class="btn btn-primary" value="确定" />
+    </div>
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</body>
+</html>

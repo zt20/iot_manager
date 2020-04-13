@@ -1,0 +1,167 @@
+
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改配置</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/edit.css">
+	<style type="text/css">
+	  .additional{
+	  	 display:none;
+	  }
+	</style>
+    <!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+
+	<script type="text/javascript" src="js/plugins/fileupload/bootstrap-fileupload.min.js"></script>
+
+    <script type="text/javascript" src="js/init.js"></script>
+	<script type="text/javascript" src="js/loading.js"></script>
+	<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+    <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+
+    <script type="text/javascript">
+    	$(document).ready(function () {
+    		$("#btnSubmit").click(function () {
+    			$("#mobilePageRemark").val(CKEDITOR.instances.mobilePageRemark.getData());
+    		});
+    		$("#formAgent").ajaxForm({
+    			success: function (result) {
+    				bootbox.alert(result.Message);
+    			},
+    			error: function (XmlHttpRequest, textStatus, errorThrown) {
+    				bootbox.alert("操作失败:服务器错误");
+    			}
+    		});
+
+    		$("#img-uplaod-form").ajaxForm({
+    			success: function (result) {
+    				if (result.Message != "") {
+    					$("#mobilePageBanner").val(result.Message);
+    					$("#mobilePageBannerShow").attr("src", "http://47.92.159.122:8083" + result.Message);
+    					$("#img-uplaod").modal("hide");
+    				} else {
+    					bootbox.alert("上传失败！");
+    				};
+    			},
+    			error: function (XmlHttpRequest, textStatus, errorThrown) {
+    				bootbox.alert("操作失败:服务器错误!");
+    			}
+    		});
+    	});
+
+    	function imgUpload() {
+    		$("#img-uplaod").modal();
+    	}
+    </script>
+
+</head>
+<body>
+    <div class="container-fluid" id="content">
+        <div id="main">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="box box-bordered">
+                            <div class="box-title">
+                                <h3><i class="icon-edit"></i>系统参数配置</h3>
+                            </div>
+                            <div class="box-content">
+                                <form action="ConfigEdit.htm?action=save" method="post" class="form-horizontal form-validate" id="formAgent">
+                                    
+                                    <div class="control-group">
+                                        <label for="account" class="control-label">管理平台二维码：</label>
+                                        <div class="controls">
+											列表页面<input type="checkbox" name="ShowAdminWebQrCode" value="1" checked="checked" />
+											导出内容<input type="checkbox" name="ShowAdminExtQrCode" value="1"   />
+                                            <br /><span style="color:Red;">当微信公众号绑定后，物联网页面是否显示单卡查询二维码，扫描该二维码会导致卡归属关系改变。</span>
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
+                                        <label for="account" class="control-label">代理平台二维码：</label>
+                                        <div class="controls">
+											列表页面<input type="checkbox" name="ShowAgentWebQrCode" value="1" checked="checked" />
+											导出内容<input type="checkbox" name="ShowAgentExtQrCode" value="1"   />
+                                            <br /><span style="color:Red;">当微信公众号绑定后，物联网页面是否显示单卡查询二维码，扫描该二维码会导致卡归属关系改变。</span>
+                                            <br /><span style="color:Red;">代理使用自己微信公众号，则显示代理公众号二维码，否则显示管理平台公众号二维码。</span>
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
+                                        <label for="account" class="control-label">客户平台二维码：</label>
+                                        <div class="controls">
+											列表页面<input type="checkbox" name="ShowUserWebQrCode" value="1" checked="checked" />
+											导出内容<input type="checkbox" name="ShowUserExtQrCode" value="1"   />
+                                            <br /><span style="color:Red;">当微信公众号绑定后，物联网页面是否显示单卡查询二维码，扫描该二维码会导致卡归属关系改变。</span>
+                                            <br /><span style="color:Red;">代理使用自己微信公众号，则显示代理公众号二维码，否则显示管理平台公众号二维码。</span>
+                                        </div>
+                                    </div>
+                                    
+									<div class="control-group">
+										<label for="email" class="control-label">限制跳转IP：</label>
+										<div class="controls">
+											<textarea name="turnIp" id="turnIp" rows="5" cols="10" placeholder="为空不限制跳转IP，一行一个，支持IP段，后面用*替代，例 202.203.1.*" ></textarea>
+										</div>
+									</div>
+                                    <div class="control-group">
+                                        <label for="account" class="control-label">登陆短信验证码：</label>
+                                        <div class="controls">
+											管理平台<input type="checkbox" name="UseLoginSms1" value="1"  />
+											代理平台<input type="checkbox" name="UseLoginSms2" value="2"   />
+											客户平台<input type="checkbox" name="UseLoginSms3" value="4"   />
+                                            <br /><span style="color:Red;">请先配置各账号正确的手机号码，并在系统管理里面配置好短信接口，测试成功后，再开启短信登陆验证功能！</span>
+                                        </div>
+                                    </div>
+									
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary" id="btnSubmit"><i class="icon-ok-sign"></i>修改</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+	
+	<div id="img-uplaod" class="modal hide fade" role="dialog" aria-labelledby="img-uplaod-form" aria-hidden="true">
+		<form action="ImageUpload.htm" id="img-uplaod-form" class="form-vertical form-validate">
+		<div class="modal-body">
+			<div class="box-content">
+				<input type="hidden" name="id" value="0"/>
+				<input type="file" name="imageUrl"/>
+				<input type="hidden" name="action" value="save" />
+			</div>
+			<div class="modal-footer">
+			<a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a> 
+			<button type="submit" class="btn btn-primary" id="Button1">提交</button>
+			</div>
+		</form>
+	</div>
+</body>
+</html>
+

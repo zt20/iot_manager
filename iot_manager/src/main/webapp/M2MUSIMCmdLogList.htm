@@ -1,0 +1,176 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>流量通道管理</title>
+
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/plugins/select2/select2.css">
+  <link rel="stylesheet" href="css/plugins/icheck/all.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/list.css">
+  <link rel="stylesheet" href="css/plugins/datepicker/bootstrap-datetimepicker.css">
+	<!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+  <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+  <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+  <script type="text/javascript" src="js/plugins/datepicker/bootstrap-datetimepicker.js"></script>
+  <script type="text/javascript" src="js/init.js?20160401"></script>
+  <script type="text/javascript" src="js/jquery.form.min.js"></script>
+
+  <!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('input, textarea').placeholder();
+      });
+    </script>
+  <![endif]-->
+   <script type="text/javascript">
+       $(document).ready(function () {
+           $('#start_date').datetimepicker({ autoclose: true, format: "yyyy-mm-dd", minView: 'month' });
+           $('#end_date').datetimepicker({ autoclose: true, format: "yyyy-mm-dd", minView: 'month' });
+
+           $(".action-search").on("click", function () {
+               $("#action").val("search");
+               $("#searchForm").submit();
+           });
+           $(".action-export").on("click", function () {
+               $("#action").val("export");
+               $("#searchForm").submit();
+           });
+
+           $(".showTr").on("click", function () {
+               $(this).next().toggle();
+           });
+       });
+  </script>
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+				<div class="box-title">
+                <h3><i class="icon-table"></i> 历史命令</h3>
+              </div>
+              <div class="box-content nopadding">
+                <div class="dataTables_wrapper">
+                  <div class="dataTables_info1" style="padding-top: 10px;">
+					<form class="form-inline" action="M2MUSIMCmdLogList.htm" method="get" id="searchForm">
+                    <input type="hidden" name="action" id="action" value="search" />
+                    <div class="dataTables_filter">
+                        <div class="form-group pull-left" style="padding-right:5px;">
+							开始时间
+							<div class="input-group input-append" id="start_date_div" style="">
+								<span class="input-group-addon add-on">
+									<i class="fa fa-calendar icon-calendar" data-date-icon="icon-calendar" data-time-icon="icon-time"></i>
+								</span>
+								<input class="form-control input-sm" placeholder="开始时间" style="width: 100px;" id="start_date" name="start_date" value="2019-02-16" data-format="yyyy-MM-dd" type="text">
+							</div>
+						</div> 
+						<div class="form-group pull-left" style="padding-right:5px;">
+							结束时间
+							<div class="input-group input-append" id="end_date_div" style="">
+								<span class="input-group-addon add-on">
+									<i class="fa fa-calendar icon-calendar" data-date-icon="icon-calendar" data-time-icon="icon-time"></i>
+								</span>
+								<input class="form-control input-sm" placeholder="结束时间" style="width: 100px;" id="end_date" name="end_date" value="2019-02-16" style="width: 160px;" type="text">
+							</div>
+						</div>
+						<label>ICCID: </label>
+                        <input type="text" class="input-large" name="ICCID" id="ICCID" placeholder="ICCID" value=""/>
+
+						<label>代理: </label>
+                        <input type="text" class="input-small" name="AgentAccount" id="AgentAccount" placeholder="代理账号" value=""/>
+						<label>客户: </label>
+                        <input type="text" class="input-small" name="UserAccount" id="UserAccount" placeholder="客户账号" value=""/>
+                        
+                    </div>
+                    <div style="clear: both;"></div>
+                    <div class="dataTables_filter">
+                        <label>ID: </label>
+                        <input type="text" class="input-large" name="ID" placeholder="ID" value=""/>
+                        <label style="width: 50px;">通　道: </label>
+                        <select id="InterfaceID" name="InterfaceID" class="select2-me input-medium" data-search="true">
+                            <option value=''>选择通道</option><option value='9'>1</option><option value='8'>测试</option><option value='7'>电信物联网卡~09</option><option value='6'>移动物联卡</option><option value='5'>20G流量池</option><option value='4'>优景万禾移动</option><option value='3'>中国联通</option><option value='2'>中国电信</option><option value='1'>中国移动</option>
+                        </select>
+                        <label style="width: 50px;">命　令: </label>
+                        <select id="CommandType" name="CommandType" class="select2-me input-medium" data-search="true">
+                            <option value="">全部</option>
+                            <option value="CHARGE" >充值</option>
+                            <option value="SYNCUSIMLIST" >同步号码</option>
+                            <option value="PAUSEUSIM" >停用</option>
+                            <option value="RESUMEUSIM" >启用</option>
+                            <option value="INITAPI" >套餐初始化</option>
+                            <option value="CHANGEPLAN" >下期资费</option>
+                            <option value="SYNCUSAGE" >用量同步</option>
+                            <option value="RELOADUSIM" >数据重载</option>
+                            <option value="AUTORENEWAL" >自动续费</option>
+                            <option value="HIBERNATE" >休眠</option>
+                            <option value="REMOVEPLAN" >取消套餐</option>
+                            <option value="ADDPLAN" >平台叠加套餐</option>
+                            <option value="CUTSERVICE" >单独断网</option>
+                            <option value="SETAUTORENEWAL" >自动续费状态</option>
+                            <option value="RNR" >同步实名</option>
+                        </select>
+                        <label style="width: 50px;">状　态: </label>
+                        <select id="Status" name="Status" class="select2-me input-small" data-search="true">
+                            <option value="">全部</option>
+                            <option value="2" >执行失败</option>
+                            <option value="3" >执行成功</option>
+                            <option value="4" >命令失败</option>
+                            <option value="5" >命令成功</option>
+                        </select>
+                        <button type="button" class="btn btn-primary action-search"><i class="icon-search"></i> 搜索</button>
+                        <button type="button" class="btn btn-success action-export"><i class="icon-share-alt"></i> 导出</button>
+                      
+                    </div>
+					</form>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <table class="table table-hover table-nomargin table-bordered table-condensed">
+                    <thead>
+                      <tr>
+                        <th style="width:60px;">ID</th>
+                        <th style="width:150px;">ICCID</th>
+						<th style="width:60px;">代理/客户</th>
+						<th style="width:100px;">通道</th>
+						<th style="width:80px;">命令</th>
+                        <th style="width:130px;">创建/待执行/执行时间</th>
+						<th style="width:55px;">来源</th>
+                        <th style="width:80px;">审核状态</th>
+						<th style="width:55px;">状态</th>
+						<th>提交返回</th>
+						<th>状态报告</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                      <tr>
+                        <td colspan="10" style="height:80px; text-align:center">暂无数据..</td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

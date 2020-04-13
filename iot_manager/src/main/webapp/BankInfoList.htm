@@ -1,0 +1,133 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>卡号信息</title>
+
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/plugins/select2/select2.css">
+  <link rel="stylesheet" href="css/plugins/icheck/all.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/list.css">
+	<!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+  <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+  <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+  <script type="text/javascript" src="js/init.js"></script>
+
+  <!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('input, textarea').placeholder();
+      });
+    </script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+              <div class="box-title">
+                <h3><i class="icon-table"></i> 卡号信息</h3>
+				<a href="BankInfoAdd.htm" class="btn btn-primary" style="float:right;margin-right:10px;"><i class="icon-plus-sign"></i> 添加卡号</a>
+              </div>
+              <div class="box-content nopadding">
+                <div class="dataTables_wrapper">
+					<div class="dataTables_info1" style="padding-top: 10px;">
+                    <div class="dataTables_filter">
+                      <form class="form-inline" action="BankInfoList.htm" method="post">
+							<label>公司名称: </label>
+                            <input type="text" class="input-small" name="companyName" id="companyName" placeholder="公司名称" value=""/>
+							<label>户名: </label>
+                            <input type="text" class="input-small" name="account" id="account" placeholder="户名" value=""/>
+							<label>卡号: </label>
+                            <input type="text" class="input-small" name="cardNo" id="cardNo" placeholder="卡号" value=""/>
+							<label>银行: </label>
+                            <input type="text" class="input-small" name="bankName" id="bankName" placeholder="银行名称" value=""/>
+							<label>类别: </label>
+							<select id="payType" name="payType" class="select2-me input-small" data-search="false">
+								<option value="">全部</option>
+								<option value="0" >公司自有</option>
+								<option value="1" >客户账号</option>
+							</select>
+							<label>类型: </label>
+							<select id="isPublic" name="isPublic" class="select2-me input-small" data-search="false">
+								<option value="">全部</option>
+								<option value="0" >Ⅰ类</option>
+								<option value="1" >Ⅱ类</option>
+							</select>
+						</select>
+						<button type="submit" class="btn btn-primary"><i class="icon-search"></i> 搜索</button>
+                      </form>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <table class="table table-hover table-nomargin table-bordered table-condensed">
+                    <thead>
+                      <tr>
+                        <th>公司名称</th>
+						<th style="width:100px;">类别</th>
+						<th style="width:80px;">类型</th>
+						<th style="width:120px;">银行</th>
+						<th>户名</th>
+                        <th style="width:160px;">卡号</th>
+						<th>备注</th>
+                        <th style="width:120px;">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>有限公司</td>
+						<td><span class='label label-success'>公司自有</span></td>
+						<td><span class='label label-info'>Ⅰ类</span></td>
+                        <td>建设</td>
+						<td>技有限公司</td>
+						<td>555665258956545665542</td>
+						<td>对公测试</td>
+						<td>
+							<a href="BankInfoEdit.htm?id=1&return=%2fBankInfoList.htm" title="修改">修改</a>
+		 <a class="deleterow" data-id="1" data-url="BankInfoList.htm" href="#" title="删除">作废</a>
+	  
+                        </td>
+                      </tr>
+                    <tr>
+                        <td>信息技术有限公司</td>
+						<td><span class='label label-warning'>客户账号</span></td>
+						<td><span class='label label-info'>Ⅰ类</span></td>
+                        <td>招商</td>
+						<td>信息技术有限公司</td>
+						<td>2333332214124142535</td>
+						<td></td>
+						<td>
+							<a href="BankInfoEdit.htm?id=2&return=%2fBankInfoList.htm" title="修改">修改</a>
+		 <a class="deleterow" data-id="2" data-url="BankInfoList.htm" href="#" title="删除">作废</a>
+	  
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+
+                  <div class="dataTables_paginate paging_full_numbers"> <a href="#" class="paginate_button paginate_button_disabled">首页</a>  <a href="#" class="paginate_button paginate_button_disabled">上一页</a>  <span>  <a href="BankInfoList.htm?&companyName=&account=&cardNo=&bankName=&payType=&isPublic=&pageIndex=1" class="paginate_active">1</a>   </span>  <a href="#" class="paginate_button paginate_button_disabled">下一页</a>  <a href="#" class="paginate_button paginate_button_disabled">尾页</a>  <a href="#" class="paginate_button paginate_button_disabled">共2条，1页</a>  <a href="#" class="paginate_button paginate_button_disabled">当前第</a>  <select name="pageSelect" id="pageSelect" class="select2-me input-mini"> <option value="BankInfoList.htm?&companyName=&account=&cardNo=&bankName=&payType=&isPublic=&pageIndex=1" selected="selected">1</option> </select> <a href="#" class="paginate_button paginate_button_disabled">页</a> </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

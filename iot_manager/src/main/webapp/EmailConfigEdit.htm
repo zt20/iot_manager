@@ -1,0 +1,149 @@
+
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改配置</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/edit.css">
+	<style type="text/css">
+	  .additional{
+	  	 display:none;
+	  }
+	</style>
+    <!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+
+	<script type="text/javascript" src="js/plugins/fileupload/bootstrap-fileupload.min.js"></script>
+
+    <script type="text/javascript" src="js/init.js"></script>
+	<script type="text/javascript" src="js/loading.js"></script>
+	<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+    <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+
+    <script type="text/javascript">
+    	$(document).ready(function () {
+    		$("#formAgent").ajaxForm({
+    			success: function (result) {
+    				bootbox.alert(result.Message);
+    			},
+    			error: function (XmlHttpRequest, textStatus, errorThrown) {
+    				bootbox.alert("操作失败:服务器错误");
+    			}
+    		});
+
+    		$("#testButton").on("click", function () {
+    			$.ajax({
+    				url: 'EmailConfigEdit.htm',
+    				type: "post",
+    				data: {
+    					"action": "testEmail",
+    					"Username": $("#Username").val(),
+						"Password": $("#Password").val(),
+						"SmtpServer": $("#SmtpServer").val(),
+						"SmtpPort": $("#SmtpPort").val(),
+						"SenderAddress": $("#SenderAddress").val(),
+						"SSL": $('input:radio[name="SSL"]:checked').val(),
+						"testAddress": $("#testAddress").val()
+    				}, success: function (result) {
+    					bootbox.alert(result.Message);
+    				}
+    			});
+			});
+    	});
+    </script>
+
+</head>
+<body>
+    <div class="container-fluid" id="content">
+        <div id="main">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="box box-bordered">
+                            <div class="box-title">
+                                <h3><i class="icon-edit"></i>邮件配置</h3>
+                            </div>
+                            <div class="box-content">
+                                <form action="EmailConfigEdit.htm?action=save" method="POST" class="form-horizontal form-validate" id="formAgent">
+                                    <div class="control-group">
+                                        <label for="NeedReconciliation" class="control-label">启用对账单：</label>
+                                        <div class="controls">
+											否<input type="radio" name="NeedReconciliation" value="0" checked="checked" />
+											是<input type="radio" name="NeedReconciliation" value="1"   />
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="account" class="control-label">SMTP账号：</label>
+                                        <div class="controls">
+                                            <input type="text" value="" id="Username" name="Username" class="input-xlarge" maxlength="30" />
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="account" class="control-label">SMTP密码：</label>
+                                        <div class="controls">
+                                            <input type="password" value="" id="Password" name="Password" class="input-xlarge" maxlength="30" />
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="account" class="control-label">SMTP地址：</label>
+                                        <div class="controls">
+                                            <input type="text" value="" id="SmtpServer" name="SmtpServer" class="input-xlarge" maxlength="100" />
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="account" class="control-label">SMTP端口：</label>
+                                        <div class="controls">
+                                            <input type="text" value="25" id="SmtpPort" name="SmtpPort" class="input-small" maxlength="5" />
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="account" class="control-label">源发邮箱：</label>
+                                        <div class="controls">
+                                            <input type="text" value="" id="SenderAddress" name="SenderAddress" class="input-xlarge" maxlength="30" />
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="account" class="control-label">启用SSL：</label>
+                                        <div class="controls">
+											否<input type="radio" name="SSL" value="0" checked="checked" />
+											是<input type="radio" name="SSL" value="1"   />
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary" id="btnSubmit"><i class="icon-ok-sign"></i>修改</button> 测试接收邮箱<input type="text" value="" id="testAddress" name="testAddress" class="input-small" maxlength="30" /><button type="button" class="btn btn-success" id="testButton"><i class="icon-question-sign"></i>测试</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
+

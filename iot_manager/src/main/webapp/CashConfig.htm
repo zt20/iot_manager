@@ -1,0 +1,151 @@
+
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改配置</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/edit.css">
+	<style type="text/css">
+	  .additional{
+	  	 display:none;
+	  }
+	</style>
+    <!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+
+    <script type="text/javascript" src="js/init.js"></script>
+	<script type="text/javascript" src="js/loading.js"></script>
+    <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+
+    <script type="text/javascript">
+    	$(document).ready(function () {
+    		$("#formAgent").ajaxForm({
+    			success: function (result) {
+    				bootbox.alert(result.Message);
+    			},
+    			error: function (XmlHttpRequest, textStatus, errorThrown) {
+    				bootbox.alert("操作失败:服务器错误");
+    			}
+    		});
+    	});
+    </script>
+
+</head>
+<body>
+    <div class="container-fluid" id="content">
+        <div id="main">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="box box-bordered">
+                            <div class="box-title">
+                                <h3><i class="icon-edit"></i>参数配置</h3>
+                            </div>
+                            <div class="box-content">
+                                <form action="CashConfig.htm?action=save" method="POST" class="form-horizontal form-validate" id="formAgent">
+                                    <div class="control-group">
+                                        <label for="account" class="control-label">付款审核：</label>
+                                        <div class="controls">
+											初审<input type="checkbox"  name="PaymentApplyType_1" value="1"  checked /> 终审<input type="checkbox"  name="PaymentApplyType_2" value="2"  checked /> 复核<input type="checkbox"  name="PaymentApplyType_4" value="4"  checked />
+                                        </div>
+                                    </div>
+									<div class="box-title"></div>
+									<div class="control-group">
+                                        <label for="account" class="control-label">加款方式：</label>
+                                        <div class="controls">
+                                            原加款方式<input type="radio" name="AddFundsApplySwitch" value="0" checked="checked" />
+											加款流程<input type="radio" name="AddFundsApplySwitch" value="1"   />
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="account" class="control-label">工作时间流程：</label>
+                                        <div class="controls">
+                                            初审<input type="checkbox"  name="AddFundsApplyType1_1" value="1"   checked/> 终审<input type="checkbox"  name="AddFundsApplyType1_2" value="2"  /> 财务<input type="checkbox"  name="AddFundsApplyType1_4" value="4"   checked/> 复核<input type="checkbox"  name="AddFundsApplyType1_8" value="8"   checked/>
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="account" class="control-label">非工作时间流程：</label>
+                                        <div class="controls">
+                                            初审<input type="checkbox"  name="AddFundsApplyType2_1" value="1"   checked/> 终审<input type="checkbox"  name="AddFundsApplyType2_2" value="2"  /> 财务<input type="checkbox"  name="AddFundsApplyType2_4" value="4"  /> 复核<input type="checkbox"  name="AddFundsApplyType2_8" value="8"   checked/>
+                                        </div>
+                                    </div>
+									<div class="control-group">
+										<label for="email" class="control-label">工作时间：</label>
+										<div class="controls">
+											开始时间<input type="text" maxlength="5" class="input-mini" name="AddFundsApplyStartTime" value="09:00"/>
+											结束时间<input type="text" maxlength="5" class="input-mini" name="AddFundsApplyEndTime" value="17:30"/> 时间为24小时制
+										</div>
+									</div>
+									<div class="box-title"></div>
+									<div class="control-group">
+                                        <label for="account" class="control-label">授信流程：</label>
+                                        <div class="controls">
+                                            初审<input type="checkbox"  name="AddFundsApplyType3_1" value="1"   checked/> 终审<input type="checkbox"  name="AddFundsApplyType3_2" value="2"  /> 财务<input type="checkbox"  name="AddFundsApplyType3_4" value="4"  /> 复核<input type="checkbox"  name="AddFundsApplyType3_8" value="8"   checked/>
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="account" class="control-label">扣款流程：</label>
+                                        <div class="controls">
+                                            初审<input type="checkbox"  name="AddFundsApplyType4_1" value="1"   checked/> 终审<input type="checkbox"  name="AddFundsApplyType4_2" value="2"  /> 财务<input type="checkbox"  name="AddFundsApplyType4_4" value="4"   checked/> 复核<input type="checkbox"  name="AddFundsApplyType4_8" value="8"   checked/>
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="account" class="control-label">手工加款流程：</label>
+                                        <div class="controls">
+                                            初审<input type="checkbox"  name="AddFundsApplyType5_1" value="1"  /> 终审<input type="checkbox"  name="AddFundsApplyType5_2" value="2"  /> 财务<input type="checkbox"  name="AddFundsApplyType5_4" value="4"  /> 复核<input type="checkbox"  name="AddFundsApplyType5_8" value="8"   checked/>
+                                        </div>
+                                    </div>
+									
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary" id="btnSubmit"><i class="icon-ok-sign"></i>修改</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+	
+	<div id="img-uplaod" class="modal hide fade" role="dialog" aria-labelledby="img-uplaod-form" aria-hidden="true">
+		<form action="ImageUpload.htm" id="img-uplaod-form" class="form-vertical form-validate">
+		<div class="modal-body">
+			<div class="box-content">
+				<input type="hidden" name="id" value="0"/>
+				<input type="file" name="imageUrl"/>
+				<input type="hidden" name="action" value="save" />
+			</div>
+			<div class="modal-footer">
+			<a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a> 
+			<button type="submit" class="btn btn-primary" id="Button1">提交</button>
+			</div>
+		</form>
+	</div>
+</body>
+</html>
+

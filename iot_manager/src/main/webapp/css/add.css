@@ -1,0 +1,57 @@
+﻿.select-xlarge
+{
+    width: 284px;
+}
+.ui-spinner-input
+{
+    margin-right: 18px;
+    margin-left: 0px;
+    width: 252px;
+}
+.cke .cke_top
+{
+    border-top: 1px solid #ddd;
+    background-color: #eee;
+}
+.check-line .inline
+{
+    left: 25px;
+}
+body
+{
+    font-family: "微软雅黑" , "宋体";
+    font-size: 12px !important;
+}
+input, button, select, textarea
+{
+    font-family: "微软雅黑" , "宋体";
+    font-size: 12px !important;
+}
+#main
+{
+    margin-left: 0px;
+}
+#main .page-header
+{
+    margin-top: 0px;
+}
+
+.form-horizontal .form-actions
+{
+    padding-left: 120px;
+}
+.form-horizontal .control-label
+{
+    text-align: left;
+}
+
+.form-horizontal .control-text
+{
+    height: 20px;
+    line-height: 20px;
+        display:block;
+    padding-top: 5px
+}
+
+
+

@@ -1,0 +1,82 @@
+
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>系统公告管理</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/plugins/select2/select2.css">
+  <link rel="stylesheet" href="css/plugins/icheck/all.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/list.css">
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+  <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+  <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+  <script type="text/javascript" src="js/init.js"></script>
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+              <div class="box-title">
+                <h3>
+                  <i class="icon-table"></i>
+                  系统公告列表</h3>
+				  <a href="NotificationAdd.htm" class="btn btn-primary" style=" float:right; margin-right:10px;">
+                      <i class="icon-plus-sign"></i>
+                      发布公告</a>
+              </div>
+              <div class="box-content nopadding">
+                <div class="dataTables_wrapper" style="padding-top: 10px">
+                  <div style="clear: both;">
+                  </div>
+                  <table class="table table-hover table-nomargin table-bordered table-condensed">
+                    <thead>
+                      <tr>
+                        <th style="width: 150px;">标题</th>
+                        <th style="width: 100px;">发布者</th>
+                        <th style="width: 100px;">发送对象</th>
+                        <th style="width: 150px;">添加时间</th>
+						<th>内容</th>
+                        <th style="width: 100px;">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      
+                        <tr>
+                          <td>sss</td>
+                          <td>sss</td>
+                          <td>1</td>
+                          <td>2018/6/28 16:28:56</td>
+						  <td>
+<p>12345</p>
+</td>
+                          <td>
+							
+                              <a class="deleterow" data-id="5" data-url="NotificationList.htm" href="#" title="删除">删除</a> 
+								
+						  </td>
+                        </tr>
+                      
+                    </tbody>
+                  </table>
+                  
+                           <div class="dataTables_paginate paging_full_numbers"> <a href="#" class="paginate_button paginate_button_disabled">首页</a>  <a href="#" class="paginate_button paginate_button_disabled">上一页</a>  <span>  <a href="NotificationList.htm?&pageIndex=1" class="paginate_active">1</a>   </span>  <a href="#" class="paginate_button paginate_button_disabled">下一页</a>  <a href="#" class="paginate_button paginate_button_disabled">尾页</a>  <a href="#" class="paginate_button paginate_button_disabled">共1条，1页</a>  <a href="#" class="paginate_button paginate_button_disabled">当前第</a>  <select name="pageSelect" id="pageSelect" class="select2-me input-mini"> <option value="NotificationList.htm?&pageIndex=1" selected="selected">1</option> </select> <a href="#" class="paginate_button paginate_button_disabled">页</a> </div>
+                      
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

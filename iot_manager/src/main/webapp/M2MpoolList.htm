@@ -1,0 +1,179 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>套餐管理</title>
+
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/plugins/select2/select2.css">
+  <link rel="stylesheet" href="css/plugins/icheck/all.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/list.css">
+	<!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+  <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+  <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+  <script type="text/javascript" src="js/init.js"></script>
+  <script type="text/javascript" src="js/jquery.form.min.js"></script>
+
+  <!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('input, textarea').placeholder();
+      });
+    </script>
+  <![endif]-->
+  <script type="text/javascript">
+        $(document).ready(function () {
+				$(".action-addRate").on("click", function () {
+					var ID = $(this).attr("data-id");
+
+					$.ajax({
+						url: 'SetM2MUSIM.htm',
+						type: 'post',
+						data: { action: "getAddRateSelect", ID: ID },
+						error: function () { alert("远程访问失败"); },
+						success: function (result) {
+							if (result.OK) {
+                        		$("#addRate").html('<option value="" selected="selected">选择套餐</option>');
+								$.each(result.Message, function (index, item) {
+                            		$("#addRate").append('<option value=' + item.PlanCode + '>' + item.PlanName + '</option>')
+								});
+								$("#addRate").select2();
+							}
+						}
+					});
+
+					$("#setAddRateID").val(ID);
+					$("#modal-setAddRate").modal();
+
+               });
+
+               $("#modal-setAddRate").on("click", ".btn-primary", function () {
+
+               		var addRate = $("#addRate").val();
+               		if (addRate) {
+               			$("#most-setNextRate-form").ajaxSubmit({
+               				type: "POST",
+               				success: function (result) {
+               					if (result.OK) {
+               						alert(result.Message);
+               						$("#modal-setAddRate").modal("hide");
+               					} else {
+               						alert(result.Message);
+               					}
+               				},
+               				error: function (XmlHttpRequest, textStatus, errorThrown) {
+               					alert("操作失败服务器错误");
+               				}
+               			});
+               		}
+               		else {
+               			alert("请选择参数");
+               		}
+               });
+		});
+	</script>
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+              <div class="box-title">
+                <h3><i class="icon-table"></i> 流量池</h3>
+              </div>
+              <div class="box-content nopadding">
+                <div class="dataTables_wrapper">
+                  <div class="dataTables_info1" style="padding-top: 10px;">
+				    <form class="form-inline" action="M2MpoolList.htm" method="post">
+                    <div class="dataTables_filter">
+                            <label style="width: 60px;">代　　理: </label>
+                            <input type="text" class="input-small" name="AgentAccount" id="AgentAccount" placeholder="代理账号" value="" />
+                            <label style="width: 60px;">客　　户: </label>
+                            <input type="text" class="input-medium" name="UserAccount" id="UserAccount" placeholder="客户账号" value="" />
+                            <label>运营商: </label>
+							<select id="OperatorType" name="OperatorType" class="select2-me input-small" data-search="false">
+							  <option value="">全部</option>
+							  <option value="1" >移动</option>
+							  <option value="2" >联通</option>
+							  <option value="3" >电信</option>
+							</select>
+							<label style="width: 50px;">通　道: </label>
+                            <select id="InterfaceID" name="InterfaceID" class="select2-me input-xlarge" data-search="true">
+                                <option value=''>选择通道</option><option value='9'>1</option><option value='8'>测试</option><option value='7'>电信物联网卡~09</option><option value='6'>移动物联卡</option><option value='5'>20G流量池</option><option value='4'>优景万禾移动</option><option value='3'>中国联通</option><option value='2'>中国电信</option><option value='1'>中国移动</option>
+                            </select>
+                        <button type="submit" class="btn btn-primary"><i class="icon-search"></i> 搜索</button>
+                      
+                    </div>
+					</form>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <table class="table table-hover table-nomargin table-bordered table-condensed">
+                    <thead>
+                      <tr>
+                        <th>代理</th>
+                        <th>客户</th>
+                        <th>通道</th>
+                        <th style="width:60px;">套餐M</th>
+                        <th style="width:40px;">运营商</th>
+						<th style="width:120px;">总流量(M)</th>
+						<th style="width:120px;">已使用(M)</th>
+						<th style="width:50px;">总卡数</th>
+						<th style="width:50px;">已激活</th>
+                        <th style="width:50px;">已停用</th>
+                        <th style="width:50px;">其他</th>
+                        <th>流量池名称</th>
+						<!--<th style="width:120px;">操作</th>-->
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-setAddRate" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+        <form id="most-setNextRate-form" class="form-horizontal" novalidate="novalidate" action="SetM2MUSIM.htm">
+            <input type="hidden" name="action" value="setAddRate" />
+            <input type="hidden" name="id" id="setAddRateID" value="" />
+            <div class="modal-header">
+                <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel3">叠加套餐</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box-content" id="bodyList3">
+                    <div class="control-group">
+                        <label class="control-label">叠加包: </label>
+                        <div class="controls" style="margin-left: 130px;">
+                            <select name="addRate" id="addRate" class="select2-me input-xlarge" data-search="true">
+                            </select>
+							<br />一般情况下不需要要手动叠加，系统会自动计算！
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a> <a class="btn btn-primary">确定</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

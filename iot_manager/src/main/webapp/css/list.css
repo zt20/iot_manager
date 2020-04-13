@@ -1,0 +1,66 @@
+﻿body
+{
+    font-family: 微软雅黑;
+    font-size: 12px;
+}
+input, button, select, textarea
+{
+    font-family: 微软雅黑;
+    font-size: 12px;
+}
+.dataTables_filter .icheckbox_minimal
+{
+    /*display: inline-block;*/
+    top: 4px;
+}
+.dataTables_filter .select2-me
+{
+    margin-bottom: 0px;
+	border-radius:0;
+	margin-right:5px;
+}
+.select2-container{
+	border-radius:0;
+	margin-right:5px;
+}
+.check-line
+{
+    margin-bottom: 0px;
+    width: 100px;
+}
+.dataTables_filter form
+{
+    margin-bottom: 5px;
+}
+.dataTables_wrapper .dataTables_info
+{
+    margin-top: 6px;
+}
+.dataTables_wrapper .dataTables_info .icheckbox_minimal
+{
+    display: inline-block;
+    top: 4px;
+}
+.dataTables_wrapper .dataTables_info .btn
+{
+    padding: 3px 8px;
+}
+.dataTables_wrapper .dataTables_info1
+{
+margin: 0;
+margin-bottom:5px;
+float:left;
+}
+#main
+{
+    margin-left: 0px;
+}
+#main .page-header
+{
+    margin-top: 0px;
+}
+
+.alert-margin
+{
+    margin-bottom: 10px !important;    
+}

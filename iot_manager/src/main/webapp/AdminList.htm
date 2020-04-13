@@ -1,0 +1,257 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>管理员管理</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/plugins/icheck/all.css">
+    <link rel="stylesheet" href="css/plugins/dynatree/ui.dynatree.css"/>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/list.css">
+    <link rel="stylesheet" href="css/pagination.css">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+    <link rel="stylesheet" href="css/ie7.css">
+
+    <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/json.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+    <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jquery-ui/jquery.ui.js" language="javascript"></script>
+    <script type="text/javascript" src="js/plugins/dynatree/jquery.dynatree.js"></script>
+    <script type="text/javascript" src="js/init.js"></script>
+    <script type="text/javascript" src="js/plugins/jquery-paginator/jquery.pagination.js"></script>
+
+
+    <!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('input, textarea').placeholder();
+        });
+    </script>
+    <![endif]-->
+    <script type="text/javascript">
+        $(function () {
+            //设置角色权限
+            $("#function-modal .modal-body").dynatree({
+                checkbox: true,
+                minExpandLevel: 2,
+                selectMode: 3
+            });
+
+            $(".action-function-modal").on("click", function () {
+                var adminID = $(this).data("id");
+                $('#function-modal').data("id", adminID);
+                $.ajax({
+                    url: 'AdminFunction.ashx?action=loadFunctionTree',
+                    type: 'GET',
+                    data: {adminID: adminID},
+                    success: function (result) {
+                        if (result.OK) {
+                            var treeRoot = $("#function-modal .modal-body").dynatree("getRoot");
+                            treeRoot.removeChildren();
+                            treeRoot.addChild(result.Message);
+                            $("#function-modal").modal("show");
+                        } else {
+                            bootbox.alert(result.Message, function () {
+                            });
+                        }
+                    },
+                    error: function (result) {
+                        bootbox.alert(result.Message, function () {
+                        });
+                    }
+                });
+            });
+
+            function serializeNode(list, data, dataArray) {
+                for (var n in list.children) {
+                    var node = list.children[n];
+
+                    //if (!node.isaction) {
+                    var n = node.key;
+                    serializeNode(node, n, dataArray);
+                    node.select && dataArray.push(n);
+                    //}
+                }
+            }
+
+            //保存角色权限树
+            $('#function-modal').on('click', "a.btn-primary", function (e) {
+                var adminID = $('#function-modal').data("id");
+                var tree = $("#function-modal .modal-body").dynatree("getRoot");
+                var list = tree.toDict(true);
+                var dataArray = [];
+                serializeNode(list, null, dataArray);
+
+                $("#function-modal form").ajaxSubmit({
+                    type: "POST",
+                    url: "AdminFunction.ashx?action=saveFunctionTree",
+                    dataType: 'json',
+                    data: {adminID: adminID, treeData: $.toJSON(dataArray)},
+                    success: function (result) {
+                        $('#function-modal').modal("hide");
+                        bootbox.alert(result.Message, function () {
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container-fluid" id="content">
+    <div id="main">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="box box-bordered">
+                        <div class="box-title">
+                            <h3><i class="icon-table"></i> 管理员列表</h3>
+                            <a href="AdminAdd.htm" class="btn btn-primary" style=" float:right;margin-right:10px;"><i
+                                    class="icon-plus-sign"></i> 添加管理员</a>
+                        </div>
+                        <div class="box-content nopadding">
+                            <div class="dataTables_wrapper" style="padding-top: 10px">
+                                <div style="clear:both;"></div>
+                                <table id="systemUserList"
+                                       class="table table-hover table-nomargin table-bordered table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: auto">帐号</th>
+                                        <th style="width: auto">类型</th>
+                                        <th style="width: auto">姓名</th>
+                                        <th style="width: auto">手机号</th>
+                                        <th style="width: auto">电子邮件</th>
+                                        <th style="width: auto">状态</th>
+                                        <th style="width: auto">添加时间</th>
+                                        <th style="width: auto">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                                <div id="pagination-container"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="function-modal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <form class="form-horizontal" id="function-form">
+        <div class="modal-header">
+            <a class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">×</a>
+            <h4 class="modal-title" id="H2">权限设置</h4>
+        </div>
+        <div class="modal-body" name="functionTree">
+            <div class="box-content">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <a class="btn btn-primary" aria-hidden="true">保存修改</a>
+        </div>
+    </form>
+</div>
+</body>
+
+<script>
+    $(document).ready(function () {
+
+        $('#pagination-container').pagination({
+            dataSource: '/api/v1/system_user_list.do',
+            prevText: '<<',
+            nextText: '>>',
+            goButtonText: 'go',
+            alias: {
+                pageNumber: 'page',
+                pageSize: 'size'
+            },
+            pageSize: 10,
+            totalNumberLocator: function (response) {//处理页数
+                return response.total;
+            },
+            locator: 'list',
+            ajax: {
+                type: 'GET',
+                beforeSend: function () {//请求前处理
+                    $("#dataContainer").html('加载中...');
+                }
+            },
+            showGoInput: true,
+            showGoButton: true,
+            showNavigator: true,
+            callback: function (data, pagination) {
+                $.each(data, function (i, item) {
+                    var result = "<tr><td>" + item['account'] + "</td><td>" + sort(item['type'])
+                        + "</td><td>" + item['name'] + "</td><td>" + item['mobile'] + "</td><td>"
+                        + item['email'] + "</td><td>" + status(item['status']) + "</td><td>"
+                        + item['addTime'] + "</td><td><a href=\"/AdminEdit.htm?"
+                        + item['account'] + "\">修改</a> <a href='javascript:void(0)' onclick=\"deleteAccount('"
+                        + item['account'] + "')\">删除</a>";
+                    $('#systemUserList').append(result);
+                });
+            }
+
+        });
+
+    });
+
+    function sort(data) {
+        if (data == 0)
+            return '管理员';
+        if (data == 1)
+            return '总经理';
+        if (data == 2)
+            return '经理';
+        if (data == 3)
+            return '财务';
+        if (data == 4)
+            return '财务复核';
+        if (data == 5)
+            return '客服';
+    }
+
+    function status(data) {
+        if (data == 0)
+            return "<span class='label label-success'>正常</span>";
+        return "<span class='label label-important'>锁定</span>";
+    }
+
+    deleteAccount = function (data) {
+        if (confirm('你确定要删除吗？')) {
+            $.ajax({
+                type: 'GET',
+                url: '/api/v1/systemUser_delete.do',
+                data: {account: data},
+                success: function (data) {
+                    if (data.code == 0) {
+                        alert("删除成功");
+                        window.location.reload();
+                    }else {
+                        alert(data.msg);
+                    }
+                }
+            });
+        }
+    }
+
+
+
+</script>
+
+</html>

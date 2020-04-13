@@ -1,0 +1,264 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>管理日志管理</title>
+
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/plugins/select2/select2.css">
+  <link rel="stylesheet" href="css/plugins/icheck/all.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/list.css">
+	<!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+  <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+  <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+  
+  <script type="text/javascript" src="js/jquery.form.min.js"></script>
+  <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+  <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+  <script type="text/javascript" src="js/init.js"></script>
+  <script type="text/javascript" src="js/loading.js"></script>
+  <script type="text/javascript" src="js/content_zoom/content_zoom.js"></script>
+  <link rel="stylesheet" href="js/content_zoom/content_zoom.css" />
+
+  <!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('input, textarea').placeholder();
+      });
+    </script>
+  <![endif]-->
+  <script type="text/javascript">
+  	$(document).ready(function () {
+  		$(".zoomImg img").fancyZoom({ scaleImg: true, closeOnClick: true });
+
+  		$(".action-audit").on("click", function () {
+  			var id = $(this).attr("data-id");
+  			$("#auditID").val(id);
+  			var LastOptSign = $(this).attr("data-LastOptSign");
+  			$("#LastOptSignAudit").val(LastOptSign);
+  			$("#modal-plus-audit").modal();
+  		});
+
+  		$("#modal-plus-audit").on("click", ".btn-primary", function () {
+  			$("#most-plus-form-audit").ajaxSubmit({
+  				type: "POST",
+  				success: function (result) {
+  					alert(result.Message);
+  					window.location.reload();
+  				},
+  				error: function (XmlHttpRequest, textStatus, errorThrown) {
+  					alert("操作失败服务器错误");
+  				}
+  			});
+  			$("#modal-plus-audit").modal("hide");
+  		});
+
+
+  		
+
+
+  		/////////
+  		$("#description").blur(function () {
+  			$("#remark").val($("#description").html());
+  		});
+
+  		$("#description").keyup(function (event) {
+  			$("#remark").val($("#description").html());
+  		});
+
+  		$("#description").change(function () {
+  			$("#remark").val($("#description").html());
+  		})
+
+
+
+  		
+  	});
+
+  	window.addEventListener('load', function (e) {
+  		document.body.onpaste = function (e) {
+  			var items = e.clipboardData.items;
+  			for (var i = 0; i < items.length; ++i) {
+  				item = items[i];
+  				if (item && item.kind === 'file' && item.type.match(/^image\//i)) {
+  					imgReader(item);
+  					break;
+  				}
+  			}
+  		};
+  	});
+
+  	var imgReader = function (item) {
+  		var blob = item.getAsFile(),
+            reader = new FileReader();
+
+  		reader.onload = function (e) {
+  			var img = new Image();
+
+  			img.src = e.target.result;
+  			var logBox = document.getElementById('description');
+  			logBox.appendChild(img);
+  		};
+
+  		reader.readAsDataURL(blob);
+  	};
+
+  </script>
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+              <div class="box-title">
+                <h3><i class="icon-table"></i> 加款记录列表</h3>
+              </div>
+			  <ul class="nav nav-tabs">
+				<li><a href="AddFundsApplyLogList.htm">申请中<span class="badge badge-important"></span></a>
+				</li>
+				<li><a href="AddFundsApplyLogListStatus1.htm">已初审<span class="badge badge-important"></span></a>
+				</li>
+				<li><a href="AddFundsApplyLogListStatus2.htm">已终审<span class="badge badge-important">1</span><span class="badge badge-warning"></span></a>
+				</li>
+				<li class="active"><a href="AddFundsApplyLogListStatus5.htm">待复核<span class="badge badge-important"></span></a>
+				</li>
+				<li><a href="AddFundsApplyLogListStatus3.htm">已完成</a>
+				</li>
+				<li><a href="AddFundsApplyLogListStatus4.htm">已取消</a>
+				</li>
+			</ul>
+				<div class="box-content nopadding">
+					
+                <div class="dataTables_wrapper">
+					<form class="form-inline" action="AddFundsApplyLogListStatus5.htm" method="post">
+					<div class="dataTables_info1">		
+						<div class="dataTables_filter">
+							<label>类型: </label>
+							<select id="IsPublic" name="IsPublic" class="select2-me select-large" data-search="false">
+								<option value="">全部</option>
+								<option value="0" >Ⅰ类</option>
+								<option value="1" >Ⅱ类</option>
+							</select>
+							<!--
+							<label>状态: </label>
+							<select id="Status" name="Status" class="select2-me select-large" data-search="false">
+								<option value="">全部</option>
+								<option value="0" >申请</option>
+								<option value="1" >初审</option>
+								<option value="2" >终审</option>
+								<option value="3" >完结</option>
+							</select>
+							-->
+							<label>金额: </label>
+							<input type="text" id="Cash" name="Cash" placeholder="金额" class="input-small" value="" />
+							<label>名称: </label>
+							<input type="text" id="OrderName" name="OrderName" placeholder="名称" class="input-small" value="" />
+							<label>备注: </label>
+							<input type="text" id="Description" name="Description" placeholder="备注" class="input-small" value="" />
+						</div>
+						<div style="clear:both;"></div>
+						<div class="dataTables_filter">
+							<label>关联代理: </label>
+                            <select id="AgentID" name="AgentID" class="select2-me input-xlarge" data-search="true">
+                                <option value=''>全部</option><option value='26' >[test111]test111</option><option value='25' >[88测试账号]测试账号</option><option value='24' >[wsd3705]康智然</option><option value='21' >[yjdls]yjdls</option><option value='20' >[广州xx信息科技有限公司]minxun</option><option value='18' >[c代理2]clh2</option><option value='16' >[8888]123321</option><option value='12' >[20180416]20180416</option><option value='11' >[全球通]admin2</option><option value='10' >[智能机器人科技公司]机器人</option><option value='9' >[优景万禾]diexin</option><option value='8' >[测试代理]admin@test</option><option value='1' >[内置代理]agent</option>
+                            </select>
+						</div>
+						<div style="clear:both;"></div>
+						<div class="dataTables_filter">
+							<label>付款账号: </label>
+							<select id="PayCardID" name="PayCardID" class="select2-me input-xxlarge"  data-search="true">
+								<option value=''>全部</option><option value='1' >【建设】[有限公司]-技有限公司-555665258956545665542</option>
+							</select>
+						</div>
+						<div style="clear:both;"></div>
+						<div class="dataTables_filter">
+							<label>收款账号: </label>
+							<select id="ReceiveCardID" name="ReceiveCardID" class="select2-me input-xxlarge" data-search="true">
+								<option value=''>全部</option><option value='2' >【招商】[信息技术有限公司]-信息技术有限公司-2333332214124142535</option>
+							</select>
+							<button type="submit" class="btn btn-primary"><i class="icon-search"></i> 搜索</button>
+						</div>
+					</div>
+					</form>
+                    <div style="clear:both;"></div>
+                    <table class="table table-hover table-nomargin table-bordered table-condensed">
+                      <thead>
+                        <tr>
+						  <th style="width:40px;">操作员</th>
+						  <th style="width:30px;">类别</th>
+						  <th style="width:30px;">子类</th>
+						  <th style="width:30px;">类型</th>
+                          <th style="width:50px;">名称</th>
+                          <th style="width:70px;">关联代理</th>
+						  <th style="width:155px;">付款账号</th>
+                          <th style="width:155px;">收款账号</th>
+						  <th style="width:80px;">金额(元)</th>
+						  <th style="width:30px;">状态</th>
+						  <th style="width:40px;">制单人</th>
+						  <th style="width:80px;">制单时间</th>
+						  <th>备注</th>
+						  <th style="width:60px;">操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                        <tr>
+                          <td colspan="12" style="height:80px; text-align:center">暂无数据..</td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+	<div id="modal-plus-audit" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2"
+		aria-hidden="true">
+		<form id="most-plus-form-audit" class="form-horizontal" novalidate="novalidate" action="SetAddFunds.htm">
+		<input type="hidden" name="action" value="addFundsAudit5" />
+		<input type="hidden" name="id" id="auditID" value="" />
+		<input type="hidden" name="LastOptSign" id="LastOptSignAudit" value="" />
+		<div class="modal-header">
+			<button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">
+				×</button>
+			<h4 class="modal-title" id="H1">
+				复核</h4>
+		</div>
+		<div class="modal-body">
+			<div class="box-content" id="Div2">
+				<div class="control-group">
+					<div contenteditable="true" id="description" class="span8" name="description" style=" background-color:#f9f9f9; border:1px solid #ccc; transition:border linear .2s,box-shadow linear .2s; padding:4px 6px; color:#555;word-wrap: break-word;white-space: pre-wrap;width: 80%;margin-top: 0;margin-right: 5px; height:200px; overflow:auto;"></div>
+					<div style="clear:both;"></div>
+					<div style="padding:0px 0px 0px 12px; "><b>在谷歌和火狐浏览器中可直接粘贴剪贴板图片，QQ截图按ctrl+alt+a</b></div>
+					<div style="padding:0px 0px 0px 12px; "><b>对收款信息进行二次复核，复核后记录将会进入日志。</b></div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+				<input type="hidden" id="remark" name="remark" />
+				<a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a> <a class="btn btn-primary">确定</a>
+		</div>
+		</form>
+	</div>
+
+</body>
+</html>

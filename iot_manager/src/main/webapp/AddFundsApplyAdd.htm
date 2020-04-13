@@ -1,0 +1,476 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>添加流量包</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/plugins/select2/select2.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/add.css">
+	<!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+  <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+  <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+  <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+  <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+  <script type="text/javascript" src="js/init.js"></script>
+  <script type="text/javascript" src="js/loading.js"></script>
+
+  <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+
+  <script>
+  	$(document).ready(function () {
+  		$("#formInterfaceGroup").ajaxForm({
+  			success: function (result) {
+  				bootbox.alert(result.Message, function (box) {
+  					if (result.OK) {
+  						$("#formInterfaceGroup").resetForm();
+  					}
+  				});
+  			},
+  			error: function (XmlHttpRequest, textStatus, errorThrown) {
+  				bootbox.alert("操作失败:服务器错误");
+  			}
+  		});
+
+  		$("#IsPublic").change(function (data) {
+  			$.post("GetBankInfo.htm", { "action": "getList", "PayType": "1", "IsPublic": $(this).val() }, function (data) {
+  				if (data.OK) {
+  					var select = $("#PayCardID");
+  					select.empty(); //清空下拉框
+  					select.append("<option value=''>选择卡号</option>");
+  					$.each(data.Message, function () {
+  						select.append("<option value='" + this.ID + "'>【" + this.BankName + "】[" + this.CompanyName + "]-" + this.Account + "-" + this.CardNo + "</option>");
+  					});
+  					select.trigger('change');
+  				} else {
+  					alert("参数错误");
+  				}
+
+  			});
+
+  			$.post("GetBankInfo.htm", { "action": "getList", "PayType": "0", "IsPublic": $(this).val() }, function (data) {
+  				if (data.OK) {
+  					var select = $("#ReceiveCardID");
+  					select.empty(); //清空下拉框
+  					select.append("<option value=''>选择卡号</option>");
+  					$.each(data.Message, function () {
+  						select.append("<option value='" + this.ID + "'>【" + this.BankName + "】[" + this.CompanyName + "]-" + this.Account + "-" + this.CardNo + "</option>");
+  					});
+  					select.trigger('change');
+  				} else {
+  					alert("参数错误");
+  				}
+
+  			});
+  		});
+
+  		//选中付款账号
+  		$("#PayCardID").change(function (data) {
+  			if ($(this).val() != "") {
+  				$.post("GetBankInfo.htm", { "action": "get", "id": $(this).val() }, function (data) {
+  					if (data.OK) {
+  						$("#PayCompany").val(data.Message.CompanyName);
+  						$("#PayAccount").val(data.Message.Account);
+  						$("#PayCardNo").val(data.Message.CardNo);
+  						$("#PayBankName").val(data.Message.BankName);
+  					} else {
+  						alert("参数错误");
+  					}
+
+  				});
+  			} else {
+  				//清空数据
+  				$("#PayCompany").val("");
+  				$("#PayAccount").val("");
+  				$("#PayCardNo").val("");
+  				$("#PayBankName").val("");
+  			}
+  		});
+
+  		//选中收款账号
+  		$("#ReceiveCardID").change(function (data) {
+  			if ($(this).val() != "") {
+  				$.post("GetBankInfo.htm", { "action": "get", "id": $(this).val() }, function (data) {
+  					if (data.OK) {
+  						$("#ReceiveCompany").val(data.Message.CompanyName);
+  						$("#ReceiveAccount").val(data.Message.Account);
+  						$("#ReceiveCardNo").val(data.Message.CardNo);
+  						$("#ReceiveBankName").val(data.Message.BankName);
+  					} else {
+  						alert("参数错误");
+  					}
+
+  				});
+  			} else {
+  				//清空数据
+  				$("#ReceiveCompany").val("");
+  				$("#ReceiveAccount").val("");
+  				$("#ReceiveCardNo").val("");
+  				$("#ReceiveBankName").val("");
+  			}
+  		});
+
+
+  		///////////
+
+
+  		$("#Cash").blur(function () {
+  			showAmount($(this).val());
+  		});
+
+  		$("#Cash").keyup(function (event) {
+  			showAmount($(this).val());
+  		});
+
+  		$("#Cash").change(function () {
+  			showAmount($(this).val());
+  		})
+
+
+  		////////
+
+  		$("#Remark").blur(function () {
+  			$("#description").val($("#Remark").html());
+  		});
+
+  		$("#Remark").keyup(function (event) {
+  			$("#description").val($("#Remark").html());
+  		});
+
+  		$("#Remark").change(function () {
+  			$("#description").val($("#Remark").html());
+  		})
+
+
+  		/////////
+
+  		$(".OptTypeSelect").change(function () {
+  			if ($(this).val() == 0) {
+  				$("input[name='SubType'][value='充值']").prop("checked", true);
+  			} else if ($(this).val() == 1) {
+  				$("input[name='SubType'][value='授信']").prop("checked", true);
+  			} else if ($(this).val() == 2) {
+  				$("input[name='SubType'][value='退款']").prop("checked", true);
+  			} else if ($(this).val() == 3) {
+  				$("input[name='SubType'][value='平台余额扣款']").prop("checked", true);
+  			}
+  			$("#SubTypeOther").hide();
+  		})
+
+  		$(".SubTypeChange").change(function () {
+  			if ($(this).val() == "其它") {
+  				$("#SubTypeOther").show();
+  			} else {
+  				$("#SubTypeOther").hide();
+  			}
+  		})
+  	});
+
+
+  	window.addEventListener('load', function (e) {
+  		document.body.onpaste = function (e) {
+  			var items = e.clipboardData.items;
+  			for (var i = 0; i < items.length; ++i) {
+  				item = items[i];
+  				if (item && item.kind === 'file' && item.type.match(/^image\//i)) {
+  					imgReader(item);
+  					break;
+  				}
+  			}
+  		};
+  	});
+
+  	var imgReader = function (item) {
+  		var blob = item.getAsFile(),
+            reader = new FileReader();
+
+  		reader.onload = function (e) {
+  			var img = new Image();
+
+  			img.src = e.target.result;
+  			var logBox = document.getElementById('Remark');
+  			logBox.appendChild(img);
+  		};
+
+  		reader.readAsDataURL(blob);
+  	};
+
+  	function showAmount(amount) {
+  		var moneyCn = ToTrans(amount);
+  		$("#CashShow").html(moneyCn);
+  		$("#CashCn").val(moneyCn);
+  	}
+
+  	function ToTrans(a) {
+  		var minus = "";
+  		var b = 9.999999999999E10,
+    f = "\u96f6",
+    h = "\u58f9",
+    g = "\u8d30",
+    e = "\u53c1",
+    k = "\u8086",
+    p = "\u4f0d",
+    q = "\u9646",
+    r = "\u67d2",
+    s = "\u634c",
+    t = "\u7396",
+    l = "\u62fe",
+    d = "\u4f70",
+    i = "\u4edf",
+    m = "\u4e07",
+    j = "\u4ebf",
+    u = "人民币",
+    o = "\u5143",
+    c = "\u89d2",
+    n = "\u5206",
+    v = "\u6574";
+  		a = a.toString();
+  		if (a == "") {
+  			//alert("转换内容不能为空!");
+  			return "转换内容不能为空"
+  		}
+  		if (a.indexOf('-') == 0) {
+  			a = a.replace("-", "");
+  			minus = "负";
+  		} // 处理负数符号“-”
+  		if (a.match(/[^,.\d]/) != null) {
+  			//alert("输入有误,请输入小数点和纯数字!");
+  			return "输入有误,请输入小数点和纯数字!"
+  		}
+  		if (a.match(/^((\d{1,3}(,\d{3})*(.((\d{3},)*\d{1,3}))?)|(\d+(.\d+)?))$/) == null) {
+  			//alert("输入有误,请输入小数点和纯数字!");
+  			return "输入有误,请输入小数点和纯数字!"
+  		}
+  		a = a.replace(/,/g, "");
+  		a = a.replace(/^0+/, "");
+  		if (Number(a) > b) {
+  			//alert("\u5bf9\u4e0d\u8d77,\u4f60\u8f93\u5165\u7684\u6570\u5b57\u592a\u5927\u4e86!\u6700\u5927\u6570\u5b57\u4e3a99999999999.99\uff01");
+  			return ""
+  		}
+  		b = a.split(".");
+  		if (b.length > 1) {
+  			a = b[0];
+  			b = b[1];
+  			b = b.substr(0, 2)
+  		} else {
+  			a = b[0];
+  			b = ""
+  		}
+  		h = new Array(f, h, g, e, k, p, q, r, s, t);
+  		l = new Array("", l, d, i);
+  		m = new Array("", m, j);
+  		n = new Array(c, n);
+  		c = "";
+  		if (Number(a) > 0) {
+  			for (d = j = 0; d < a.length; d++) {
+  				e = a.length - d - 1;
+  				i = a.substr(d, 1);
+  				g = e / 4;
+  				e = e % 4;
+  				if (i == "0") j++;
+  				else {
+  					if (j > 0) c += h[0];
+  					j = 0;
+  					c += h[Number(i)] + l[e]
+  				}
+  				if (e == 0 && j < 4) c += m[g]
+  			}
+  			c += o
+  		}
+  		if (b != "") for (d = 0; d < b.length; d++) {
+  			i = b.substr(d, 1);
+  			if (i != "0") c += h[Number(i)] + n[d]
+  		}
+  		if (c == "") c = f + o;
+  		if (b.length < 2) c += v;
+  		return minus + c;
+  	}
+  </script>
+
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+              <div class="box-title">
+                <h3><i class="icon-ok-sign"></i> 加款制单</h3>
+              </div>
+              <div class="box-content">
+                <form action="AddFundsApplyAdd.htm?action=add" method="post" class="form-horizontal form-validate" id="formInterfaceGroup">        
+                    <div class="control-group">
+						<label for="Account" class="control-label">名称：</label>
+						<div class="controls">
+							<input type="text" id="OrderName" name="OrderName" value="加款" class="input-large" maxlength="50" data-rule-required="true" data-msg-required="请填写名称" data-rule-minlength="2" data-msg-minlength="名称至少2位" title="名称必填，最大允许输入50个字符" />
+						</div>
+					</div>
+
+					<div class="control-group">
+                        <label for="IsPublic" class="control-label">关联代理：</label>
+                        <div class="controls">
+                            <select id="AgentID" name="AgentID" class="select2-me input-xlarge"  data-rule-required="true" data-msg-required="请选择关联代理" data-search="true">
+                                <option value=''>选择关联代理</option><option value='26'>[test111]test111</option><option value='25'>[88测试账号]测试账号</option><option value='24'>[wsd3705]康智然</option><option value='21'>[yjdls]yjdls</option><option value='20'>[广州xx信息科技有限公司]minxun</option><option value='18'>[c代理2]clh2</option><option value='16'>[8888]123321</option><option value='12'>[20180416]20180416</option><option value='11'>[全球通]admin2</option><option value='10'>[智能机器人科技公司]机器人</option><option value='9'>[优景万禾]diexin</option><option value='8'>[测试代理]admin@test</option><option value='1'>[内置代理]agent</option>
+                            </select>
+                        </div>
+                    </div>
+					<div class="control-group">
+                        <label for="OptType" class="control-label">类别：</label>
+                        <div class="controls">
+                            <input class="OptTypeSelect" type="radio" name="OptType" value="0" checked="checked"/>加款(已打款)
+							<input class="OptTypeSelect" type="radio" name="OptType" value="1"/>授信(未打款)
+							<input class="OptTypeSelect" type="radio" name="OptType" value="2"/>手工退款
+							<input class="OptTypeSelect" type="radio" name="OptType" value="3"/>扣款
+                        </div>
+                    </div>
+					<div class="control-group">
+                        <label for="SubType" class="control-label">子类：</label>
+                        <div class="controls">
+                            <input type="radio" name="SubType" value="充值" checked="checked" class="SubTypeChange"/>充值
+							<input type="radio" name="SubType" value="退款" class="SubTypeChange"/>退款
+							<input type="radio" name="SubType" value="测试" class="SubTypeChange"/>测试
+							<input type="radio" name="SubType" value="差价" class="SubTypeChange"/>差价
+							<input type="radio" name="SubType" value="错充" class="SubTypeChange"/>错充
+							<input type="radio" name="SubType" value="内调" class="SubTypeChange"/>内调
+							<input type="radio" name="SubType" value="赔款" class="SubTypeChange"/>赔款
+							<input type="radio" name="SubType" value="平台余额退款" class="SubTypeChange"/>平台余额退款
+							<input type="radio" name="SubType" value="平台余额扣款" class="SubTypeChange"/>平台余额扣款
+							<input type="radio" name="SubType" value="授信" class="SubTypeChange"/>授信
+							<input type="radio" name="SubType" value="月结" class="SubTypeChange"/>月结
+							<input type="radio" name="SubType" value="其它" class="SubTypeChange"/>其它
+							<input type="text" name="SubTypeOther" value="" id="SubTypeOther" style="display:none;" class="input-small" maxlength="10" />
+                        </div>
+                    </div>
+					<div class="control-group">
+                        <label for="IsPublic" class="control-label">类型：</label>
+                        <div class="controls">
+                            <select id="IsPublic" name="IsPublic" class="select2-me select-large" data-search="false">
+                                <option value="0">Ⅰ类</option>
+								<option value="1">Ⅱ类</option>
+                            </select>
+                        </div>
+                    </div>
+					<div class="control-group">
+                        <label for="IsPublic" class="control-label">付款账号：</label>
+                        <div class="controls">
+                            <select id="PayCardID" name="PayCardID" class="select2-me input-xxlarge" data-search="true">
+                                <option value=''>选择卡号</option><option value='2'>【招商】[信息技术有限公司]-信息技术有限公司-2333332214124142535</option>
+                            </select>非必填
+                        </div>
+                    </div>
+					<div class="control-group">
+                        <label for="IsPublic" class="control-label"></label>
+						<div class="controls">
+							<table class="table">
+									<tr>
+										<td>
+											付款公司：<input type="text" id="PayCompany" name="PayCompany" class="input-large" disabled="disabled" />
+										</td>
+										<td>
+											支付银行：<input type="text" id="PayBankName" name="PayBankName" class="input-large" disabled="disabled" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											支付账号：<input type="text" id="PayAccount" name="PayAccount" class="input-large" disabled="disabled" />
+										</td>
+										<td>
+											支付卡号：<input type="text" id="PayCardNo" name="PayCardNo" class="input-large" disabled="disabled" />
+										</td>
+									</tr>
+							</table>
+						</div>
+                    </div>
+					
+					<div class="control-group">
+                        <label for="IsPublic" class="control-label">收款账号：</label>
+                        <div class="controls">
+                            <select id="ReceiveCardID" name="ReceiveCardID" class="select2-me input-xxlarge" data-search="true">
+                                <option value=''>选择卡号</option><option value='1'>【建设】[有限公司]-技有限公司-555665258956545665542</option>
+                            </select>非必填
+                        </div>
+                    </div>
+
+					<div class="control-group">
+                        <label for="IsPublic" class="control-label"></label>
+						<div class="controls">
+							<table class="table">
+									<tr>
+										<td>
+											收款公司：<input type="text" id="ReceiveCompany" name="ReceiveCompany" class="input-large" disabled="disabled" />
+										</td>
+										<td>
+											收款银行：<input type="text" id="ReceiveBankName" name="ReceiveBankName" class="input-large" disabled="disabled" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											收款账号：<input type="text" id="ReceiveAccount" name="ReceiveAccount" class="input-large" disabled="disabled" />
+										</td>
+										<td>
+											收款卡号：<input type="text" id="ReceiveCardNo" name="ReceiveCardNo" class="input-large" disabled="disabled" />
+										</td>
+									</tr>
+							</table>
+						</div>
+                    </div>
+					
+					<div class="control-group">
+						<label for="Cash" class="control-label">金额：</label>
+						<div class="controls">
+							<input type="text" id="Cash" name="Cash" class="input-small" maxlength="15" data-rule-required="true" data-msg-required="请填写金额" data-rule-minlength="1" data-msg-minlength="金额至少1位" title="金额必填，最大允许输入15个字符" />元
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="CashShow" class="control-label">大写：</label>
+						<div class="controls" id="CashShow" style="color:Red; font-size:16px;"></div>
+						<input type="hidden" name="CashCn" id="CashCn" />
+					</div>
+					<div class="control-group">
+						<label for="cash" class="control-label">回执单号：</label>
+						<div class="controls">
+								<input type="text" id="ReceiptNo" name="ReceiptNo" class="input-large"/>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="ApplyName" class="control-label">制单人：</label>
+						<div class="controls">
+							<input type="text" id="ApplyName" name="ApplyName" class="input-large" value="" maxlength="50"/>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="description" class="control-label">备注：</label>
+						<div class="controls" contenteditable="true" id="Remark" class="span8" name="Remark" style=" background-color:#f9f9f9; border:1px solid #ccc; transition:border linear .2s,box-shadow linear .2s; padding:4px 6px; color:#555;word-wrap: break-word;white-space: pre-wrap;width: 60%;margin-top: 0;margin-right: 5px; height:200px; overflow:auto;"></div>
+						<div class="controls" ><b>在谷歌和火狐浏览器中可直接粘贴剪贴板图片，QQ截图按ctrl+alt+a</b></div>
+					</div>
+					<div class="form-actions">
+						<button type="submit" class="btn btn-primary" id="btnSubmit"><i class="icon-ok-sign"></i> 提交付款申请</button>
+					</div>
+					<input type="hidden" id="description" name="description" />
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

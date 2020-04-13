@@ -1,0 +1,245 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>修改流量包</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/plugins/select2/select2.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/add.css">
+	<!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+  <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+  <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+  <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+  <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+  <script type="text/javascript" src="js/init.js"></script>
+  <script type="text/javascript" src="js/loading.js"></script>
+
+  <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+  <style type="text/css">
+  .SyncModeChangeShow{ display:none;}
+  </style>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $("#formInterfaceGroup").ajaxForm({
+              success: function (result) {
+                  bootbox.alert(result.Message, function (box) {
+                      if (result.OK) {
+                          //$("#formInterfaceGroup").resetForm();
+                      }
+                  });
+              },
+              error: function (XmlHttpRequest, textStatus, errorThrown) {
+                  bootbox.alert("操作失败:服务器错误");
+              }
+          });
+          $(".SyncModeChange").trigger("change");
+      });
+  </script>
+
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+              <div class="box-title">
+                <h3><i class="icon-ok-sign"></i> 添加加油包</h3>
+              </div>
+              <div class="box-content">
+                <div class="form-horizontal form-validate" id="formInterfaceGroup">
+				    <div class="control-group">
+                    <label for="PlanCode" class="control-label">套餐编码：</label>
+                    <div class="controls">
+                      <input type="text" id="PlanCode" name="PlanCode" value="" class="input-xlarge" maxlength="100"/>上级通道编码，不可随意填写，否则可能导致充值错误或者异常！
+                    </div>
+                  </div>
+                 <div class="control-group">
+                    <label for="InterfaceID" class="control-label">归属通道：</label>
+                    <div class="controls">
+                        <select id="InterfaceID" name="InterfaceID" class="select2-me input-medium" data-search="true">
+                                <option value=''>选择通道</option>
+                            </select>
+                    </div>
+                </div>
+                  <div class="control-group">
+                    <label for="OperatorType" class="control-label">运营商：</label>
+                    <div class="controls">
+                        <select id="OperatorType" name="OperatorType" class="select2-me select-small" data-search="false">
+                            <option value="1" selected="selected">移动</option>
+							<option value="2">联通</option>
+                            <option value="3">电信</option>
+                        </select>
+                    </div>
+                </div>
+                    <div class="control-group">
+                    <label for="OriginalPlanName" class="control-label">原始名称：</label>
+                    <div class="controls">
+                      <input type="text" id="OriginalPlanName" name="OriginalPlanName" value="" class="input-xlarge" maxlength="50"/>
+                    </div>
+                  </div>
+				  <div class="control-group">
+                    <label for="OriginalPrice" class="control-label">原始售价：</label>
+                    <div class="controls">
+                      <input type="text" id="OriginalPrice" name="OriginalPrice" value="" class="input-xlarge" maxlength="18"/>元
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label for="PlanName" class="control-label">显示名称：</label>
+                    <div class="controls">
+                      <input type="text" id="PlanName" name="PlanName" value="" class="input-xlarge" maxlength="50"/>
+                    </div>
+                  </div>
+				  <div class="control-group">
+                    <label for="Price" class="control-label">售价：</label>
+                    <div class="controls">
+                      <input type="text" id="Price" name="Price" value="" class="input-xlarge" maxlength="18"/>元
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label for="Price" class="control-label">成本：</label>
+                    <div class="controls">
+                      <input type="text" id="CostPrice" name="CostPrice" value="" class="input-xlarge" maxlength="18"/>元
+                    </div>
+                  </div>
+				  <div class="control-group">
+                    <label for="PackageSize" class="control-label">包含流量：</label>
+                    <div class="controls">
+                      <input type="text" id="PackageSize" name="PackageSize" value="" class="input-xlarge" maxlength="18"/>M
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label for="FeeMode" class="control-label">计费模式：</label>
+                    <div class="controls">
+                      整月<input type="radio" name="FeeMode" value="1" checked="checked" />
+                      剩余天数<input type="radio" name="FeeMode" value="2" />
+                    </div>
+                  </div>
+				<div class="control-group">
+                    <label for="Remark" class="control-label">备注：</label>
+                    <div class="controls">
+                      <input type="text" id="Remark" name="Remark" value="" class="input-xxlarge" maxlength="500"/>
+                    </div>
+                  </div>
+				  <div class="control-group">
+                    <label for="status" class="control-label">状态：</label>
+                    <div class="controls">
+                        <select id="IsUsed" name="IsUsed" class="select2-me select-small" data-search="false">
+                            <option value="0" selected="selected">启用</option>
+							<option value="1">停用</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                    <div class="controls" style="color:Red;">
+                     请勿随意添加加油包，添加前，请先联系客服人员确认！
+                    </div>
+                  </div>
+                </div>
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="btnSubmit"><i class="icon-ok-sign"></i> 添加加油包</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+
+  $("#btnSubmit").click(function () {
+    var packageId = $("#PlanCode").val();
+    var channelName = $("#InterfaceID").val();
+    var operator = $("#OperatorType").val();
+    var originalName = $("#OriginalPlanName").val();
+    var showName = $("#PlanName").val();
+    var originalPrice = $("#OriginalPrice").val();
+    var packagePrice = $("#Price").val();
+    var packageCost = $("#CostPrice").val();
+    var packageSize = $("#PackageSize").val();
+    var feeMode = $(":radio[name='FeeMode']:checked").val();
+    var remark = $("#Remark").val();
+    var status = $("#IsUsed").val();
+    $.ajax({
+      type: "POST",
+      url: '/api/v1/channelAddPackage_add.do',
+      data: {
+        packageId: packageId,
+        channelName: channelName,
+        operator: operator,
+        originalName: originalName,
+        showName: showName,
+        originalPrice: originalPrice,
+        packagePrice: packagePrice,
+        packageCost: packageCost,
+        packageSize: packageSize,
+        feeMode: feeMode,
+        remark: remark,
+        status: status
+      },
+      success: function (data) {
+        if (data.code == 0) {
+          alert("添加成功");
+          window.location.href = "/M2MaddPackageList.htm";
+        } else {
+          alert("添加失败" + data.msg)
+        }
+      },
+      error: function (XMLHttpRequest) {
+        alert("系统出错了" + XMLHttpRequest.status);
+      }
+
+    });
+  });
+
+  $(document).ready(function () {
+    $.ajax({
+      type: "GET",
+      url: "/api/v1/channel_all.do",
+      success: function (data) {
+        if (data.code == 0) {
+          var channelNames = data.object;
+          // console.log(channelNames);
+          var channelName;
+          for (var x in channelNames) {
+            channelName = channelNames[x];
+            // console.log(channelName);
+            var result = "<option value='" + channelName + "'>" + channelName + "</option>";
+            $("#InterfaceID").append(result);
+          }
+
+        }
+      },
+      error: function (XMLHttpRequest) {
+        alert("系统出错了" + XMLHttpRequest.status);
+      },
+
+    });
+
+
+  });
+
+</script>
+
+</html>
+

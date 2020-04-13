@@ -1,0 +1,134 @@
+
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改配置</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/edit.css">
+	<style type="text/css">
+	  .additional{
+	  	 display:none;
+	  }
+	</style>
+    <!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+
+	<script type="text/javascript" src="js/plugins/fileupload/bootstrap-fileupload.min.js"></script>
+
+    <script type="text/javascript" src="js/init.js"></script>
+	<script type="text/javascript" src="js/loading.js"></script>
+	<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+    <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+
+    <script type="text/javascript">
+    	$(document).ready(function () {
+    		$("#btnSubmit").click(function () {
+    			$("#mobilePageRemark").val(CKEDITOR.instances.mobilePageRemark.getData());
+    		});
+    		$("#formAgent").ajaxForm({
+    			success: function (result) {
+    				bootbox.alert(result.Message);
+    			},
+    			error: function (XmlHttpRequest, textStatus, errorThrown) {
+    				bootbox.alert("操作失败:服务器错误");
+    			}
+    		});
+
+    		$("#img-uplaod-form").ajaxForm({
+    			success: function (result) {
+    				if (result.Message != "") {
+    					$("#mobilePageBanner").val(result.Message);
+    					$("#mobilePageBannerShow").attr("src", "http://47.92.159.122:8083" + result.Message);
+    					$("#img-uplaod").modal("hide");
+    				} else {
+    					bootbox.alert("上传失败！");
+    				};
+    			},
+    			error: function (XmlHttpRequest, textStatus, errorThrown) {
+    				bootbox.alert("操作失败:服务器错误!");
+    			}
+    		});
+    	});
+
+    	function imgUpload() {
+    		$("#img-uplaod").modal();
+    	}
+    </script>
+
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+              <div class="box-title">
+                <h3><i class="icon-table"></i> 预警设置</h3>
+				<a href="M2MalarmSetAdd.htm" class="btn btn-primary" style=" float:right;margin-right:10px;"><i class="icon-plus-sign"></i> 添加预警</a>
+              </div>
+              <div class="box-content nopadding">
+                <div class="dataTables_wrapper">
+                    <table class="table table-hover table-nomargin table-bordered table-condensed">
+                      <thead>
+                        <tr>
+                          <th>预警类型</th>
+						  <th>规则名称</th>
+						  <th>规则内容</th>
+						  <th>创建时间</th>
+						  <th>是否启用</th>
+						  <th>预警方式</th>
+						  <th>预警对象</th>
+                          <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      <tr>
+                          <td>流量不足</td>
+						  <td>2111</td>
+						  <td>流量达到多少M或百分比：98%</td>
+						  <td>2018/1/11 20:31:15</td>
+						  <td><span class='label label-success'>启用</span></td>
+						  <td></td>
+						  <td> 全部客户</br> </td>
+                          <td><a href="M2MalarmSetEdit.htm?RuleID=1" title="修改">修改</a></td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+
+                    <div class="dataTables_paginate paging_full_numbers"> <a href="#" class="paginate_button paginate_button_disabled">首页</a>  <a href="#" class="paginate_button paginate_button_disabled">上一页</a>  <span>  <a href="M2MalarmSet.htm?pageIndex=1" class="paginate_active">1</a>   </span>  <a href="#" class="paginate_button paginate_button_disabled">下一页</a>  <a href="#" class="paginate_button paginate_button_disabled">尾页</a>  <a href="#" class="paginate_button paginate_button_disabled">共1条，1页</a>  <a href="#" class="paginate_button paginate_button_disabled">当前第</a>  <select name="pageSelect" id="pageSelect" class="select2-me input-mini"> <option value="M2MalarmSet.htm?pageIndex=1" selected="selected">1</option> </select> <a href="#" class="paginate_button paginate_button_disabled">页</a> </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

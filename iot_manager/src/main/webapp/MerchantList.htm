@@ -1,0 +1,756 @@
+
+
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>客户管理</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/plugins/select2/select2.css">
+	<link rel="stylesheet" href="css/plugins/icheck/all.css">
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/themes.css">
+	<link rel="stylesheet" href="css/list.css">
+	<!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+  <style type="text/css">
+  p{ margin:0 0 1px;}
+  </style>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+	<script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+	<script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+	<script type="text/javascript" src="js/init.js"></script>
+	<!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('input, textarea').placeholder();
+      });
+    </script>
+  <![endif]-->
+  <script type="text/javascript">
+  	$(document).ready(function () {
+
+  		$(".btn-stop").on("click", function () {
+  			id = new Array();
+  			$(".table tbody").find("input[type='checkbox']:checked").each(function (i, item) {
+  				id[i] = item.value;
+  			});
+  			if (id == "") {
+  				alert("请至少选择一项！");
+  				return;
+  			}
+  			if (!confirm('你确定要进行该操作吗？')) {
+  				return;
+  			}
+  			location.href = "MerchantList.htm?action=stopAll&ids=" + id;
+  		});
+
+  		$(".btn-use").on("click", function () {
+  			id = new Array();
+  			$(".table tbody").find("input[type='checkbox']:checked").each(function (i, item) {
+  				id[i] = item.value;
+  			});
+  			if (id == "") {
+  				alert("请至少选择一项！");
+  				return;
+  			}
+  			if (!confirm('你确定要进行该操作吗？')) {
+  				return;
+  			}
+  			location.href = "MerchantList.htm?action=useAll&ids=" + id;
+  		});
+
+
+  		$(".action-move").on("click", function () {
+  			var id = $(this).attr("data-id");
+  			var agentID = $(this).attr("data-agentID");
+
+  			//$("#agentID").val(agentID);
+  			$("#userID").val(id);
+  			$("#agentID").select2("val", agentID);
+
+  			$("#modal-plus").modal("show");
+  		});
+
+  		$("#modal-plus").on("click", ".btn-primary", function () {
+  			$("#most-plus-form").ajaxSubmit({
+  				type: "POST",
+  				success: function (result) {
+  					alert(result.Message);
+  					if (result.OK) {
+  						$("#modal-plus").modal("hide");
+  					}
+  				},
+  				error: function (XmlHttpRequest, textStatus, errorThrown) {
+  					alert("服务器信息异常");
+  				}
+  			});
+  		});
+
+
+
+  		$("#getBindCode").on("click", function () {
+  			if (confirm('你确定要生成吗？')) {
+  				$.ajax({
+  					url: 'GetM2MWx.htm',
+  					type: "post",
+  					data: {
+  						"action": "getBindCode",
+  						"userID": $("#bindWx-UserID").val()
+  					}, success: function (result) {
+  						if (result.OK) {
+  							if (result.Message.MemberID == 0)
+  								$("#bindStatus").html("未绑定");
+  							else
+  								$("#bindStatus").html("已绑定微信客户" + result.Message.WxMobile);
+  							$("#bindCode").html(result.Message.M2MBindCode);
+  							$("#bindExpireTime").html(result.Message.M2MBindExpireTime);
+  						} else {
+  							bootbox.alert(result.Message);
+  						}
+  					}
+  				});
+  			}
+  		});
+
+
+  		$("#unbindCode").on("click", function () {
+  			var status = $("#bindStatus").text();
+  			if (status == "未绑定") {
+  				bootbox.alert("尚未绑定，无需解绑！");
+  				return;
+  			}
+  			if (confirm('你确定要解除绑定吗？解除后，微信客户需要再次绑定！')) {
+  				$.ajax({
+  					url: 'GetM2MWx.htm',
+  					type: "post",
+  					data: {
+  						"action": "unbindCode",
+  						"userID": $("#bindWx-UserID").val()
+  					}, success: function (result) {
+  						if (result.OK) {
+  							if (result.Message.MemberID == 0)
+  								$("#bindStatus").html("未绑定");
+  							else
+  								$("#bindStatus").html("已绑定微信客户" + result.Message.WxMobile);
+  							$("#bindCode").html(result.Message.M2MBindCode);
+  							$("#bindExpireTime").html(result.Message.M2MBindExpireTime);
+  							bootbox.alert("解除成功！");
+  						} else {
+  							bootbox.alert(result.Message);
+  						}
+  					}
+  				});
+  			}
+  		});
+
+  		$(".action-bindWx").on("click", function () {
+  			var id = $(this).attr("data-id");
+  			$("#bindWx-UserID").val(id);
+  			$.ajax({
+  				url: 'GetM2MWx.htm',
+  				type: "post",
+  				data: {
+  					"action": "getUserInfo",
+  					"userID": id
+  				}, success: function (result) {
+  					if (result.OK) {
+  						if (result.Message.MemberID == 0)
+  							$("#bindStatus").html("未绑定");
+  						else
+  							$("#bindStatus").html("已绑定微信客户" + result.Message.WxMobile);
+  						$("#bindCode").html(result.Message.M2MBindCode);
+  						$("#bindExpireTime").html(result.Message.M2MBindExpireTime);
+  						$("#modal-bindWx").modal("show");
+  					} else {
+  						bootbox.alert(result.Message);
+  					}
+  				}
+  			});
+  		});
+
+
+
+  		$(".action-m2mCharge").on("click", function () {
+  			var id = $(this).attr("data-id");
+  			$("#m2mCharge-UserID").val(id);
+  			$.ajax({
+  				url: 'GetM2MCharge.htm',
+  				type: "post",
+  				data: {
+  					"action": "getUserM2Mbalance",
+  					"userID": id
+  				}, success: function (result) {
+  					if (result.OK) {
+  						$("#m2mBalanceShow").html(result.Message + "元");
+  						$("#modal-m2mCharge").modal("show");
+  					} else {
+  						bootbox.alert(result.Message);
+  					}
+  				}
+  			});
+  			
+  		});
+
+
+  		$("#modal-m2mCharge").on("click", ".btn-primary", function () {
+  			$("#modal-m2mCharge").modal("hide");
+  			$("#m2mChargeForm").ajaxSubmit({
+  				type: "POST",
+  				success: function (result) {
+  					alert(result.Message);
+  				},
+  				error: function (XmlHttpRequest, textStatus, errorThrown) {
+  					alert("服务器信息异常");
+  				}
+  			});
+  		});
+
+
+
+  	});
+  </script>
+</head>
+<body>
+	<div class="container-fluid" id="content">
+		<div id="main">
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<div class="span12">
+						<div class="box box-bordered">
+							<div class="box-title">
+								<h3>
+									<i class="icon-table"></i>
+									客户列表</h3>
+							</div>
+							<div class="box-content nopadding">
+								<div class="dataTables_wrapper" style="padding-top: 10px;">
+									<div class="dataTables_info1">
+										<div class="dataTables_filter">
+											<form class="form-inline" action="MerchantList.htm" method="GET">
+
+											
+											
+											<label>关键词 </label>
+											<input type="text" id="merchantName" name="merchantName" placeholder="账号、联系人、手机号" class="input-medium" value="" />
+
+                                            <label>代理账号 </label>
+                                            <input type="text" class="input-medium" name="agentName" id="agentName" placeholder="代理账号" value=""/>
+											
+											<label>客户编号 </label>
+                                            <input type="text" class="input-medium" name="merchantID" id="merchantID" placeholder="客户编号" value=""/>
+											
+											<button type="submit" class="btn btn-primary">
+												<i class="icon-search"></i>
+												搜索</button>
+											<button type="button" class="btn btn-primary btn-stop"><i class="icon-trash"></i> 停用</button>
+	  <button type="button" class="btn btn-primary btn-use"><i class="icon-ok"></i> 启用</button>
+	  
+											</form>
+										</div>
+									</div>
+									<div style="clear: both;">
+									</div>
+									<table class="table table-hover table-nomargin table-bordered table-condensed">
+										<thead>
+											<tr>
+												<th rowspan="2"><input type="checkbox" class="check-all" name="chkAll" value="0"/></th>
+												<th rowspan="2" style="width: 80px;">客户编号</th>
+												<th rowspan="2">登录帐号</th>
+												<th rowspan="2" style="width: 90px;">代理账号</th>
+                                                
+												<th rowspan="2" style="width: 100px;">物联网余额</th>
+												
+												<th rowspan="2" style="width: 80px;">创建时间</th>
+												<th rowspan="2" style="width: 45px;">状态</th>
+												<th rowspan="2" style="width:100px;">操作</th>
+											</tr>
+											<tr>
+												
+											</tr>
+										</thead>
+										<tbody>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="20"/></td>
+												<td>20</td>
+												<td>testtest</td>
+												<td>test111</td>
+                                                
+												<td>0.0000</td>
+												
+												<td>2018/12/28 14:50:27</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=testtest&password=02b29b174737808f8f0c76e68b69c54c" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="20" data-agentID="26" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="20" data-agentID="26" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="20" data-agentID="26" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="19"/></td>
+												<td>19</td>
+												<td>test222</td>
+												<td>test111</td>
+                                                
+												<td>0.0000</td>
+												
+												<td>2018/11/16 10:21:16</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=test222&password=3fc663cf4266aa8e2c106dc606c8bf2b" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="19" data-agentID="26" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="19" data-agentID="26" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="19" data-agentID="26" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="18"/></td>
+												<td>18</td>
+												<td>111111</td>
+												<td>测试账号</td>
+                                                
+												<td>0.0000</td>
+												
+												<td>2018/11/2 13:58:41</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=111111&password=2bbf9887d2ee74b543099164440c3d0f" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="18" data-agentID="25" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="18" data-agentID="25" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="18" data-agentID="25" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="17"/></td>
+												<td>17</td>
+												<td>1</td>
+												<td>admin@test</td>
+                                                
+												<td>0.0000</td>
+												
+												<td>2018/7/30 15:37:44</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=1&password=a87607e358716be54aa7d7aabcb1bdf8" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="17" data-agentID="8" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="17" data-agentID="8" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="17" data-agentID="8" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="16"/></td>
+												<td>16</td>
+												<td>admin</td>
+												<td>minxun</td>
+                                                
+												<td>1.0000</td>
+												
+												<td>2018/7/21 9:41:26</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=admin&password=313251073cb82c25cb33f1d1bc8d1d79" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="16" data-agentID="20" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="16" data-agentID="20" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="16" data-agentID="20" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="15"/></td>
+												<td>15</td>
+												<td>cc</td>
+												<td>yjdls</td>
+                                                
+												<td>111111111.0000</td>
+												
+												<td>2018/7/16 11:15:13</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=cc&password=0d48dcbbf1c3301a6d6f0c50a10c10cd" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="15" data-agentID="21" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="15" data-agentID="21" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="15" data-agentID="21" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="14"/></td>
+												<td>14</td>
+												<td>minxuns</td>
+												<td>minxun</td>
+                                                
+												<td>22222.0000</td>
+												
+												<td>2018/6/21 23:40:34</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=minxuns&password=46c32cfbb4004d91da96c8200098e6b0" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="14" data-agentID="20" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="14" data-agentID="20" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="14" data-agentID="20" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="13"/></td>
+												<td>13</td>
+												<td>test334</td>
+												<td>clh2</td>
+                                                
+												<td>1.0000</td>
+												
+												<td>2018/6/8 15:24:02</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=test334&password=1ffe3df199fdea9fe190872f2c8d4624" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="13" data-agentID="18" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="13" data-agentID="18" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="13" data-agentID="18" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="12"/></td>
+												<td>12</td>
+												<td>clh-kh1</td>
+												<td>clh</td>
+                                                
+												<td>0.0000</td>
+												
+												<td>2018/5/22 11:42:05</td>
+												<td><span class='label label-important'>锁定</span></td>
+												<td>
+                                                <p><a href="#" class="action-move" data-id="12" data-agentID="17" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="12" data-agentID="17" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="12" data-agentID="17" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="9"/></td>
+												<td>9</td>
+												<td>q</td>
+												<td>123321</td>
+                                                
+												<td>1.0000</td>
+												
+												<td>2018/5/15 9:50:26</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=q&password=215525373f568db828eabc74a22c2786" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="9" data-agentID="16" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="9" data-agentID="16" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="9" data-agentID="16" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="8"/></td>
+												<td>8</td>
+												<td>test</td>
+												<td>admin2</td>
+                                                
+												<td>50.0000</td>
+												
+												<td>2018/5/8 10:00:17</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=test&password=1ffe3df199fdea9fe190872f2c8d4624" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="8" data-agentID="11" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="8" data-agentID="11" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="8" data-agentID="11" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="7"/></td>
+												<td>7</td>
+												<td>dajia1</td>
+												<td>123</td>
+                                                
+												<td>0.0000</td>
+												
+												<td>2018/4/23 12:47:37</td>
+												<td><span class='label label-important'>锁定</span></td>
+												<td>
+                                                <p><a href="#" class="action-move" data-id="7" data-agentID="13" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="7" data-agentID="13" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="7" data-agentID="13" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="6"/></td>
+												<td>6</td>
+												<td>ddd</td>
+												<td>20180416</td>
+                                                
+												<td>20.0000</td>
+												
+												<td>2018/4/17 20:43:15</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=ddd&password=3fa18d54ad3275e6c820f18d33bdfdb8" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="6" data-agentID="12" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="6" data-agentID="12" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="6" data-agentID="12" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="5"/></td>
+												<td>5</td>
+												<td>222222</td>
+												<td>admin2</td>
+                                                
+												<td>12.0000</td>
+												
+												<td>2018/3/6 16:40:23</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=222222&password=2bbf9887d2ee74b543099164440c3d0f" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="5" data-agentID="11" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="5" data-agentID="11" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="5" data-agentID="11" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="4"/></td>
+												<td>4</td>
+												<td>西南片区智能机器人</td>
+												<td>机器人</td>
+                                                
+												<td>960.0000</td>
+												
+												<td>2018/1/16 9:44:50</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=%e8%a5%bf%e5%8d%97%e7%89%87%e5%8c%ba%e6%99%ba%e8%83%bd%e6%9c%ba%e5%99%a8%e4%ba%ba&password=3f3a21d15eb635a439e8e8aa24cefd81" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="4" data-agentID="10" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="4" data-agentID="10" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="4" data-agentID="10" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="3"/></td>
+												<td>3</td>
+												<td>滴滴打车</td>
+												<td>diexin</td>
+                                                
+												<td>122.0000</td>
+												
+												<td>2017/12/13 15:05:10</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=%e6%bb%b4%e6%bb%b4%e6%89%93%e8%bd%a6&password=f2b70d5c54712a6b8bb2878369cc56e7" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="3" data-agentID="9" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="3" data-agentID="9" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="3" data-agentID="9" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="2"/></td>
+												<td>2</td>
+												<td>diexin1</td>
+												<td>diexin</td>
+                                                
+												<td>1000.0000</td>
+												
+												<td>2017/12/13 14:24:49</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=diexin1&password=424325c72eca3000bfa078e9ee8afea6" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="2" data-agentID="9" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="2" data-agentID="9" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="2" data-agentID="9" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+											<tr>
+												<td><input type="checkbox" name="userID" value="1"/></td>
+												<td>1</td>
+												<td>kehu</td>
+												<td>diexin</td>
+                                                
+												<td>1.0000</td>
+												
+												<td>2017/11/21 9:04:48</td>
+												<td><span class='label label-success'>正常</span></td>
+												<td>
+                                                
+                                            <p><a target="_blank" href="http://47.92.159.122:8083/LoginApi.htm?action=login&formType=S&account=kehu&password=a233b368558e174d2dbdf0ed36094428" title="登陆">登陆</a></p>
+                                            <p><a href="#" class="action-move" data-id="1" data-agentID="9" title="转移">转移</a></p>
+			 <p><a href="#" class="action-bindWx" data-id="1" data-agentID="9" title="微信绑定码">微信绑定码</a></p>
+				<p><a href="#" class="action-m2mCharge" data-id="1" data-agentID="9" title="物理网充值">物理网充值</a></p>
+			 
+												</td>
+											</tr>
+											
+										</tbody>
+									</table>
+									
+									<div class="dataTables_paginate paging_full_numbers">
+										 <a href="#" class="paginate_button paginate_button_disabled">首页</a>  <a href="#" class="paginate_button paginate_button_disabled">上一页</a>  <span>  <a href="MerchantList.htm?&merchantName=&merchantID=&agentName=&pageIndex=1" class="paginate_active">1</a>   </span>  <a href="#" class="paginate_button paginate_button_disabled">下一页</a>  <a href="#" class="paginate_button paginate_button_disabled">尾页</a>  <a href="#" class="paginate_button paginate_button_disabled">共18条，1页</a>  <a href="#" class="paginate_button paginate_button_disabled">当前第</a>  <select name="pageSelect" id="pageSelect" class="select2-me input-mini"> <option value="MerchantList.htm?&merchantName=&merchantID=&agentName=&pageIndex=1" selected="selected">1</option> </select> <a href="#" class="paginate_button paginate_button_disabled">页</a> </div>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="modal-plus" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2"
+		aria-hidden="true">
+		<form id="most-plus-form" class="form-horizontal" novalidate="novalidate" action="GetMerchant.htm">
+		<input type="hidden" name="action" value="move" />
+		<input type="hidden" name="userID" id="userID" value="" />
+		<div class="modal-header">
+			<button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">
+				×</button>
+			<h4 class="modal-title" id="myModalLabel2">
+				转移代理</h4>
+		</div>
+		<div class="modal-body">
+			<div class="box-content" id="bodyList">
+				<div class="control-group">
+					<label for="agentID" class="control-label">归属代理：</label>
+					<div class="controls">
+						 <select id="agentID" name="agentID" class="select2-me input-medium" data-search="true">
+							<option value='26'>test111</option><option value='25'>测试账号</option><option value='24'>康智然</option><option value='21'>yjdls</option><option value='20'>minxun</option><option value='18'>clh2</option><option value='16'>123321</option><option value='12'>20180416</option><option value='11'>admin2</option><option value='10'>机器人</option><option value='9'>diexin</option><option value='8'>admin@test</option><option value='1'>agent</option>
+                        </select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+				<a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a> <a class="btn btn-primary">确定</a>
+		</div>
+		</form>
+	</div>
+
+
+	<div id="modal-bindWx" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2"
+		aria-hidden="true">
+		<form id="bindWxForm" class="form-horizontal" novalidate="novalidate" action="GetM2MWx.htm">
+		<input type="hidden" name="action" value="bindWx" />
+		<input type="hidden" name="userID" id="bindWx-UserID" value="" />
+		<div class="modal-header">
+			<button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">
+				×</button>
+			<h4 class="modal-title" id="H1">
+				生成绑定码</h4>
+		</div>
+		<div class="modal-body">
+			<div class="box-content" id="Div2">
+				<div class="control-group">
+					<label for="agentID" class="control-label">是否已绑定：</label>
+					<div class="controls" id="bindStatus">
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="agentID" class="control-label">绑定码：</label>
+					<div class="controls" id="bindCode">
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="agentID" class="control-label">失效时间：</label>
+					<div class="controls" id="bindExpireTime">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+				<a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a> <a class="btn btn-danger" id="unbindCode">解除绑定</a> <a class="btn btn-success" id="getBindCode">生成绑定码</a> 
+		</div>
+		</form>
+	</div>
+
+	<div id="modal-m2mCharge" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2"
+		aria-hidden="true">
+		<form id="m2mChargeForm" class="form-horizontal" novalidate="novalidate" action="GetM2MCharge.htm">
+		<input type="hidden" name="action" value="m2mCharge" />
+		<input type="hidden" name="userID" id="m2mCharge-UserID" value="" />
+		<div class="modal-header">
+			<button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">
+				×</button>
+			<h4 class="modal-title" id="H2">
+				物联网卡充值</h4>
+		</div>
+		<div class="modal-body">
+			<div class="box-content" id="Div1">
+				<div class="control-group">
+   					<label for="MinBalance" class="control-label">物联网余额</label>
+   					<div class="controls" id="m2mBalanceShow">
+   					</div>
+   				</div>
+				<div class="control-group">
+   					<label for="MinBalance" class="control-label">充扣金额</label>
+   					<div class="controls">
+   						<input type="text" name="amount" id="amount" value="" class="discountInput input-small" maxlength="10" />元，负数为扣除
+   					</div>
+   				</div>
+                <div class="control-group">
+   					<label for="MinBalance" class="control-label">备注</label>
+   					<div class="controls">
+   						<textarea name="remark" id="remark" cols="10" rows="4"></textarea>
+   					</div>
+   				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+				<a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a> <a class="btn btn-primary">确定</a>
+		</div>
+		</form>
+	</div>
+</body>
+</html>

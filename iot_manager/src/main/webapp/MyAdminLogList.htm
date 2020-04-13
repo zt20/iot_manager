@@ -1,0 +1,311 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>管理日志</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/plugins/icheck/all.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/list.css">
+    <link rel="stylesheet" href="css/plugins/datepicker/bootstrap-datetimepicker.css">
+    <link rel="stylesheet" href="css/pagination.css">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+    <link rel="stylesheet" href="css/ie7.css">
+    <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+    <script type="text/javascript" src="js/plugins/datepicker/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="js/init.js"></script>
+    <script type="text/javascript" src="js/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+    <script type="text/javascript" src="js/plugins/jquery-paginator/jquery.pagination.js"></script>
+
+    <!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('input, textarea').placeholder();
+        });
+    </script>
+    <![endif]-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#start_date').datetimepicker({autoclose: true, format: "yyyy-mm-dd", minView: 'month'});
+            $('#end_date').datetimepicker({autoclose: true, format: "yyyy-mm-dd", minView: 'month'});
+        });
+    </script>
+</head>
+<body>
+<div class="container-fluid" id="content">
+    <div id="main">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="box box-bordered">
+                        <div class="box-title">
+                            <h3><i class="icon-table"></i> 我的管理日志</h3>
+                        </div>
+                        <div class="box-content nopadding">
+                            <div class="dataTables_wrapper">
+                                <div class="dataTables_info1" style="padding-top: 10px;">
+                                    <div class="dataTables_filter">
+                                        <!--<form class="form-inline" action="MyAdminLogList.htm" method="post">-->
+                                        <div class="form-inline">
+                                            <div class="form-group pull-left" style="padding-right:5px;">
+                                                开始时间
+                                                <div class="input-group input-append" id="start_date_div" style="">
+								<span class="input-group-addon add-on">
+									<i class="fa fa-calendar icon-calendar" data-date-icon="icon-calendar"
+                                       data-time-icon="icon-time"></i>
+								</span>
+                                                    <input class="form-control input-sm" placeholder="开始时间"
+                                                           style="width: 80px;" id="start_date" name="start_date"
+                                                           data-format="yyyy-MM-dd" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="form-group pull-left" style="padding-right:5px;">
+                                                结束时间
+                                                <div class="input-group input-append" id="end_date_div" style="">
+									<span class="input-group-addon add-on">
+										<i class="fa fa-calendar icon-calendar" data-date-icon="icon-calendar"
+                                           data-time-icon="icon-time"></i>
+									</span>
+                                                    <input class="form-control input-sm" placeholder="结束时间"
+                                                           style="width: 80px;" id="end_date" name="end_date"
+                                                           style="width: 160px;" type="text">
+                                                </div>
+                                            </div>
+                                            <label>类型: </label>
+                                            <input type="text" class="input-medium" name="optType" id="optType"
+                                                   placeholder="类型" value=""/>
+                                            <label>详情: </label>
+                                            <input type="text" class="input-medium" name="content" id="Text1"
+                                                   placeholder="详情" value=""/>
+                                            <button id="logSearch" class="btn btn-primary"><i class="icon-search"></i>
+                                                搜索
+                                            </button>
+                                            <!--</form>-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <table id="systemLogItem"
+                                       class="table table-hover table-nomargin table-bordered table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th style="width:50px;">类型</th>
+                                        <th style="width:50px;">IP</th>
+                                        <th style="width:100px">描述</th>
+                                        <th style="width:50px;">时间</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <!--<tr>-->
+                                    <!--<td>登陆</td>-->
+                                    <!--<td>101.229.149.206</td>-->
+                                    <!--<td>登陆系统</td>-->
+                                    <!--<td>2019/2/16 8:49:32</td>-->
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                                <!--<div style="text-align: center" id="pageInfo"></div>-->
+                                <!--<div id="data-container"></div>-->
+                                <div id="pagination-container" ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    // $("#logSearch").click(function () {
+    //     $.ajax({
+    //         datatype: 'JSON',
+    //         data:{ page: 1},
+    //         url: 'systemUser_log.do',
+    //         type: 'GET',
+    //         success: function(data,done){
+    //             done(data.list);
+    //             $('#pagination-container').pagination({
+    //                 dataSource:data.list,
+    //                 showGoInput: true,
+    //                 showGoButton: true,
+    //                 pageSize: 5,
+    //             })
+    //
+    //            callback: function done(data,pagination) {
+    //                 console.log(data);
+    //                 $.each(data, function (i, item) {
+    //                     var result = "<tr><td>" + item['operationType'] + "</td><td>" + item['operationIp'] + "</td><td>"
+    //                         + item['instruction'] + "</td><td>" + item['operationTime'] + "</td></tr>";
+    //                     $('#systemLogItem').append(result);
+    //                 })
+    //             }
+    //         }
+    //     })
+    //
+    // })
+
+    $("#logSearch").click(function () {
+
+        pageStart();//初始化
+
+        function pageStart() {
+            var startTime = $("#start_date").val();
+            var endTime = $("#end_date").val();
+            var optType = $("#optType").val();
+            var Text1 = $("#Text1").val();
+            $('#pagination-container').pagination({
+                dataSource: '/api/v1/systemUser_log.do?startTime=' + startTime + "&endTime=" + endTime + "&optType=" + optType + "&Text1=" +Text1,
+                prevText: '<<',
+                nextText: '>>',
+                goButtonText: 'go',
+                // className: 'paginationjs-theme-blue',
+                alias: {
+                    pageNumber: 'page',
+                    pageSize: 'size'
+                },
+                pageSize: 5,
+                totalNumberLocator: function (response) {//处理页数
+                    return response.total;
+                },
+                locator: 'list',
+                ajax: {
+                    type: 'GET',
+                    beforeSend: function () {//请求前处理
+                        $("#dataContainer").html('加载中...');
+                    }
+                },
+                showGoInput: true,
+                showGoButton: true,
+                showNavigator: true,
+                callback: function (data, pagination) {
+                    // console.log(data);
+                    $("#systemLogItem tr td").remove();//移除上一次查询的数据
+                    $.each(data, function (i, item) {
+                        var result = "<tr><td>" + item['operationType'] + "</td><td>" + item['operationIp'] + "</td><td>"
+                            + item['instruction'] + "</td><td>" + item['operationTime'] + "</td></tr>";
+                        $('#systemLogItem').append(result);
+                    })
+                }
+            })
+        }
+
+    })
+
+
+    //
+    // function simpleTemplating(data) {
+    //     var html = '<ul>';
+    //     $.each(data, function (index, item) {
+    //         html += '<li>' + item + '</li>';
+    //     });
+    //     html += '</ul>';
+    //     return html;
+
+
+    /*$("#logSearch").click(function () {
+
+        var element = $("#pageInfo");
+
+        var startTime = $("#start_date").val();
+        var endTime = $("#end_date").val();
+        var optType = $("#optType").val();
+        var Text1 = $("#Text1").val();
+        pageStart();
+
+        function pageStart() {
+            $.ajax({
+                type: "GET",
+                url: "systemUser_log.do",
+                dataType: "json",
+                data: {
+                    page: 1,
+                    startTime: startTime,
+                    endTime: endTime,
+                    optType: optType,
+                    Text1: Text1
+                },
+                success: function (data) {
+                    var logs = data.list;
+                    //后台返回的需要显示的信息列表
+                    //根据自己需求再进行前端渲染
+                    console.log(data.list);
+                    $("#systemLogItem tr td").remove();//移除上一次查询的数据
+                    $.each(logs, function (i, item) {
+                        var result = "<tr><td>" + item['operationType'] + "</td><td>" + item['operationIp'] + "</td><td>"
+                            + item['instruction'] + "</td><td>" + item['operationTime'] + "</td></tr>";
+                        $('#systemLogItem').append(result);
+                    })
+
+                    var options = {
+                        bootstrapMajorVersion: 2, //bootstrap的版本要求
+                        currentPage: data.pageNum,//当前页数
+                        totalPages: data.pages,//总页数
+                        numberOfPages: data.pageSize,//每页记录数
+                        itemTexts: function (type, page, current) {//设置分页按钮显示字体样式
+                            switch (type) {
+                                case "first":
+                                    return "首页";
+                                case "prev":
+                                    return "上一页";
+                                case "next":
+                                    return "下一页";
+                                case "last":
+                                    return "末页";
+                                case "page":
+                                    return page;
+                            }
+                        },
+
+                        onPageClicked: function (event, originalEvent, type, page) {//分页按钮点击事件
+                            $.ajax({//根据page去后台加载数据
+                                url: "systemUser_log.do",
+                                type: "GET",
+                                dataType: "json",
+                                data: {"page": page,
+                                    startTime: startTime,
+                                    endTime: endTime,
+                                    optType: optType,
+                                    Text1: Text1
+                                },
+                                success: function (data) {
+                                    //后台返回的需要显示的信息列表
+                                    //根据自己需求再进行前端渲染
+                                    console.log(data.list);
+                                    var logs = data.list;
+                                    $("#systemLogItem tr td").remove();//移除上一次查询的数据
+                                    $.each(logs, function (i, item) {
+                                        var result = "<tr><td>" + item['operationType'] + "</td><td>" + item['operationIp'] + "</td><td>"
+                                            + item['instruction'] + "</td><td>" + item['operationTime'] + "</td></tr>";
+                                        $('#systemLogItem').append(result);
+                                    });
+
+                                }
+                            });
+                        }
+                    };
+                    //初始化分页框
+                    element.bootstrapPaginator(options);
+
+                }
+            })
+
+        }
+
+    });
+*/
+
+</script>
+
+</html>

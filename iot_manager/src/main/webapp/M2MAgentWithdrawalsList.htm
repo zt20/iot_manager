@@ -1,0 +1,157 @@
+
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改配置</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/edit.css">
+	<style type="text/css">
+	  .additional{
+	  	 display:none;
+	  }
+	</style>
+    <!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+
+	<script type="text/javascript" src="js/plugins/fileupload/bootstrap-fileupload.min.js"></script>
+
+    <script type="text/javascript" src="js/init.js"></script>
+	<script type="text/javascript" src="js/loading.js"></script>
+	<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+    <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+
+    <script type="text/javascript">
+    	$(document).ready(function () {
+    	    $(".memberAudit").click(function () {
+    	        var ID = $(this).attr("data-id");
+    	        $("#WithdrawalsID").val(ID);
+
+    	        $("#remark").val("");
+
+    	        $(":radio[name='auditType'][value='1']").prop("checked", "checked");
+
+    	        $("#audit-modal").modal();
+    	    });
+
+
+    	    $("#audit-modal").on("click", ".btn-primary", function () {
+    	        $("#audit-modal-form").ajaxSubmit({
+    	            type: "POST",
+    	            success: function (result) {
+    	                alert(result.Message);
+    	                window.location.reload();
+    	            },
+    	            error: function (XmlHttpRequest, textStatus, errorThrown) {
+    	                alert("操作失败服务器错误");
+    	            }
+    	        });
+    	        $("#audit-modal").modal("hide");
+    	    });
+    	});
+
+    </script>
+
+</head>
+<body>
+  <div class="container-fluid" id="content">
+    <div id="main">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="box box-bordered">
+              <div class="box-title">
+                <h3><i class="icon-table"></i> 提现申请</h3>
+              </div>
+              <div class="box-content nopadding">
+                <div class="dataTables_wrapper">
+                    <table class="table table-hover table-nomargin table-bordered table-condensed">
+                      <thead>
+                        <tr>
+                          <th>代理</th>
+                          <th>申请时间</th>
+						  <th>金额</th>
+						  <th>开户银行</th>
+						  <th>收款姓名</th>
+						  <th>银行账号</th>
+						  <th>状态</th>
+                          <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                        <tr>
+                          <td colspan="10" style="height:80px; text-align:center">暂无数据..</td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+	<div id="audit-modal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2"
+		aria-hidden="true">
+		<form id="audit-modal-form" class="form-horizontal" novalidate="novalidate" action="M2MAgentWithdrawalsList.htm">
+		<input type="hidden" name="WithdrawalsID" id="WithdrawalsID" value="0"/>
+		<input type="hidden" name="action" value="audit"/>
+		<div class="modal-header">
+			<button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">
+				×</button>
+			<h4 class="modal-title" id="H1">
+				处理</h4>
+		</div>
+		<div class="modal-body">
+			<div class="box-content" id="Div2">
+				<div class="control-group">
+					<label for="reportCode" class="control-label">状态：</label>
+					<div class="controls">
+						<input type="radio" name="auditType" value="1" checked="checked" />已付款
+						<input type="radio" name="auditType" value="2"  />拒绝
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="reportCode" class="control-label">原因：</label>
+					<div class="controls">
+						<input type="text" name="remark" id="remark" value="" class="input-xlarge" maxlength="500" /><br/>如果拒绝，描述下原因
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+				<a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a> <a class="btn btn-primary">确定</a>
+		</div>
+		</form>
+	</div>
+</body>
+</html>
+

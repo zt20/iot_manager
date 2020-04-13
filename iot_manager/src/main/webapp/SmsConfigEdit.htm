@@ -1,0 +1,116 @@
+
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改配置</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/edit.css">
+	<style type="text/css">
+	  .additional{
+	  	 display:none;
+	  }
+	</style>
+    <!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="css/ie7.css">
+  <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/form/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/plugins/validation/additional-methods.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+
+	<script type="text/javascript" src="js/plugins/fileupload/bootstrap-fileupload.min.js"></script>
+
+    <script type="text/javascript" src="js/init.js"></script>
+	<script type="text/javascript" src="js/loading.js"></script>
+	<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+    <!--[if lte IE 9]>
+    <script type="text/javascript" src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("input, textarea").placeholder();
+      });
+    </script>
+  <![endif]-->
+
+    <script type="text/javascript">
+    	$(document).ready(function () {
+    		$('#formInterface').submit(function () {
+    			var params = "{";
+    			$(".interfaceParams").each(function () {
+    				params = params + '"' + $(this).attr("paramKey") + '":"' + $(this).val().replace(/\"/g, "\\\"") + '",';
+    			});
+    			if (params.lastIndexOf(",") > 0) {
+    				params = params.substr(0, params.length - 1);
+    			}
+    			params = params + "}";
+    			$("#configData").val(params);
+
+    			$(this).ajaxSubmit({
+    				success: function (result) {
+    					bootbox.alert(result.Message, function (box) {
+    						if (result.OK) {
+    							//$("#formInterface").resetForm();
+    						}
+    					});
+    				},
+    				error: function (XmlHttpRequest, textStatus, errorThrown) {
+    					bootbox.alert("操作失败:服务器错误");
+    				}
+    			});
+    			return false;
+    		});
+    	});
+    </script>
+
+</head>
+<body>
+    <div class="container-fluid" id="content">
+        <div id="main">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="box box-bordered">
+                            <div class="box-title">
+                                <h3><i class="icon-edit"></i>短信参数配置</h3>
+                            </div>
+                            <div class="box-content">
+                                <form action="SmsConfigEdit.htm?action=save" method="POST" class="form-horizontal form-validate" id="formInterface">
+                                    <input type="hidden" name="configData" value="" id="configData"/>
+									<div class="control-group">
+                                        <label for="account" class="control-label">短信参数配置</label>
+                                        <div class="controls">
+                                            <table cellpadding="3" style="min-width:300px;"><tr><td style='width:100px;'>userid：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_userid' paramKey='userid'  class='input-xxlarge interfaceParams' type='text' name='bc_userid' value='' ></td></tr><tr><td style='width:100px;'>account：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_account' paramKey='account'  class='input-xxlarge interfaceParams' type='text' name='bc_account' value='' ></td></tr><tr><td style='width:100px;'>password：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_password' paramKey='password'  class='input-xxlarge interfaceParams' type='text' name='bc_password' value='' ></td></tr><tr><td style='width:100px;'>RPTURL：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_RPTURL' paramKey='RPTURL'  class='input-xxlarge interfaceParams' type='text' name='bc_RPTURL' value='http://111.com:9999/statusapi.htm?action=query' ></td></tr><tr><td style='width:100px;'>MTURL：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_MTURL' paramKey='MTURL'  class='input-xxlarge interfaceParams' type='text' name='bc_MTURL' value='http://111.com:9999/sms.htm?action=send' ></td></tr><tr><td style='width:100px;'>extno：</td><td style='padding-left:5px;padding-right:5px;'><input id='bc_extno' paramKey='extno'  class='input-xxlarge interfaceParams' type='text' name='bc_extno' value='' ></td></tr></table>
+                                        </div>
+                                    </div>
+									<div class="control-group">
+                                        <label for="account" class="control-label"></label>
+                                        <div class="controls">
+                                            目前仅支持迈远短信接口
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary" id="btnSubmit"><i class="icon-ok-sign"></i>修改</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
+

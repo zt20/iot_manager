@@ -1,0 +1,823 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>套餐管理</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/select2/select2.css">
+    <link rel="stylesheet" href="css/plugins/icheck/all.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/list.css">
+    <link rel="stylesheet" href="css/pagination.css">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+    <link rel="stylesheet" href="css/ie7.css">
+    <![endif]-->
+    <style type="text/css">
+        .table.table-condensed tr td {
+            padding: 2px;
+        }
+
+        input[type="text"] {
+            margin-bottom: 0px;
+        }
+
+        .packagesParams {
+            display: none;
+        }
+    </style>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="js/plugins/icheck/jquery.icheck.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootbox/jquery.bootbox.js"></script>
+    <script type="text/javascript" src="js/init.js"></script>
+    <script type="text/javascript" src="js/loading.js"></script>
+    <script type="text/javascript" src="js/jquery.form.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jquery-paginator/jquery.pagination.js"></script>
+
+    <!--[if lte IE 9]>
+    <script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('input, textarea').placeholder();
+        });
+    </script>
+    <![endif]-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".addNew").on("click", function () {
+                $("#modal-plus").modal();
+            });
+            //////////////////查询联动js//////////////////////////////////
+            // $("#AddOperatorType").on("change", function () {
+            //     //类型切换
+            //     var operatorType = $(this).val();
+            //     $(".selectAll").prop("checked", false);
+            //     var html = "";
+            //     $("#AddPackages").html(html);
+            //     $("#AddInterfaceID").html('<option value="">全部</option>');
+            //     $.post("GetM2MPackages.htm", { "action": "getList", "operatorType": operatorType, "packageType": 1 }, function (result) {
+            //         if (result.OK) {
+            //             var i = 0;
+            //             $.each(result.Message, function (index, item) {
+            //                 $("#AddInterfaceID").append('<option value=' + item.InterfaceID + '>' + item.InterfaceName + '</option>')
+            //             });
+            //         }
+            //     }, "JSON");
+            //     $("#AddInterfaceID").select2();
+            // });
+            //
+            // $("#AddInterfaceID").on("change", function () {
+            //     //通道切换
+            //     var interfaceID = $(this).val();
+            //     $(".selectAll").prop("checked", false);
+            //     var html = "";
+            //     $.post("GetM2MPackages.htm", { "action": "getPackageList", "interfaceID": interfaceID, "packageType": 1 }, function (result) {
+            //         if (result.OK) {
+            //             var i = 0;
+            //             $.each(result.Message, function () {
+            //                 i++;
+            //                 html += " <input type='checkbox' class='packagesValues' name='packages' data-PackageName='" + this.PlanName + "' value='" + this.PlanID + "'/><b>" + this.PlanName + "</b><span class='packagesParams' id='packages" + this.PlanID + "'><br/>原价:<font color='orange'>" + this.OriginalPrice + "</font>元 成本:<font color='orange'>" + this.CostPrice + "</font>元 售价:<input type='text' class='input-mini priceInput' data-CostPrice='" + this.CostPrice + "' data-OriginalPrice='" + this.OriginalPrice + "' data-Package='" + this.PlanID + "' name='price" + this.PlanID + "' value='' id='price" + this.PlanID + "'>元 </span>";
+            //                 if (i > 0) {
+            //                     html += "<br/>";
+            //                     i = 0;
+            //                 }
+            //             });
+            //         }
+            //         $("#AddPackages").html(html);
+            //     }, "JSON");
+            //
+            // });
+            //
+            // $(".selectAll").on("click", function () {
+            //     //全选
+            //     if ($(this).prop("checked") == true) {
+            //         $(".packagesValues").each(function () {
+            //             $(this).prop("checked", true);
+            //             $(this).trigger("change");
+            //         });
+            //     } else {
+            //         $(".packagesValues").each(function () {
+            //             $(this).prop("checked", false);
+            //             $(this).trigger("change");
+            //         });
+            //     }
+            // });
+            //
+            // $(document).on("change", ".packagesValues", function () {
+            //     //勾选流量包
+            //     var Package = $(this).val();
+            //     if ($(this).prop("checked") == true) {
+            //         $("#packages" + Package).show();
+            //     } else {
+            //         $("#packages" + Package).hide();
+            //     }
+            // });
+            //
+            // $("#batchDiscountSet").on("click", function () {
+            //     //批量折扣设置
+            //     var discount = $("#batchDiscount").val();
+            //     discount = Math.round(discount * 10000) / 10000;
+            //     if (discount <= 0 || isNaN(discount)) {
+            //         discount = 10;
+            //     }
+            //     $("#batchDiscount").val(discount);
+            //     $.each($(".priceInput"), function () {
+            //         var OriginalPrice = parseFloat($(this).attr("data-OriginalPrice"));
+            //         var price = Math.round((OriginalPrice * discount / 10) * 10000) / 10000;
+            //         $(this).val(price);
+            //     });
+            // });
+            //
+            // $('#modal-plus').on('click', "a.btn-primary", function (e) {
+            //     $("#modal-plus-action").val("savePackageDiscount");
+            //     var hasPackage = false;
+            //     var hasError = false;
+            //     $(".packagesValues").each(function () {
+            //         if ($(this).prop("checked") == true) {
+            //             hasPackage = true;
+            //             //已经选中，需要判断是否已经设置单价和折扣
+            //             var Package = $(this).val();
+            //             var PackageName = $(this).attr("data-PackageName");
+            //             var price = $("#price" + Package).val();
+            //             //判断是否小于0，是否非数字
+            //             if (price <= 0 || isNaN(price)) {
+            //                 alert(PackageName + "价格设置错误！");
+            //                 hasError = true;
+            //                 return false;
+            //             }
+            //         }
+            //     });
+            //     if (!hasPackage) {
+            //         alert("未勾选包体！");
+            //         return;
+            //     }
+            //     if (hasError) {
+            //         return;
+            //     }
+            //
+            //     if ($("#AddAccount").val() == null || $("#AddAccount").val() == "") {
+            //         if (!confirm("不设置代理将更新所有代理，耗时较长，是否继续？")) {
+            //             return;
+            //         }
+            //     }
+            //
+            //     $("#most-plus-form").ajaxSubmit({
+            //         type: "POST",
+            //         success: function (result) {
+            //             alert(result.Message);
+            //             if (result.OK) {
+            //                 $("#modal-plus").modal("hide");
+            //                 location.reload();
+            //             }
+            //         },
+            //         error: function (XmlHttpRequest, textStatus, errorThrown) {
+            //             alert("操作失败服务器错误");
+            //         }
+            //     });
+            // });
+            //
+            //
+            // ///批量删除//////////
+            // $('#modal-plus').on('click', "a.btn-danger", function (e) {
+            //     if (!confirm("按当前条件删除配置，是否继续？")) {
+            //         return;
+            //     }
+            //     $("#modal-plus-action").val("delPackageDiscount");
+            //     $("#most-plus-form").ajaxSubmit({
+            //         type: "POST",
+            //         success: function (result) {
+            //             alert(result.Message);
+            //             if (result.OK) {
+            //                 $("#modal-plus").modal("hide");
+            //                 location.reload();
+            //             }
+            //         },
+            //         error: function (XmlHttpRequest, textStatus, errorThrown) {
+            //             alert("操作失败服务器错误");
+            //         }
+            //     });
+            // });
+            // /////////////////////按选中操作////////////////////////
+            // var saveCount = 0;
+            // $(".btn-segSave").on("click", function () {
+            //     $(".table tbody").find("input[type='checkbox']:checked").each(function (i, item) {
+            //         saveCount++;
+            //         var ID = item.value;
+            //         var price = $("#priceEdit" + ID).val();
+            //         $.ajax({
+            //             url: 'GetM2MAgentPackage.htm',
+            //             type: 'POST',
+            //             data: { "action": "saveDiscount", "id": ID, "price": price, "packageType": 1 },
+            //             error: function () { alert("远程访问失败"); },
+            //             success: function (result) {
+            //             }
+            //         });
+            //     });
+            //     if (saveCount > 0) {
+            //         alert("操作完成！");
+            //     } else {
+            //         alert("请至少选择一项！");
+            //     }
+            //     saveCount = 0;
+            // });
+            //
+            // $(".btn-segDel").on("click", function () {
+            //     ids = new Array();
+            //     $(".table tbody").find("input[type='checkbox']:checked").each(function (i, item) {
+            //         ids[i] = item.value;
+            //     });
+            //     if (ids == "") {
+            //         alert("请至少选择一项！");
+            //         return;
+            //     }
+            //     if (confirm("确认要删除吗？")) {
+            //         $.ajax({
+            //             url: 'GetM2MAgentPackage.htm',
+            //             type: 'POST',
+            //             data: { "action": "segDel", "ids": ids.toString(), "packageType": 1 },
+            //             error: function () { alert("远程访问失败"); },
+            //             success: function (result) {
+            //                 alert(result.Message);
+            //                 location.reload();
+            //             }
+            //         });
+            //     }
+            // });
+            //
+            // //////////////////以下为单个修改js//////////////////////////////////
+            // $(".saveDiscount").on("click", function () {
+            //     var ID = $(this).attr("data-PackageID");
+            //     var price = $("#priceEdit" + ID).val();
+            //     $.ajax({
+            //         url: 'GetM2MAgentPackage.htm',
+            //         type: 'POST',
+            //         data: { "action": "saveDiscount", "id": ID, "price": price, "packageType": 1 },
+            //         error: function () { alert("远程访问失败"); },
+            //         success: function (result) {
+            //             alert(result.Message);
+            //         }
+            //     });
+            // });
+            //
+            // $(".delDiscount").on("click", function () {
+            //     var ID = $(this).attr("data-PackageID");
+            //     if (confirm("确认要删除吗？")) {
+            //         $.ajax({
+            //             url: 'GetM2MAgentPackage.htm',
+            //             type: 'POST',
+            //             data: { "action": "delDiscount", "id": ID, "packageType": 1 },
+            //             error: function () { alert("远程访问失败"); },
+            //             success: function (result) {
+            //                 alert(result.Message);
+            //                 location.reload();
+            //             }
+            //         });
+            //     }
+            // });
+        });
+    </script>
+</head>
+<body>
+<div class="container-fluid" id="content">
+    <div id="main">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="box box-bordered">
+                        <div class="box-title">
+                            <h3><i class="icon-table"></i> 资费计划列表</h3>
+                        </div>
+                        <div class="box-content nopadding">
+                            <div class="dataTables_wrapper">
+                                <div class="dataTables_info1" style="padding-top: 10px;">
+                                    <div class="form-inline">
+                                        <div class="dataTables_filter">
+                                            <label>运营商: </label>
+                                            <select id="OperatorType" name="OperatorType" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="1">移动</option>
+                                                <option value="2">联通</option>
+                                                <option value="3">电信</option>
+                                            </select>
+                                            <label style="width: 50px;">通　道: </label>
+                                            <select id="InterfaceID" name="InterfaceID" class="select2-me input-medium"
+                                                    data-search="true">
+                                                <option value=''>选择通道</option>
+                                            </select>
+                                            <label>显示名称: </label>
+                                            <input type="text" class="input-small" name="PlanName" id="PlanName"
+                                                   placeholder="显示名称" value=""/>
+                                            <label>代理账号: </label>
+                                            <input type="text" class="input-small" name="Account" id="Account"
+                                                   placeholder="代理账号" value=""/>
+                                            <label>套餐编码: </label>
+                                            <input type="text" class="input-small" name="PlanCode" id="PlanCode"
+                                                   placeholder="套餐编码" value=""/>
+                                        </div>
+                                        <div style="clear: both;"></div>
+                                        <div class="dataTables_filter">
+                                            <label style="width:42px;">状 态: </label>
+                                            <select id="IsUsed" name="IsUsed" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="1">启用</option>
+                                                <option value="0">停用</option>
+                                            </select>
+                                            <label>计费模式: </label>
+                                            <select id="FeeMode" name="FeeMode" class="select2-me input-small"
+                                                    data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="1">整月</option>
+                                                <option value="2">剩余天数</option>
+                                            </select>
+                                            <label>叠加模式: </label>
+                                            <select id="SuperpositionMode" name="SuperpositionMode"
+                                                    class="select2-me input-small" data-search="false">
+                                                <option value="">全部</option>
+                                                <option value="0">不可叠加</option>
+                                                <option value="1">可叠加</option>
+                                            </select>
+                                            <button id="agentTariffSearch" type="submit" class="btn btn-primary"><i
+                                                    class="icon-search"></i> 搜索
+                                            </button>
+
+                                            <button type="button" class="btn btn-success addNew"><i
+                                                    class="icon-tasks"></i> 批量设置
+                                            </button>
+
+                                            <button id="saveChoose" type="button" class="btn btn-primary btn-segSave"><i
+                                                    class="icon-ok"></i> 保存选中
+                                            </button>
+
+                                            <button id="deleteChoose" type="button" class="btn btn-danger btn-segDel"><i
+                                                    class="icon-trash"></i> 删除选中
+                                            </button>
+                                            <button id="reloadTotalStatus" class="btn btn-primary btn-segSave"><i
+                                                    class="icon-ok"> </i> 刷新总状态
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="clear:both;"></div>
+                                <table id="agentTariffList"
+                                       class="table table-hover table-nomargin table-bordered table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th style="width:10px;"><input type="checkbox" class="check-all" name="chkAll"
+                                                                       value="0"/></th>
+                                        <th>代理账号</th>
+                                        <th style="width:120px;">通道</th>
+                                        <th>套餐编码</th>
+                                        <th>显示名称</th>
+                                        <th style="width:auto;">包含流量(M)</th>
+                                        <th style="width:auto;">运营商</th>
+                                        <th style="width:auto;">计费模式</th>
+                                        <th style="width:auto;">叠加模式</th>
+                                        <th style="width:auto;">返佣模式</th>
+                                        <th style="width:auto;">总状态</th>
+                                        <th style="width:auto;">状态</th>
+                                        <th style="width:auto;">原价(元)</th>
+                                        <th style="width:auto;">成本(元)</th>
+                                        <th style="width:auto;">售价(元)</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                                <div id="pagination-container"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modal-plus" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel2"
+     aria-hidden="true">
+    <div id="most-plus-form" class="form-horizontal" novalidate="novalidate"
+         method="post">
+        <input type="hidden" name="action" id="modal-plus-action" value="savePackageDiscount"/>
+        <input type="hidden" name="packageType" id="addPackageType" value="1"/>
+        <div class="modal-header">
+            <button type="button" class="close btn btn-mini" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h4 class="modal-title" id="myModalLabel2">
+                资费设置</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-content" id="bodyList">
+                <div class="control-group">
+                    <label for="IsEnabled" class="control-label">指定代理</label>
+                    <div class="controls">
+                        <select id="AddAccount" name="AgentID" class="select2-me input-xlarge" data-search="true"
+                                multiple="multiple">
+                            <option>请输入代理商</option>
+                        </select>
+                        <br/>不指定则设置所有代理，可多选
+                    </div>
+                </div>
+                <!--<div class="control-group">-->
+                <!--<label for="IsEnabled" class="control-label">运营商</label>-->
+                <!--<div class="controls">-->
+                <!--<select id="AddOperatorType" name="OperatorType" class="select2-me input-medium"-->
+                <!--data-search="false">-->
+                <!--<option value="">全部</option>-->
+                <!--<option value="1">移动</option>-->
+                <!--<option value="2">联通</option>-->
+                <!--<option value="3">电信</option>-->
+                <!--</select>-->
+                <!--</div>-->
+                <!--</div>-->
+                <div class="control-group">
+                    <label for="AddInterfaceID" class="control-label">通　道: </label>
+                    <div class="controls">
+                        <select id="AddInterfaceID" name="InterfaceID" class="select2-me input-medium"
+                                data-search="true">
+                            <option value=''>选择通道</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="IsEnabled" class="control-label">套餐包</label>
+                    <div class="controls">
+                        <select id="packageId" name="packageId" class="select2-me input-medium" data-search="">
+                            <option value="">请选择套餐编码</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="AddInterfaceID" class="control-label">折扣：</label>
+                    <div class="controls">
+                        <input type='text' class='input-small' name='batchDiscount' id="batchDiscount" value=''/>
+                        <br/>按百分比输入，多选的配置都是这个折扣
+                    </div>
+                    <div id="AddPackages">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+            <a class="btn btn-primary" id="batchAgentTariff">确定</a>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/api/v1/channel_all.do",
+            success: function (data) {
+                if (data.code == 0) {
+                    var channelNames = data.object;
+                    // console.log(channelNames);
+                    var channelName;
+                    for (var x in channelNames) {
+                        channelName = channelNames[x];
+                        // console.log(channelName);
+                        var result = "<option value='" + channelName + "'>" + channelName + "</option>";
+                        $("#InterfaceID").append(result);
+                        $("#AddInterfaceID").append(result);
+                    }
+
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+
+        });
+    });
+
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/api/v1/agentName_all.do",
+            success: function (data) {
+                if (data.code == 0) {
+                    var agentNames = data.object;
+                    // console.log(channelNames);
+                    var agentName;
+                    for (var x in agentNames) {
+                        agentName = agentNames[x];
+                        // console.log(channelName);
+                        var result = "<option value='" + agentName + "'>" + agentName + "</option>";
+                        $("#AddAccount").append(result);
+                    }
+
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+
+        });
+    });
+
+    $("#AddInterfaceID").change(function () {
+        console.log("packageId")
+        var channelName = $("#AddInterfaceID").val();
+        $("#packageId").empty();
+        // $("#packageId").html();
+        $.ajax({
+            type: "GET",
+            url: "/api/v1/channelTariff_channelName.do?channelName=" + channelName,
+            success: function (data) {
+                if (data.code == 0) {
+                    var packageIds = data.object;
+                    // console.log("--->" + packageIds);
+                    // console.log(channelNames);
+                    var packageId;
+                    for (var x in packageIds) {
+                        packageId = packageIds[x];
+                        // console.log(channelName);
+                        var result = "<option value='" + packageId + "'>" + packageId + "</option>";
+                        $("#packageId").append(result);
+                    }
+
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+
+        });
+    });
+
+    $("#batchAgentTariff").click(function () {
+        var agentName = $("#AddAccount").val();
+        var channelName = $("#AddInterfaceID").val();
+        var packageId = $("#packageId").val();
+        var discount = $("#batchDiscount").val();
+        console.log(agentName + "--" + channelName + "--" + packageId + "-" + discount)
+        $.ajax({
+            type: "POST",
+            url: "/api/v1/agentTariff_add.do",
+            data: {
+                agentName: agentName,
+                channelName: channelName,
+                packageId: packageId,
+                discount: discount
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    alert("执行完毕" + data.msg);
+                 window.location.reload();
+                } else {
+                    alert(data.msg);
+                }
+
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+
+        });
+
+    });
+
+    $(document).ready(function () {
+        $('#pagination-container').pagination({
+            dataSource: '/api/v1/agentTariff_list.do?',
+            prevText: '<<',
+            nextText: '>>',
+            goButtonText: 'go',
+            alias: {
+                pageNumber: 'page',
+                pageSize: 'size'
+            },
+            pageSize: 20,
+            totalNumberLocator: function (response) {//处理页数
+                return response.total;
+            },
+            locator: 'list',
+            ajax: {
+                type: 'GET',
+                beforeSend: function () {//请求前处理
+                    $("#dataContainer").html('加载中...');
+                }
+            },
+            showGoInput: true,
+            showGoButton: true,
+            showNavigator: true,
+            callback: function (data, pagination) {
+                $("#agentTariffList tr td").remove();
+                $.each(data, function (i, item) {
+                    var result = "<tr><td><input type='checkbox' name = 'id' value='" + item['id'] + "'/></td><td>"
+                        + item['agentName'] + "</td><td>" + item['channelName'] + "</td><td>" + item['packageId'] + "</td><td>" + item['showName'] + "</td><td>" + item['packageSize']
+                        + "</td><td>" + operatorType(item['operator']) + "</td><td>" + agentPackageFeeMode(item['feeMode']) + "</td><td>" + agentPackageSuperpositionMode(item['superpositionMode'])
+                        + "</td><td>按代理设置</td><td>" + totalStatus(item['totalStatus']) + "</td><td>" + agentTariffStatus(item['status']) + "</td><td>" + item['originalPrice']
+                        + "</td><td>" + item['tariffCost'] + "</td><td><input type=\"text\" class=\"input-small\" id = \"" + item['id'] + "agentTariff\" value=\"" + item['tariffPrice'] + "\"/>"
+                        + "</td></tr>";
+                    $("#agentTariffList").append(result);
+                });
+            }
+
+        });
+
+
+    });
+
+    function operatorType(data) {
+        if (data == 1)
+            return "移动";
+        if (data == 2)
+            return "联通";
+        if (data == 3)
+            return "电信";
+        if (data == 8)
+            return "全国";
+        return "没有配置运营商";
+    }
+
+    function agentPackageFeeMode(data) {
+        if (data == 1)
+            return "<font color='green'>整月</font></td>";
+        return "<font color='#ff7f50'>剩余天数</font></td>";
+    }
+
+    function agentPackageSuperpositionMode(data) {
+        if (data == 0)
+            return "<font color='green'>可叠加</font></td>";
+        return "<font color='#ff7f50'>不可叠加</font></td>";
+    }
+
+    function totalStatus(data) {
+        if (data == 0)
+            return "<font color= #696969>状态未知</font>";
+        if (data == 1)
+            return "<font color= green>启动</font>";
+        if (data == 2)
+            return "<font color= red>供应商状态未就绪</font>";
+        if (data == 3)
+            return "<font color= red>代理商状态未就绪</font>";
+        if (data == 4)
+            return "<font color= red>通道资费计费状态未就绪</font>";
+    }
+
+    function agentTariffStatus(data) {
+        if (data == 0)
+            return "<font color= green>启动</font>";
+        return "<font color= red>停用</font>";
+
+
+    }
+
+    $("#saveChoose").click(function () {
+        if (!confirm("是否要更新选中的价格?"))
+            return;
+        var id = new Array();
+        var prices = new Array();
+        // var key ;
+        // var map = {};
+        $(".table tbody").find("input[type='checkbox']:checked").each(function (i, item) {
+            id[i] = item.value;
+            prices[i] = $("#" + item.value + "agentTariff").val();
+            // key = item.value;
+            // map.key = $("#" + item.value + "agentTariff").val();
+        });
+        // console.log(map);
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/v1/update_agentTariff_price.do',
+            data: {
+                ids: id,
+                prices: prices
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    alert("更新成功");
+                    window.location.reload();
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+        })
+
+    });
+
+    $("#agentTariffSearch").click(function () {
+        pageStart();
+
+        function pageStart() {
+            var operator = $("#OperatorType").val();
+            var channelName = $("#InterfaceID").val();
+            var showName = $("#PlanName").val();
+            var agentName = $("#Account").val();
+            // var originalName = $("#OriginalPlanName").val();
+            var packageId = $("#PlanCode").val();
+            var status = $("#IsUsed").val();
+            var feeMode = $("#FeeMode").val();
+            var superpositionMode = $("#SuperpositionMode").val();
+            $('#pagination-container').pagination({
+                dataSource: '/api/v1/agentTariff_list.do?operator='
+                    + operator + "&channelName=" + channelName + "&showName=" + showName
+                    + "&agentName=" + agentName + "&packageId=" + packageId + "&status="
+                    + status + "&feeMode=" + feeMode + "&superpositionMode=" + superpositionMode,
+                prevText: '<<',
+                nextText: '>>',
+                goButtonText: 'go',
+                alias: {
+                    pageNumber: 'page',
+                    pageSize: 'size'
+                },
+                pageSize: 20,
+                totalNumberLocator: function (response) {//处理页数
+                    return response.total;
+                },
+                locator: 'list',
+                ajax: {
+                    type: 'GET',
+                    beforeSend: function () {//请求前处理
+                        $("#dataContainer").html('加载中...');
+                    }
+                },
+                showGoInput: true,
+                showGoButton: true,
+                showNavigator: true,
+                callback: function (data, pagination) {
+                    $("#agentTariffList tr td").remove();
+                    $.each(data, function (i, item) {
+                        var result = "<tr><td><input type='checkbox' name = 'id' value='" + item['id'] + "'/></td><td>"
+                            + item['agentName'] + "</td><td>" + item['channelName'] + "</td><td>" + item['packageId'] + "</td><td>" + item['showName'] + "</td><td>" + item['packageSize']
+                            + "</td><td>" + operatorType(item['operator']) + "</td><td>" + agentPackageFeeMode(item['feeMode']) + "</td><td>" + agentPackageSuperpositionMode(item['superpositionMode'])
+                            + "</td><td>按代理设置</td><td>" + totalStatus(item['totalStatus']) + "</td><td>" + agentTariffStatus(item['status']) + "</td><td>" + item['originalPrice']
+                            + "</td><td>" + item['tariffCost'] + "</td><td><input type=\"text\" class=\"input-small\" id = \"" + item['id'] + "agentTariff\" value=\"" + item['tariffPrice'] + "\"/>"
+                            + "</td></tr>";
+                        $("#agentTariffList").append(result);
+                    });
+                }
+
+            });
+        }
+
+    });
+
+    $("#deleteChoose").click(function () {
+        if (!confirm("是否要删除选中的?"))
+            return;
+        var id = new Array();
+        $(".table tbody").find("input[type='checkbox']:checked").each(function (i, item) {
+            id[i] = item.value;
+            // key = item.value;
+            // map.key = $("#" + item.value + "agentTariff").val();
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/v1//api/v1/delete_agentTariff.do',
+            data: {
+                ids: id,
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    alert("删除成功");
+                    window.location.reload();
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+        })
+    });
+
+    $("#reloadTotalStatus").click(function () {
+        if (!confirm("刷新总状态耗时比较久，是否继续"))
+            return;
+        $.ajax({
+            type: "GET",
+            url: "/api/v1/agentTariff_totalStatus.do",
+            success: function (data) {
+                if (data.code == 0) {
+                 alert("刷新成功！")
+                }
+            },
+            error: function (XMLHttpRequest) {
+                alert("系统出错了" + XMLHttpRequest.status);
+            },
+        });
+
+    });
+</script>
+
+
+</html>

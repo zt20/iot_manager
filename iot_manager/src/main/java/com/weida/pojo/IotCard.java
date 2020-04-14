@@ -3,52 +3,53 @@ package com.weida.pojo;
 import java.util.Date;
 
 public class IotCard {
-    private Integer id;
+    private Integer Id;
 
-    private String cardid;
+    private String cardId;
 
     private Integer status;
 
-    private Integer networkstatus;
+    private Integer networkStatus;
 
-    private Integer usesize;
+    private Integer useSize;
 
-    private Integer totalsize;
+    private Integer totalSize;
 
-    private String agentname;
+    private String agentName;
 
-    private String channelname;
+    private String channelName;
 
-    private Integer cardtype;
+    private Integer cardType;
 
-    private String carddetail;
+    private String cardDetail;
 
-    private Integer settlementdate;
+    private Integer settlementDate;
 
-    private Date addtime;
+    private Date addTime;
 
     private Integer renew;
 
-    private String renewdetail;
+    private String renewDetail;
 
-    private Integer trafficpool;
+    private Integer traffiCpool;
 
     private Integer operator;
 
+
     public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        Id = id;
     }
 
-    public String getCardid() {
-        return cardid;
+    public String getCardId() {
+        return cardId;
     }
 
-    public void setCardid(String cardid) {
-        this.cardid = cardid;
+    public void setCardId(String cardId) {
+        this.cardId = cardId;
     }
 
     public Integer getStatus() {
@@ -59,76 +60,76 @@ public class IotCard {
         this.status = status;
     }
 
-    public Integer getNetworkstatus() {
-        return networkstatus;
+    public Integer getNetworkStatus() {
+        return networkStatus;
     }
 
-    public void setNetworkstatus(Integer networkstatus) {
-        this.networkstatus = networkstatus;
+    public void setNetworkStatus(Integer networkStatus) {
+        this.networkStatus = networkStatus;
     }
 
-    public Integer getUsesize() {
-        return usesize;
+    public Integer getUseSize() {
+        return useSize;
     }
 
-    public void setUsesize(Integer usesize) {
-        this.usesize = usesize;
+    public void setUseSize(Integer useSize) {
+        this.useSize = useSize;
     }
 
-    public Integer getTotalsize() {
-        return totalsize;
+    public Integer getTotalSize() {
+        return totalSize;
     }
 
-    public void setTotalsize(Integer totalsize) {
-        this.totalsize = totalsize;
+    public void setTotalSize(Integer totalSize) {
+        this.totalSize = totalSize;
     }
 
-    public String getAgentname() {
-        return agentname;
+    public String getAgentName() {
+        return agentName;
     }
 
-    public void setAgentname(String agentname) {
-        this.agentname = agentname;
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
-    public String getChannelname() {
-        return channelname;
+    public String getChannelName() {
+        return channelName;
     }
 
-    public void setChannelname(String channelname) {
-        this.channelname = channelname;
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
     }
 
-    public Integer getCardtype() {
-        return cardtype;
+    public Integer getCardType() {
+        return cardType;
     }
 
-    public void setCardtype(Integer cardtype) {
-        this.cardtype = cardtype;
+    public void setCardType(Integer cardType) {
+        this.cardType = cardType;
     }
 
-    public String getCarddetail() {
-        return carddetail;
+    public String getCardDetail() {
+        return cardDetail;
     }
 
-    public void setCarddetail(String carddetail) {
-        this.carddetail = carddetail;
+    public void setCardDetail(String cardDetail) {
+        this.cardDetail = cardDetail;
     }
 
-    public Integer getSettlementdate() {
-        return settlementdate;
+    public Integer getSettlementDate() {
+        return settlementDate;
     }
 
-    public void setSettlementdate(Integer settlementdate) {
-        this.settlementdate = settlementdate;
+    public void setSettlementDate(Integer settlementDate) {
+        this.settlementDate = settlementDate;
     }
 
-    public Date getAddtime() {
-        return addtime;
+    public Date getAddTime() {
+        return addTime;
     }
 
-    public void setAddtime(Date addtime) {
-        this.addtime = addtime;
+    public void setAddTime(Date addTime) {
+        this.addTime = addTime;
     }
 
     public Integer getRenew() {
@@ -139,20 +140,20 @@ public class IotCard {
         this.renew = renew;
     }
 
-    public String getRenewdetail() {
-        return renewdetail;
+    public String getRenewDetail() {
+        return renewDetail;
     }
 
-    public void setRenewdetail(String renewdetail) {
-        this.renewdetail = renewdetail;
+    public void setRenewDetail(String renewDetail) {
+        this.renewDetail = renewDetail;
     }
 
-    public Integer getTrafficpool() {
-        return trafficpool;
+    public Integer getTraffiCpool() {
+        return traffiCpool;
     }
 
-    public void setTrafficpool(Integer trafficpool) {
-        this.trafficpool = trafficpool;
+    public void setTraffiCpool(Integer traffiCpool) {
+        this.traffiCpool = traffiCpool;
     }
 
     public Integer getOperator() {
